@@ -66,7 +66,12 @@ matcher:
                   netherlands, belgium, portugal, italy, austria, switzerland, czech republic,
                   czechia, hungary, greece, estonia, lithuania, latvia, croatia, serbia,
                   ukraine, slovakia, slovenia, luxembourg,
-                  california, new york, texas, washington, massachusetts, colorado, florida
+                  california, new york, texas, washington, massachusetts, colorado, florida,
+                  charlotte, san diego, austin, orlando, milwaukee, chicago, denver, philadelphia,
+                  los angeles, nyc, seattle, nashville, houston, cincinnati, minnesota, detroit,
+                  pittsburgh, raleigh, bentonville, bentoville, boston, atlanta, dallas, san francisco,
+                  bay area, miami, phoenix, portland, canberra, southwest, midwest, northeast,
+                  ar, mi, pa, nc, la, tx, oh, ny, wa, fl, ga, il, nj, va, mn, az
             - name: keywords
               params:
                 field: title
@@ -83,7 +88,12 @@ matcher:
                   netherlands, belgium, portugal, italy, austria, switzerland, czech republic,
                   czechia, hungary, greece, estonia, lithuania, latvia, croatia, serbia,
                   ukraine, slovakia, slovenia, luxembourg,
-                  california, new york, texas, washington, massachusetts, colorado, florida
+                  california, new york, texas, washington, massachusetts, colorado, florida,
+                  charlotte, san diego, austin, orlando, milwaukee, chicago, denver, philadelphia,
+                  los angeles, nyc, seattle, nashville, houston, cincinnati, minnesota, detroit,
+                  pittsburgh, raleigh, bentonville, bentoville, boston, atlanta, dallas, san francisco,
+                  bay area, miami, phoenix, portland, canberra, southwest, midwest, northeast,
+                  ar, mi, pa, nc, la, tx, oh, ny, wa, fl, ga, il, nj, va, mn, az
 
 notifiers:
   - name: console
@@ -98,7 +108,7 @@ notifiers:
       subject_prefix: "[JobScout] "
       # Sort each email by location preference and show the best 10 in full;
       # any extra matches are listed one per line underneath.
-      rank: "barcelona, remote, spain"
+      rank: "barcelona, remote, distributed, worldwide, anywhere, spain, españa, madrid"
       top: 10
 
 store:
@@ -122,7 +132,7 @@ companies:
   - {name: "Veriff", source: greenhouse, params: {board_token: "veriff"}}  # via slug-guess
   - {name: "Mitek Systems", source: lever, params: {site: "miteksystems-2"}}  # via careers-page
   - {name: "CrowdStrike", source: workday, params: {host: "crowdstrike.wd5.myworkdayjobs.com", tenant: "crowdstrike", site: "crowdstrikecareers"}}  # via upstream
-  - {name: "Palo Alto Networks", source: workday, params: {host: "paloaltonetworks.wd5.myworkdayjobs.com", tenant: "paloaltonetworks", site: "panwexternalcareers"}}  # via upstream
+  - {name: "Palo Alto Networks", source: workday, params: {host: "paloaltonetworks.wd5.myworkdayjobs.com", tenant: "paloaltonetworks", site: "panwexternalcareers", max_postings: 3000}}  # via upstream
   - {name: "Vanta", source: ashby, params: {board_name: "vanta"}}  # via slug-guess
   - {name: "Drata", source: ashby, params: {board_name: "drata"}}  # via careers-page
   - {name: "1Password", source: ashby, params: {board_name: "1password"}}  # via careers-page
@@ -188,7 +198,7 @@ companies:
   - {name: "JetBrains", source: greenhouse, params: {board_token: "jetbrains"}}  # via careers-page
   - {name: "Atlassian", source: atlassian}  # via upstream
   - {name: "Algolia", source: greenhouse, params: {board_token: "algolia"}}  # via slug-guess
-  - {name: "Postman", source: greenhouse, params: {board_token: "postman"}}  # via upstream
+  # Postman: old Greenhouse board returns 404 (moved ATS, not found yet) -- see companies.missing.csv
   - {name: "Miro", source: ashby, params: {board_name: "miro"}}  # via slug-guess
   - {name: "n8n", source: ashby, params: {board_name: "n8n"}}  # via slug-guess
   - {name: "Zapier", source: ashby, params: {board_name: zapier}}  # via upstream
@@ -216,7 +226,7 @@ companies:
   - {name: "Cohere", source: ashby, params: {board_name: "cohere"}}  # via careers-page
   - {name: "Synthesia", source: ashby, params: {board_name: "synthesia"}}  # via slug-guess
   - {name: "Dataiku", source: greenhouse, params: {board_token: "dataiku"}}  # via careers-page
-  - {name: "HP", source: workday, params: {host: "hp.wd5.myworkdayjobs.com", tenant: "hp", site: "ExternalCareerSite"}}  # via upstream
+  - {name: "HP", source: workday, params: {host: "hp.wd5.myworkdayjobs.com", tenant: "hp", site: "ExternalCareerSite", max_postings: 3000}}  # via upstream
   - {name: "Cisco", source: workday, params: {host: "cisco.wd5.myworkdayjobs.com", tenant: "cisco", site: "Cisco_Careers", max_postings: 2000}}  # via upstream
   - {name: "Salesforce", source: workday, params: {host: "salesforce.wd12.myworkdayjobs.com", tenant: "salesforce", site: "External_Career_Site", max_postings: 2000}}  # via upstream
   - {name: "Zendesk", source: workday, params: {host: "zendesk.wd1.myworkdayjobs.com", tenant: "zendesk", site: "zendesk"}}  # via careers-page
