@@ -33,17 +33,45 @@ matcher:
         exclude: >-
           intern, internship, working student, vp, vice president, director, chief,
           solutions engineer, solution engineer, solutions architect, solution architect
-    # 2. Location must be Barcelona, remote, or Spain (in that order of
-    #    preference -- see `rank` on the email notifier). Jobs whose location
-    #    names a non-European region are dropped.
-    - name: keywords
-      params:
-        field: location
-        include: >-
-          barcelona, remote, spain, españa, espana, madrid, anywhere, worldwide
-        exclude: >-
-          united states, usa, us, canada, apac, asia, india, latam, americas,
-          australia, japan, singapore, brazil, mexico, north america
+    # 2. Location: Barcelona, remote, or Spain (email ranks them in that
+    #    order -- see `rank` on the email notifier). Either:
+    - name: any
+      of:
+        # a) the job is in Barcelona / Spain (even if it also lists other cities), or
+        - name: keywords
+          params:
+            field: location
+            include: barcelona, catalunya, cataluña, catalonia, spain, españa, espana, madrid
+        # b) it is remote and does not name some other country or region,
+        #    in its location or title, so "Remote - Germany", "Remote U.S." or
+        #    "Value Engineer | UK | Remote" are dropped.
+        - name: all
+          of:
+            - name: keywords
+              params:
+                field: location
+                include: remote, anywhere, worldwide, distributed
+            - name: keywords
+              params:
+                field: location
+                # &other_places names this list so the title rule below can reuse it
+                exclude: &other_places >-
+                  united states, usa, us, u.s, canada, north america, americas, amer, latam,
+                  mexico, brazil, colombia, argentina, chile, peru, costa rica, ontario, toronto,
+                  united arab emirates, emirates,
+                  apac, asia, india, japan, singapore, australia, new zealand, philippines,
+                  korea, china, hong kong, taiwan, israel, uae, dubai, saudi arabia, turkey,
+                  south africa, nigeria, kenya, egypt,
+                  united kingdom, uk, gbr, england, london, ireland, germany, deutschland,
+                  france, poland, bulgaria, romania, denmark, finland, sweden, norway,
+                  netherlands, belgium, portugal, italy, austria, switzerland, czech republic,
+                  czechia, hungary, greece, estonia, lithuania, latvia, croatia, serbia,
+                  ukraine, slovakia, slovenia, luxembourg,
+                  california, new york, texas, washington, massachusetts, colorado, florida
+            - name: keywords
+              params:
+                field: title
+                exclude: *other_places
 
 notifiers:
   - name: console

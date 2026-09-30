@@ -16,7 +16,7 @@ permissions:
 jobs:
   dry-run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120 # a run with no saved state opens every Workday job; Cisco alone takes ~8 min
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
