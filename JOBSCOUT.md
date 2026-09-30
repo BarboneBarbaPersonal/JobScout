@@ -2,9 +2,10 @@
 
 Personal fork of [jobwatch](https://github.com/AkashKumar7902/jobwatch).
 Every 30 minutes GitHub Actions polls the careers boards of my target
-companies and emails me new Customer Success / TAM / CSE roles in
-Barcelona, Spain or remote Europe. No AI and no tokens: matching is keyword
-rules only.
+companies and emails me new Customer Success / TAM / CSE / Forward Deployed
+Engineer / Service Delivery Manager roles. Location preference:
+Barcelona > remote > Spain; each email is sorted that way and shows the top 10
+in full. No AI and no tokens: matching is keyword rules only.
 
 ## What is different from upstream
 
@@ -13,6 +14,7 @@ rules only.
 | `jobscout.yaml` | My config: target companies, keyword rules on title and location, Gmail notifier |
 | `internal/source/teamtailor.go` | New source for Teamtailor career sites (reads `jobs.rss`) |
 | `internal/source/source.go` | One line that registers the Teamtailor board identity |
+| `internal/notify/email.go`, `rank.go` | Optional `rank` + `top` email params: sort by location preference, show top N |
 | `.github/workflows/jobwatch.yml` | Uses `jobscout.yaml`, no LLM key |
 | `.github/workflows/dry-run.yml` | Manual test run: prints current matches, sends nothing |
 | `jobscout/discover_ats.py` | Finds which job board each company uses |

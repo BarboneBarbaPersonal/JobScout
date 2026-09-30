@@ -16,27 +16,31 @@ poll:
 matcher:
   name: all
   of:
-    # 1. Title must be a Customer Success / TAM / CSE-type role.
+    # 1. Title must be a Customer Success / TAM / CSE / FDE / SDM-type role.
     #    Terms are case-insensitive whole words ("tam" does not match "team").
+    #    Solutions Engineer / Architect roles are deliberately NOT included.
     - name: keywords
       params:
         field: title
         include: >-
           customer success, technical account manager, tam, csm, cse,
-          solutions engineer, solution engineer, solutions architect, solution architect,
-          customer engineer, customer success engineer, implementation manager,
-          implementation consultant, implementation specialist, onboarding manager,
-          onboarding specialist, engagement manager, value engineer, csam,
-          customer success architect, technical customer success, support engineer
-        exclude: intern, internship, working student, vp, vice president, director, chief
-    # 2. Location must be Barcelona / Spain or remote-friendly in Europe.
-    #    Jobs whose location names only a non-European region are dropped.
+          customer success engineer, customer success architect, technical customer success, csam,
+          forward deployed engineer, forward deployed, fde,
+          service delivery manager, service delivery, sdm,
+          customer engineer, implementation manager, implementation consultant,
+          implementation specialist, onboarding manager, onboarding specialist,
+          engagement manager, value engineer, support engineer
+        exclude: >-
+          intern, internship, working student, vp, vice president, director, chief,
+          solutions engineer, solution engineer, solutions architect, solution architect
+    # 2. Location must be Barcelona, remote, or Spain (in that order of
+    #    preference -- see `rank` on the email notifier). Jobs whose location
+    #    names a non-European region are dropped.
     - name: keywords
       params:
         field: location
         include: >-
-          barcelona, spain, españa, espana, madrid, emea, europe, european union, eu,
-          remote, anywhere, worldwide, iberia
+          barcelona, remote, spain, españa, espana, madrid, anywhere, worldwide
         exclude: >-
           united states, usa, us, canada, apac, asia, india, latam, americas,
           australia, japan, singapore, brazil, mexico, north america
@@ -51,6 +55,11 @@ notifiers:
       password_env: JOBWATCH_SMTP_PASSWORD
       from: ${JOBWATCH_SMTP_USERNAME}
       to: ${JOBWATCH_EMAIL_TO}
+      subject_prefix: "[JobScout] "
+      # Sort each email by location preference and show the best 10 in full;
+      # any extra matches are listed one per line underneath.
+      rank: "barcelona, remote, spain"
+      top: 10
 
 store:
   path: state.json

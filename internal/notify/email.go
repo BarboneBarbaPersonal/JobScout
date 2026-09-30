@@ -67,8 +67,24 @@ func init() {
 			}
 		}
 
+		// JobScout: optional ranking. rank lists location words in order of
+		// preference ("barcelona, remote, spain"); top caps how many jobs are
+		// shown in full, the rest are listed one per line. Unset = upstream behavior.
+		var rank []string
+		for _, term := range strings.Split(p.Get("rank"), ",") {
+			if term = strings.ToLower(strings.TrimSpace(term)); term != "" {
+				rank = append(rank, term)
+			}
+		}
+		top, err := p.Int("top", 0)
+		if err != nil || top < 0 {
+			return nil, fmt.Errorf("param \"top\": want a positive number, got %q", p.Get("top"))
+		}
+
 		port := p.GetDefault("smtp_port", "587")
 		return &email{
+			rank:        rank,
+			top:         top,
 			addr:        host + ":" + port,
 			host:        host,
 			implicitTLS: port == "465",
@@ -102,6 +118,8 @@ type email struct {
 	from        string
 	to          []string
 	prefix      string
+	rank        []string // JobScout: location preference order
+	top         int      // JobScout: jobs shown in full (0 = all)
 }
 
 func (e *email) Name() string { return "email" }
@@ -134,7 +152,22 @@ func (e *email) Report(ctx context.Context, r Report) error {
 var _ Reporter = (*email)(nil)
 
 func (e *email) compose(matches []Match) []byte {
-	return e.message(Headline(matches), Headline(matches)+" for your experience criteria.\n\n"+Text(matches))
+	if len(e.rank) == 0 && e.top == 0 {
+		return e.message(Headline(matches), Headline(matches)+" for your experience criteria.\n\n"+Text(matches))
+	}
+	ranked := RankByLocation(matches, e.rank)
+	shown, rest := ranked, []Match(nil)
+	if e.top > 0 && len(ranked) > e.top {
+		shown, rest = ranked[:e.top], ranked[e.top:]
+	}
+	body := Headline(matches) + ", best location first (" + strings.Join(e.rank, " > ") + ").\n\n" + Text(shown)
+	if len(rest) > 0 {
+		body += fmt.Sprintf("\n%d more:\n", len(rest))
+		for _, m := range rest {
+			body += fmt.Sprintf("- %s - %s (%s) %s\n", OneLine(m.Job.Company), OneLine(m.Job.Title), OneLine(m.Job.Location), OneLine(m.Job.URL))
+		}
+	}
+	return e.message(Headline(matches), body)
 }
 
 // message builds one RFC 5322 message. Both callers pass text that includes
