@@ -54,8 +54,7 @@ matcher:
             - name: keywords
               params:
                 field: location
-                # &other_places names this list so the title rule below can reuse it
-                exclude: &other_places >-
+                exclude: >-
                   united states, usa, us, u.s, canada, north america, americas, amer, latam,
                   mexico, brazil, colombia, argentina, chile, peru, costa rica, ontario, toronto,
                   united arab emirates, emirates,
@@ -71,7 +70,20 @@ matcher:
             - name: keywords
               params:
                 field: title
-                exclude: *other_places
+                # same list as above (jobwatch does not support YAML anchors)
+                exclude: >-
+                  united states, usa, us, u.s, canada, north america, americas, amer, latam,
+                  mexico, brazil, colombia, argentina, chile, peru, costa rica, ontario, toronto,
+                  united arab emirates, emirates,
+                  apac, asia, india, japan, singapore, australia, new zealand, philippines,
+                  korea, china, hong kong, taiwan, israel, uae, dubai, saudi arabia, turkey,
+                  south africa, nigeria, kenya, egypt,
+                  united kingdom, uk, gbr, england, london, ireland, germany, deutschland,
+                  france, poland, bulgaria, romania, denmark, finland, sweden, norway,
+                  netherlands, belgium, portugal, italy, austria, switzerland, czech republic,
+                  czechia, hungary, greece, estonia, lithuania, latvia, croatia, serbia,
+                  ukraine, slovakia, slovenia, luxembourg,
+                  california, new york, texas, washington, massachusetts, colorado, florida
 
 notifiers:
   - name: console
