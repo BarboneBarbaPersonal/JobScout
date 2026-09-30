@@ -127,7 +127,7 @@ companies:
   - {name: "Docplanner (Doctoralia)", source: ashby, params: {board_name: "docplanner"}}  # via slug-guess
   - {name: "Mirakl", source: greenhouse, params: {board_token: "mirakl"}}  # via slug-guess
   - {name: "Contentsquare", source: lever, params: {site: "contentsquare"}}  # via careers-page
-  - {name: "Hotjar", source: lever, params: {site: "contentsquare"}}  # via careers-page
+  # Hotjar: owned by Contentsquare, same Lever board -- covered by the Contentsquare entry
   - {name: "Preply", source: ashby, params: {board_name: "preply"}}  # via slug-guess
   - {name: "UserTesting (ex-UserZoom)", source: workday, params: {host: "usertesting.wd12.myworkdayjobs.com", tenant: "usertesting", site: "UserTesting"}}  # via careers-page
   - {name: "Ocado Technology", source: greenhouse, params: {board_token: "ocadogroup"}}  # via slug-guess
