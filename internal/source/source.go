@@ -201,6 +201,8 @@ func coordsFor(name string, p params.Map) ([]coord, bool) {
 		return []coord{stable("account", p.Get("account"))}, true
 	case "recruitee":
 		return []coord{stable("company_slug", p.Get("company_slug"))}, true
+	case "teamtailor":
+		return []coord{stable("host", strings.ToLower(strings.TrimSpace(p.Get("host"))))}, true
 	case "rippling":
 		return []coord{stable("board_slug", p.Get("board_slug"))}, true
 	case "polymer":

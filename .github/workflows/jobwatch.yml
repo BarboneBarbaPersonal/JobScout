@@ -10,7 +10,7 @@
 #   JOBWATCH_SMTP_USERNAME  e.g. your Gmail address (also used as From)
 #   JOBWATCH_SMTP_PASSWORD  e.g. a Gmail app password
 #   JOBWATCH_EMAIL_TO       where the alerts go
-#   JOBWATCH_LLM_API_KEY     Google AI Studio key for the configured matcher
+#   (no LLM key needed: JobScout matches with keywords only)
 
 name: jobwatch
 
@@ -77,7 +77,6 @@ jobs:
           JOBWATCH_SMTP_USERNAME: ${{ secrets.JOBWATCH_SMTP_USERNAME }}
           JOBWATCH_SMTP_PASSWORD: ${{ secrets.JOBWATCH_SMTP_PASSWORD }}
           JOBWATCH_EMAIL_TO: ${{ secrets.JOBWATCH_EMAIL_TO }}
-          JOBWATCH_LLM_API_KEY: ${{ secrets.JOBWATCH_LLM_API_KEY }}
           # Extra channels: add the secret, then mirror it here and enable
           # the matching notifier in config.example.yaml.
           # JOBWATCH_SLACK_WEBHOOK: ${{ secrets.JOBWATCH_SLACK_WEBHOOK }}
@@ -89,11 +88,11 @@ jobs:
               # The console notifier writes human match bodies and URLs to
               # stdout. Scheduled logs retain only the sanitized logger
               # protocol on stderr; email notification behavior is unchanged.
-              ./jobwatch -config config.example.yaml -state state.json -seed-new-sources \
+              ./jobwatch -config jobscout.yaml -state state.json -seed-new-sources \
                 2>&1 > /dev/null | tee run.log
               ;;
             bootstrap)
-              ./jobwatch -config config.example.yaml -state state.json -seed \
+              ./jobwatch -config jobscout.yaml -state state.json -seed \
                 2>&1 > /dev/null | tee run.log
               ;;
             *)

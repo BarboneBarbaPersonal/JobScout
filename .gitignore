@@ -9,3 +9,6 @@ __pycache__/
 # runtime state & logs
 state.json
 *.log
+
+# JobScout: raw export of the private target-companies sheet
+jobscout/companies.csv

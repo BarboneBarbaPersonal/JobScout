@@ -1,0 +1,117 @@
+  - {name: "New Relic", source: greenhouse, params: {board_token: "newrelic"}}  # via slug-guess
+  - {name: "DataDog", source: greenhouse, params: {board_token: datadog}}  # via upstream
+  - {name: "Grafana Labs", source: greenhouse, params: {board_token: grafanalabs}}  # via upstream
+  - {name: "Elastic", source: greenhouse, params: {board_token: "elastic"}}  # via slug-guess
+  - {name: "Logz.io", source: lever, params: {site: "logz"}}  # via careers-page
+  - {name: "Sentry", source: ashby, params: {board_name: "sentry"}}  # via careers-page
+  - {name: "Honeycomb", source: greenhouse, params: {board_token: "honeycomb"}}  # via slug-guess
+  - {name: "Checkly", source: ashby, params: {board_name: "checkly"}}  # via slug-guess
+  - {name: "Dash0", source: ashby, params: {board_name: "dash0"}}  # via careers-page
+  - {name: "PagerDuty", source: greenhouse, params: {board_token: "pagerduty"}}  # via slug-guess
+  - {name: "incident.io", source: ashby, params: {board_name: "incident"}}  # via slug-guess
+  - {name: "Kentik", source: greenhouse, params: {board_token: kentik}}  # via upstream
+  - {name: "SigNoz", source: ashby, params: {board_name: "SigNoz"}}  # via careers-page
+  - {name: "Veriff", source: greenhouse, params: {board_token: "veriff"}}  # via slug-guess
+  - {name: "Mitek Systems", source: lever, params: {site: "miteksystems-2"}}  # via careers-page
+  - {name: "CrowdStrike", source: workday, params: {host: "crowdstrike.wd5.myworkdayjobs.com", tenant: "crowdstrike", site: "crowdstrikecareers"}}  # via upstream
+  - {name: "Palo Alto Networks", source: workday, params: {host: "paloaltonetworks.wd5.myworkdayjobs.com", tenant: "paloaltonetworks", site: "panwexternalcareers"}}  # via upstream
+  - {name: "Vanta", source: ashby, params: {board_name: "vanta"}}  # via slug-guess
+  - {name: "Drata", source: ashby, params: {board_name: "drata"}}  # via careers-page
+  - {name: "1Password", source: ashby, params: {board_name: "1password"}}  # via careers-page
+  - {name: "Bitwarden", source: greenhouse, params: {board_token: "bitwarden"}}  # via slug-guess
+  - {name: "Zscaler", source: greenhouse, params: {board_token: "zscaler"}}  # via slug-guess
+  - {name: "Cloudflare", source: greenhouse, params: {board_token: "cloudflare"}}  # via upstream
+  - {name: "Tailscale", source: greenhouse, params: {board_token: "tailscale"}}  # via slug-guess
+  - {name: "Semgrep", source: ashby, params: {board_name: "semgrep"}}  # via careers-page
+  - {name: "Huntress", source: greenhouse, params: {board_token: "huntress"}}  # via careers-page
+  - {name: "Tines", source: greenhouse, params: {board_token: "tines"}}  # via slug-guess
+  - {name: "Darktrace", source: workday, params: {host: "darktrace.wd3.myworkdayjobs.com", tenant: "darktrace", site: "DarktaceExternal"}}  # via careers-page
+  - {name: "Arctic Wolf", source: workday, params: {host: "arcticwolf.wd1.myworkdayjobs.com", tenant: "arcticwolf", site: "External"}}  # via upstream
+  - {name: "Proofpoint", source: workday, params: {host: proofpoint.wd5.myworkdayjobs.com, tenant: proofpoint, site: ProofpointCareers}}  # via upstream
+  - {name: "Sonatype", source: lever, params: {site: sonatype}}  # via upstream
+  - {name: "Mend.io", source: ashby, params: {board_name: "mend-io"}}  # via careers-page
+  - {name: "Nord Security", source: ashby, params: {board_name: "nord-security"}}  # via slug-guess
+  - {name: "SEON", source: ashby, params: {board_name: "seon"}}  # via careers-page
+  - {name: "Kantox", source: workable, params: {account: "kantox"}}  # via slug-guess
+  - {name: "SeQura", source: recruitee, params: {company_slug: "sequra"}}  # via careers-page
+  - {name: "Payhawk", source: greenhouse, params: {board_token: "payhawkio"}}  # via careers-page
+  - {name: "N26", source: greenhouse, params: {board_token: "n26"}}  # via slug-guess
+  - {name: "Bitpanda", source: greenhouse, params: {board_token: "bitpanda"}}  # via slug-guess
+  - {name: "Checkout.com", source: ashby, params: {board_name: "checkout.com"}}  # via upstream
+  - {name: "Adyen", source: greenhouse, params: {board_token: "adyen"}}  # via slug-guess
+  - {name: "Stripe", source: greenhouse, params: {board_token: "stripe"}}  # via upstream
+  - {name: "Pleo", source: ashby, params: {board_name: "pleo"}}  # via careers-page
+  - {name: "Qonto", source: lever, params: {site: "qonto"}}  # via careers-page
+  - {name: "Wise", source: greenhouse, params: {board_token: "wise"}}  # via slug-guess
+  - {name: "Ebury", source: greenhouse, params: {board_token: "ebury"}}  # via careers-page
+  - {name: "TrueLayer", source: greenhouse, params: {board_token: "truelayer"}}  # via slug-guess
+  - {name: "Feedzai", source: greenhouse, params: {board_token: "feedzai"}}  # via slug-guess
+  - {name: "Clarity AI", source: greenhouse, params: {board_token: "clarityai"}}  # via slug-guess
+  - {name: "Capchase", source: ashby, params: {board_name: "capchase"}}  # via careers-page
+  - {name: "Remote.com", source: greenhouse, params: {board_token: "descript"}}  # via careers-page
+  - {name: "Oyster HR", source: ashby, params: {board_name: "oyster"}}  # via careers-page
+  - {name: "Rippling", source: rippling, params: {board_slug: rippling}}  # via upstream
+  - {name: "SumUp", source: greenhouse, params: {board_token: "sumup"}}  # via slug-guess
+  - {name: "Typeform", source: greenhouse, params: {board_token: "typeform"}}  # via slug-guess
+  - {name: "Perk (ex-TravelPerk)", source: ashby, params: {board_name: "perk"}}  # via slug-guess
+  - {name: "Holded (Visma)", source: recruitee, params: {company_slug: "holded"}}  # via slug-guess
+  - {name: "Lodgify", source: lever, params: {site: "lodgify"}}  # via slug-guess
+  - {name: "Docplanner (Doctoralia)", source: ashby, params: {board_name: "docplanner"}}  # via slug-guess
+  - {name: "Mirakl", source: greenhouse, params: {board_token: "mirakl"}}  # via slug-guess
+  - {name: "Contentsquare", source: lever, params: {site: "contentsquare"}}  # via careers-page
+  - {name: "Hotjar", source: lever, params: {site: "contentsquare"}}  # via careers-page
+  - {name: "Preply", source: ashby, params: {board_name: "preply"}}  # via slug-guess
+  - {name: "UserTesting (ex-UserZoom)", source: workday, params: {host: "usertesting.wd12.myworkdayjobs.com", tenant: "usertesting", site: "UserTesting"}}  # via careers-page
+  - {name: "Ocado Technology", source: greenhouse, params: {board_token: "ocadogroup"}}  # via slug-guess
+  - {name: "Exoticca", source: workable, params: {account: "exoticca"}}  # via careers-page
+  - {name: "Personio", source: recruitee, params: {company_slug: "personio"}}  # via slug-guess
+  - {name: "Celonis", source: greenhouse, params: {board_token: "celonis"}}  # via slug-guess
+  - {name: "GitLab", source: greenhouse, params: {board_token: gitlab}}  # via upstream
+  - {name: "MongoDB", source: greenhouse, params: {board_token: "mongodb"}}  # via slug-guess
+  - {name: "Confluent", source: ashby, params: {board_name: "confluent"}}  # via slug-guess
+  - {name: "Snowflake", source: ashby, params: {board_name: "snowflake"}}  # via slug-guess
+  - {name: "Databricks", source: greenhouse, params: {board_token: "databricks"}}  # via upstream
+  - {name: "Twilio", source: greenhouse, params: {board_token: "twilio"}}  # via upstream
+  - {name: "Vercel", source: greenhouse, params: {board_token: vercel}}  # via upstream
+  - {name: "Supabase", source: ashby, params: {board_name: "supabase"}}  # via careers-page
+  - {name: "PostHog", source: ashby, params: {board_name: "posthog"}}  # via slug-guess
+  - {name: "Temporal", source: ashby, params: {board_name: "temporal"}}  # via slug-guess
+  - {name: "CircleCI", source: greenhouse, params: {board_token: "circleci"}}  # via slug-guess
+  - {name: "JetBrains", source: greenhouse, params: {board_token: "jetbrains"}}  # via careers-page
+  - {name: "Atlassian", source: atlassian}  # via upstream
+  - {name: "Algolia", source: greenhouse, params: {board_token: "algolia"}}  # via slug-guess
+  - {name: "Postman", source: greenhouse, params: {board_token: "postman"}}  # via upstream
+  - {name: "Miro", source: ashby, params: {board_name: "miro"}}  # via slug-guess
+  - {name: "n8n", source: ashby, params: {board_name: "n8n"}}  # via slug-guess
+  - {name: "Zapier", source: ashby, params: {board_name: zapier}}  # via upstream
+  - {name: "Airtable", source: greenhouse, params: {board_token: "airtable"}}  # via slug-guess
+  - {name: "Cloudinary", source: lever, params: {site: "cloudinary"}}  # via slug-guess
+  - {name: "Contentful", source: greenhouse, params: {board_token: "contentful"}}  # via careers-page
+  - {name: "Storyblok", source: greenhouse, params: {board_token: "storyblok"}}  # via slug-guess
+  - {name: "Buffer", source: ashby, params: {board_name: buffer}}  # via upstream
+  - {name: "HubSpot", source: greenhouse, params: {board_token: "hubspotjobs"}}  # via upstream
+  - {name: "Intercom", source: greenhouse, params: {board_token: "intercom"}}  # via careers-page
+  - {name: "Pipedrive", source: lever, params: {site: "pipedrive"}}  # via slug-guess
+  - {name: "Canonical", source: greenhouse, params: {board_token: canonical}}  # via upstream
+  - {name: "Help Scout", source: ashby, params: {board_name: helpscout}}  # via upstream
+  - {name: "Sprout Social", source: greenhouse, params: {board_token: "sproutsocial"}}  # via slug-guess
+  - {name: "Close", source: ashby, params: {board_name: "Close"}}  # via careers-page
+  - {name: "Superside", source: lever, params: {site: superside}}  # via upstream
+  - {name: "Lokalise", source: greenhouse, params: {board_token: "lokalise"}}  # via slug-guess
+  - {name: "Hostinger", source: ashby, params: {board_name: "hostinger"}}  # via slug-guess
+  - {name: "Crisp", source: ashby, params: {board_name: "crisp"}}  # via slug-guess
+  - {name: "Anthropic", source: greenhouse, params: {board_token: "anthropic"}}  # via careers-page
+  - {name: "OpenAI", source: ashby, params: {board_name: "openai"}}  # via upstream
+  - {name: "ElevenLabs", source: ashby, params: {board_name: "elevenlabs"}}  # via slug-guess
+  - {name: "Mistral AI", source: ashby, params: {board_name: "mistral.ai"}}  # via careers-page
+  - {name: "Hugging Face", source: workable, params: {account: "huggingface"}}  # via upstream
+  - {name: "Cohere", source: ashby, params: {board_name: "cohere"}}  # via careers-page
+  - {name: "Synthesia", source: ashby, params: {board_name: "synthesia"}}  # via slug-guess
+  - {name: "Dataiku", source: greenhouse, params: {board_token: "dataiku"}}  # via careers-page
+  - {name: "HP", source: workday, params: {host: "hp.wd5.myworkdayjobs.com", tenant: "hp", site: "ExternalCareerSite"}}  # via upstream
+  - {name: "Cisco", source: workday, params: {host: "cisco.wd5.myworkdayjobs.com", tenant: "cisco", site: "Cisco_Careers", max_postings: 2000}}  # via upstream
+  - {name: "Salesforce", source: workday, params: {host: "salesforce.wd12.myworkdayjobs.com", tenant: "salesforce", site: "External_Career_Site", max_postings: 2000}}  # via upstream
+  - {name: "Zendesk", source: workday, params: {host: "zendesk.wd1.myworkdayjobs.com", tenant: "zendesk", site: "zendesk"}}  # via careers-page
+  - {name: "ServiceNow", source: smartrecruiters, params: {company_id: "ServiceNow"}}  # via upstream
+  - {name: "Workday", source: workday, params: {host: "workday.wd5.myworkdayjobs.com", tenant: "workday", site: "Workday"}}  # via careers-page
+  - {name: "Freshworks", source: smartrecruiters, params: {company_id: "Freshworks"}}  # via upstream
