@@ -119,15 +119,23 @@ jobs:
           touch .nojekyll
           git add -A
           git commit -q -m "Update job board" || exit 0
-          git push origin gh-pages
+          for attempt in 1 2 3; do
+            git push origin gh-pages && exit 0
+            echo "push failed (attempt $attempt), retrying in 20s"
+            sleep 20
+          done
+          exit 1
 
       - name: Publish state
         id: publish
         # A restored run may have valid checkpoints even when polling fails.
         # A bootstrap is publishable only after the complete seed succeeds.
+        # JobScout: never save state unless the board was published, so a
+        # failed page publish re-delivers the same matches next run.
         if: >-
           ${{
             !cancelled() &&
+            steps.page.outcome == 'success' &&
             steps.restore.outcome == 'success' &&
             steps.build.outcome == 'success' &&
             (steps.poll.outcome == 'success' || steps.poll.outcome == 'failure') &&
