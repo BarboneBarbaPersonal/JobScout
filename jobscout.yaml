@@ -10,7 +10,7 @@
 # and copy the new lines from jobscout/companies.found.yaml.
 
 poll:
-  timeout_seconds: 30
+  timeout_seconds: 60 # big Greenhouse boards (full descriptions) can take >30s
   concurrency: 6 # companies fetched in parallel
 
 # Speed-up: checked BEFORE a job's detail page is opened (Workday boards only

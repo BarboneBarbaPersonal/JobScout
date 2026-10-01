@@ -44,8 +44,8 @@ are set at the top of `jobscout/build_page.py`.
 
 Delete the `state` branch and run Actions -> **jobwatch** with
 **initialize_state** ticked: every job matching today goes onto the board.
-The first run takes about 40 minutes (Workday boards are opened job by job);
-hourly runs after that are short.
+A full scan takes about 4 minutes: the `prefilter:` title check skips opening
+job pages for roles that are not targets (it used to take about 40 minutes).
 
 ## Pulling upstream fixes
 
