@@ -37,6 +37,7 @@ const (
 type Runner struct {
 	Sources   []source.Source
 	Matcher   match.Matcher
+	Prefilter match.Matcher // JobScout: optional, checked before fetching job details
 	Notifiers []notify.Notifier
 	Store     *store.Store
 	Log       *log.Logger
@@ -485,6 +486,31 @@ func (r *Runner) RunOnce(ctx context.Context) (runErr error) {
 			}
 			if pendingDelivery {
 				outcome.retries++ // an actual delivery retry starts below
+			}
+
+			// JobScout: a cheap prefilter (e.g. title keywords) runs before
+			// the detail fetch below. A rejected job is recorded as unmatched
+			// without ever fetching its detail page. An error lets the job
+			// through to the full matcher, so nothing is dropped by mistake.
+			if r.Prefilter != nil {
+				if pre, err := r.Prefilter.Match(res.ctx, job); err == nil && !pre.Matched {
+					if r.DryRun {
+						r.localf("NO_MATCH %s — %s (%s): prefilter: %s",
+							sanitizeLogField(job.Company), sanitizeLogField(job.Title), sanitizeLogField(job.Location),
+							sanitizeLogField(pre.Reason))
+						continue
+					}
+					r.Store.Add(job.ID, store.Record{
+						FirstSeen: rec.FirstSeen,
+						Title:     job.Company + ": " + job.Title,
+						Matched:   false,
+					})
+					dirty++
+					if time.Since(lastSave) >= saveEvery {
+						checkpoint()
+					}
+					continue
+				}
 			}
 
 			// Sources with lazy details (SmartRecruiters, BambooHR) list

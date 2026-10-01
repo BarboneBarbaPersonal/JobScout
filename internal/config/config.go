@@ -26,6 +26,13 @@ type Config struct {
 	// {name: experience, params: {max_years: 1}}.
 	Matcher Plugin `yaml:"matcher"`
 
+	// Prefilter (JobScout, optional) is a cheap matcher run BEFORE a job's
+	// detail page is fetched. Jobs it rejects are recorded as unmatched and
+	// never fetched — e.g. a title-only rule saves thousands of Workday
+	// detail requests. It must only reject jobs the full matcher would
+	// reject too, so it should check fields the job list already has (title).
+	Prefilter Plugin `yaml:"prefilter"`
+
 	// Notifiers all receive every batch of matches; defaults to console.
 	Notifiers []Plugin `yaml:"notifiers"`
 

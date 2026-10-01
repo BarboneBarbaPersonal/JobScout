@@ -239,6 +239,14 @@ func build(configPath, statePath string, logger *log.Logger, seed, seedNew, dryR
 	if err != nil {
 		return nil, fmt.Errorf("matcher: %w", err)
 	}
+	// JobScout: optional cheap prefilter, checked before job details are fetched.
+	var prefilter match.Matcher
+	if cfg.Prefilter.Name != "" {
+		prefilter, err = match.Build(matcherSpec(cfg.Prefilter))
+		if err != nil {
+			return nil, fmt.Errorf("prefilter: %w", err)
+		}
+	}
 
 	var notifiers []notify.Notifier
 	if dryRun {
@@ -293,6 +301,7 @@ func build(configPath, statePath string, logger *log.Logger, seed, seedNew, dryR
 	return &run.Runner{
 		Sources:               sources,
 		Matcher:               matcher,
+		Prefilter:             prefilter,
 		Notifiers:             notifiers,
 		Store:                 st,
 		Log:                   logger,

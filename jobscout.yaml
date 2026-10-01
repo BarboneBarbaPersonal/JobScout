@@ -13,7 +13,26 @@ poll:
   timeout_seconds: 30
   concurrency: 6 # companies fetched in parallel
 
-# A job is emailed only if BOTH rules pass.
+# Speed-up: checked BEFORE a job's detail page is opened (Workday boards only
+# list "2 Locations", so every job would otherwise be opened one by one).
+# Keep it IDENTICAL to rule 1 below -- it may only skip jobs rule 1 rejects.
+prefilter:
+  name: keywords
+  params:
+    field: title
+    include: >-
+      customer success, technical account manager, tam, csm, cse,
+      customer success engineer, customer success architect, technical customer success, csam,
+      forward deployed engineer, forward deployed, fde,
+      service delivery manager, service delivery, sdm,
+      customer engineer, implementation manager, implementation consultant,
+      implementation specialist, onboarding manager, onboarding specialist,
+      engagement manager, value engineer, support engineer
+    exclude: >-
+      intern, internship, working student, vp, vice president, director, chief,
+      solutions engineer, solution engineer, solutions architect, solution architect
+
+# A job goes on the board only if BOTH rules pass.
 matcher:
   name: all
   of:
