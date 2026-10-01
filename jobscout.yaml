@@ -1,6 +1,7 @@
 # JobScout configuration (fork of jobwatch).
 # Watches the CS / TAM / CSE target companies from the
-# "CS_TAM_Target_Companies" Google Sheet and emails new matching roles.
+# "CS_TAM_Target_Companies" Google Sheet and publishes matching roles on a
+# job board web page (GitHub Pages). No email.
 # No AI / no tokens: matching is plain keyword rules on title + location.
 #
 # To add a company: add one line under `companies:` (see README table
@@ -97,19 +98,11 @@ matcher:
 
 notifiers:
   - name: console
-  - name: email
+  # No email: new matches go to a file that the workflow turns into the
+  # job board web page (jobscout/build_page.py -> GitHub Pages).
+  - name: jsonfile
     params:
-      smtp_host: smtp.gmail.com
-      smtp_port: 587
-      username: ${JOBWATCH_SMTP_USERNAME}
-      password_env: JOBWATCH_SMTP_PASSWORD
-      from: ${JOBWATCH_SMTP_USERNAME}
-      to: ${JOBWATCH_EMAIL_TO}
-      subject_prefix: "[JobScout] "
-      # Sort each email by location preference and show the best 10 in full;
-      # any extra matches are listed one per line underneath.
-      rank: "barcelona, remote, distributed, worldwide, anywhere, spain, españa, madrid"
-      top: 10
+      path: new_matches.jsonl
 
 store:
   path: state.json

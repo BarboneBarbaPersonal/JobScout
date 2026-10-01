@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Reload every 30 minutes so a new scan shows up without touching anything -->
+<meta http-equiv="refresh" content="1800">
+<meta name="robots" content="noindex, nofollow">
+<title>JobScout Board</title>
+<style>
+  :root {
+    --bg: #f6f4ef; --panel: #ecE8df; --card: #ffffff; --text: #1d1b18; --muted: #6b665d;
+    --line: #ddd7cb; --accent: #b5341a; --bcn: #b5341a; --remote: #2f6f9f; --spain: #7a5c3a;
+    --fit0: #e9e5dc; --fit1: #f3dfb3; --fit2: #cfe8c6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --panel: #1f1d1a; --card: #282622; --text: #eeeae2; --muted: #a39d92;
+      --line: #3a3732; --accent: #e0714f; --bcn: #e0714f; --remote: #6aaee0; --spain: #c9a27a;
+      --fit0: #34312c; --fit1: #574a2c; --fit2: #2f4a2b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 20px 16px 8px; max-width: 1300px; margin: 0 auto;
+           display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; }
+  h1 { margin: 0; font-size: 22px; }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--muted); font-size: 13px; }
+  .toggle { margin-left: auto; font-size: 13px; color: var(--muted); }
+  main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
+         padding: 8px 16px 32px; max-width: 1300px; margin: 0 auto; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  .column { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  h2 { margin: 0; font-size: 16px; display: flex; gap: 8px; align-items: center; }
+  .count { font-size: 12px; background: var(--card); border: 1px solid var(--line);
+           border-radius: 999px; padding: 1px 8px; color: var(--muted); }
+  .note { margin: 2px 0 10px; font-size: 12px; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+          padding: 10px 12px; margin-bottom: 8px; }
+  .top, .bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .company { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .fit { font-size: 11px; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .fit0 { background: var(--fit0); } .fit1 { background: var(--fit1); } .fit2 { background: var(--fit2); }
+  .title { display: block; margin: 4px 0; color: var(--text); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+  .title:hover { color: var(--accent); text-decoration: underline; }
+  .meta { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .place { font-size: 11px; font-weight: 700; margin-right: 4px; }
+  .p-barcelona { color: var(--bcn); } .p-remote { color: var(--remote); } .p-spain { color: var(--spain); }
+  .bottom { margin-top: 6px; font-size: 12px; color: var(--muted); }
+  .hide { font: inherit; font-size: 12px; color: var(--muted); background: none;
+          border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
+  .hide:hover { color: var(--text); }
+  .empty { color: var(--muted); font-size: 13px; }
+  body:not(.show-hidden) .card.hidden { display: none; }
+  .card.hidden { opacity: .45; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Job<span>Scout</span></h1>
+  <span class="sub">Updated {{UPDATED}} &middot; {{TOTAL}} matching jobs &middot; scans every hour</span>
+  <label class="toggle"><input type="checkbox" id="show-hidden"> show hidden</label>
+</header>
+<main>{{COLUMNS}}
+</main>
+<script>
+  // "Hide" remembers dismissed jobs in this browser only (per device).
+  var KEY = "jobscout-hidden";
+  function readHidden() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; }
+  }
+  function saveHidden(list) {
+    try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  var hidden = readHidden();
+  document.querySelectorAll(".card").forEach(function (card) {
+    var id = card.dataset.id;
+    var button = card.querySelector(".hide");
+    function paint() {
+      var isHidden = hidden.indexOf(id) !== -1;
+      card.classList.toggle("hidden", isHidden);
+      button.textContent = isHidden ? "Unhide" : "Hide";
+    }
+    button.addEventListener("click", function () {
+      var index = hidden.indexOf(id);
+      if (index === -1) { hidden.push(id); } else { hidden.splice(index, 1); }
+      saveHidden(hidden);
+      // the same job can sit in two columns (e.g. New and Best fit)
+      document.querySelectorAll('.card[data-id="' + CSS.escape(id) + '"]').forEach(function (c) {
+        c.classList.toggle("hidden", hidden.indexOf(id) !== -1);
+        c.querySelector(".hide").textContent = hidden.indexOf(id) !== -1 ? "Unhide" : "Hide";
+      });
+    });
+    paint();
+  });
+  document.getElementById("show-hidden").addEventListener("change", function (e) {
+    document.body.classList.toggle("show-hidden", e.target.checked);
+  });
+</script>
+</body>
+</html>

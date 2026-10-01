@@ -1,41 +1,36 @@
 # JobScout
 
 Personal fork of [jobwatch](https://github.com/AkashKumar7902/jobwatch).
-Every 30 minutes GitHub Actions polls the careers boards of my target
-companies and emails me new Customer Success / TAM / CSE / Forward Deployed
-Engineer / Service Delivery Manager roles. Location preference:
-Barcelona > remote > Spain; each email is sorted that way and shows the top 10
-in full. No AI and no tokens: matching is keyword rules only.
+Every hour GitHub Actions polls the careers boards of my target companies and
+publishes matching Customer Success / TAM / CSE / Forward Deployed Engineer /
+Service Delivery Manager roles on a job board web page:
+
+**https://barbonebarbapersonal.github.io/JobScout/**
+
+The board has three columns: **New** (first seen in the last 48 hours),
+**Best fit** (top 10: Barcelona > remote > Spain, core roles first) and
+**Older**. It reloads itself every 30 minutes; "Hide" dismisses a job in that
+browser. No email, no AI, no tokens: matching is keyword rules only.
 
 ## What is different from upstream
 
 | File | Change |
 |---|---|
-| `jobscout.yaml` | My config: target companies, keyword rules on title and location, Gmail notifier |
+| `jobscout.yaml` | My config: target companies, keyword rules on title and location, `jsonfile` notifier |
+| `internal/notify/jsonfile.go` | New notifier: appends new matches to `new_matches.jsonl` (no email) |
+| `jobscout/build_page.py`, `page_template.html` | Merge matches into `matches.json` and build the board page |
 | `internal/source/teamtailor.go` | New source for Teamtailor career sites (reads `jobs.rss`) |
 | `internal/source/source.go` | One line that registers the Teamtailor board identity |
-| `internal/notify/email.go`, `rank.go` | Optional `rank` + `top` email params: sort by location preference, show top N |
-| `.github/workflows/jobwatch.yml` | Uses `jobscout.yaml`, no LLM key |
-| `.github/workflows/dry-run.yml` | Manual test run: prints current matches, sends nothing |
+| `internal/notify/email.go`, `rank.go` | Optional `rank` + `top` email params (email no longer used) |
+| `.github/workflows/jobwatch.yml` | Hourly, no secrets, publishes the board to the `gh-pages` branch |
+| `.github/workflows/dry-run.yml` | Manual test run: prints current matches, changes nothing |
 | `jobscout/discover_ats.py` | Finds which job board each company uses |
-
-## One-time setup
-
-1. Create a Gmail app password (needs 2-Step Verification): https://myaccount.google.com/apppasswords
-2. Add three repository secrets (Settings -> Secrets and variables -> Actions):
-   - `JOBWATCH_SMTP_USERNAME`: the Gmail address that sends the alerts
-   - `JOBWATCH_SMTP_PASSWORD`: the app password from step 1
-   - `JOBWATCH_EMAIL_TO`: where the alerts go
-3. Actions tab -> enable workflows (forks start with Actions disabled).
-4. Actions -> **dry-run** -> Run workflow. Check the log: are these the roles you want?
-5. Actions -> **jobwatch** -> Run workflow with **initialize_state** ticked.
-   This records every job that is open today *without* emailing them.
-6. From now on the schedule emails only newly posted matches.
 
 ## Changing what matches
 
-Edit the two `keywords` rules under `matcher:` in `jobscout.yaml`, then run
-**dry-run** again to see the effect.
+Edit the `keywords` rules under `matcher:` in `jobscout.yaml`, then run
+Actions -> **dry-run** to see the effect. The fit score and the board columns
+are set at the top of `jobscout/build_page.py`.
 
 ## Adding companies
 
@@ -45,7 +40,12 @@ Edit the two `keywords` rules under `matcher:` in `jobscout.yaml`, then run
 3. Copy new lines from `jobscout/companies.found.yaml` into `jobscout.yaml`.
    `jobscout/companies.missing.csv` lists companies that need a manual look.
 
-New boards are seeded automatically on their first run (no email flood).
+## Starting over
+
+Delete the `state` branch and run Actions -> **jobwatch** with
+**initialize_state** ticked: every job matching today goes onto the board.
+The first run takes about 40 minutes (Workday boards are opened job by job);
+hourly runs after that are short.
 
 ## Pulling upstream fixes
 

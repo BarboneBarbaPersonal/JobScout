@@ -12,3 +12,5 @@ state.json
 
 # JobScout: raw export of the private target-companies sheet
 jobscout/companies.csv
+new_matches.jsonl
+/site/

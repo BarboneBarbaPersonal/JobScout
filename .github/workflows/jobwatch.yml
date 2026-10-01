@@ -1,26 +1,25 @@
 # Runs jobwatch on a schedule so no computer of yours needs to stay on.
 #
-# State (which jobs were already seen/emailed) lives on a dedicated `state`
+# JobScout: no email and no secrets. New matches are written to
+# new_matches.jsonl and published as a job board web page on the `gh-pages`
+# branch (GitHub Pages). See JOBSCOUT.md.
+#
+# State (which jobs were already seen) lives on a dedicated `state`
 # branch as normal linear history — runners are wiped between runs, a branch
 # is not. Missing state is bootstrapped only by an explicit manual run; a
-# failed restore stops the run instead of risking replacement state. Later
-# catalog additions are seeded per source by -seed-new-sources.
-#
-# Required repository secrets (Settings → Secrets → Actions):
-#   JOBWATCH_SMTP_USERNAME  e.g. your Gmail address (also used as From)
-#   JOBWATCH_SMTP_PASSWORD  e.g. a Gmail app password
-#   JOBWATCH_EMAIL_TO       where the alerts go
-#   (no LLM key needed: JobScout matches with keywords only)
+# failed restore stops the run instead of risking replacement state.
+# A bootstrap does NOT seed silently here: every job matching today goes
+# onto the board, so the page starts full instead of empty.
 
 name: jobwatch
 
 on:
   schedule:
-    - cron: "13,43 * * * *" # every 30 minutes (UTC); odd minutes avoid the on-the-hour rush
+    - cron: "13 * * * *" # every hour (UTC); odd minute avoids the on-the-hour rush
   workflow_dispatch:
     inputs:
       initialize_state:
-        description: "Initialize a missing state branch by seeding all current jobs"
+        description: "Initialize a missing state branch (puts every job matching today on the board)"
         required: false
         default: false
         type: boolean
@@ -73,14 +72,6 @@ jobs:
         # job timeout leaves room for that publication; explicit cancellation
         # and a job-level hard timeout intentionally publish nothing.
         timeout-minutes: 345
-        env:
-          JOBWATCH_SMTP_USERNAME: ${{ secrets.JOBWATCH_SMTP_USERNAME }}
-          JOBWATCH_SMTP_PASSWORD: ${{ secrets.JOBWATCH_SMTP_PASSWORD }}
-          JOBWATCH_EMAIL_TO: ${{ secrets.JOBWATCH_EMAIL_TO }}
-          # Extra channels: add the secret, then mirror it here and enable
-          # the matching notifier in config.example.yaml.
-          # JOBWATCH_SLACK_WEBHOOK: ${{ secrets.JOBWATCH_SLACK_WEBHOOK }}
-          # JOBWATCH_TELEGRAM_TOKEN: ${{ secrets.JOBWATCH_TELEGRAM_TOKEN }}
         run: |
           set -o pipefail
           case "${{ steps.restore.outputs.mode }}" in
@@ -88,11 +79,11 @@ jobs:
               # The console notifier writes human match bodies and URLs to
               # stdout. Scheduled logs retain only the sanitized logger
               # protocol on stderr; email notification behavior is unchanged.
-              ./jobwatch -config jobscout.yaml -state state.json -seed-new-sources \
+              ./jobwatch -config jobscout.yaml -state state.json \
                 2>&1 > /dev/null | tee run.log
               ;;
             bootstrap)
-              ./jobwatch -config jobscout.yaml -state state.json -seed \
+              ./jobwatch -config jobscout.yaml -state state.json \
                 2>&1 > /dev/null | tee run.log
               ;;
             *)
@@ -100,6 +91,35 @@ jobs:
               exit 1
               ;;
           esac
+
+      - name: Publish job board
+        id: page
+        # Runs before the state is saved: if saving state fails, the next run
+        # re-delivers the same matches and build_page.py ignores duplicates.
+        if: >-
+          ${{
+            !cancelled() &&
+            steps.build.outcome == 'success' &&
+            (steps.poll.outcome == 'success' || steps.poll.outcome == 'failure')
+          }}
+        run: |
+          git config user.name "jobscout-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Check out the gh-pages branch (the published site) into ./site,
+          # or start it empty on the very first run.
+          if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            git fetch --depth 1 origin gh-pages:refs/remotes/origin/gh-pages
+            git worktree add -B gh-pages site origin/gh-pages
+          else
+            git worktree add --orphan -b gh-pages site
+          fi
+          touch new_matches.jsonl
+          python3 jobscout/build_page.py new_matches.jsonl site
+          cd site
+          touch .nojekyll
+          git add -A
+          git commit -q -m "Update job board" || exit 0
+          git push origin gh-pages
 
       - name: Publish state
         id: publish
