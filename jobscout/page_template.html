@@ -9,36 +9,51 @@
 <title>JobScout Board</title>
 <style>
   :root {
-    --bg: #f6f4ef; --panel: #ecE8df; --card: #ffffff; --text: #1d1b18; --muted: #6b665d;
+    --bg: #f6f4ef; --panel: #ece8df; --card: #ffffff; --text: #1d1b18; --muted: #6b665d;
     --line: #ddd7cb; --accent: #b5341a; --bcn: #b5341a; --remote: #2f6f9f; --spain: #7a5c3a;
-    --fit0: #e9e5dc; --fit1: #f3dfb3; --fit2: #cfe8c6;
+    --fit0: #e9e5dc; --fit1: #f3dfb3; --fit2: #cfe8c6; --ok: #2e7d32; --warn: #b26a00;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #161513; --panel: #1f1d1a; --card: #282622; --text: #eeeae2; --muted: #a39d92;
       --line: #3a3732; --accent: #e0714f; --bcn: #e0714f; --remote: #6aaee0; --spain: #c9a27a;
-      --fit0: #34312c; --fit1: #574a2c; --fit2: #2f4a2b;
+      --fit0: #34312c; --fit1: #574a2c; --fit2: #2f4a2b; --ok: #7bc47f; --warn: #e0a64f;
     }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text);
          font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  header { padding: 20px 16px 8px; max-width: 1300px; margin: 0 auto;
-           display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; }
+  .wrap { max-width: 1300px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 20px 0 8px; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
   h1 { margin: 0; font-size: 22px; }
   h1 span { color: var(--accent); }
   .sub { color: var(--muted); font-size: 13px; }
-  .toggle { margin-left: auto; font-size: 13px; color: var(--muted); }
-  main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
-         padding: 8px 16px 32px; max-width: 1300px; margin: 0 auto; }
-  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+
+  /* Stats bar */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 8px 0 12px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+  .stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .stat .value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat .detail { font-size: 12px; color: var(--muted); }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; margin-bottom: 12px; font-size: 13px; }
+  .group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .group > span { color: var(--muted); margin-right: 4px; }
+  .chip { font: inherit; font-size: 13px; color: var(--text); background: var(--card); border: 1px solid var(--line);
+          border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .toggle { margin-left: auto; color: var(--muted); }
+
+  main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-bottom: 32px; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } .toggle { margin-left: 0; } }
   .column { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
   h2 { margin: 0; font-size: 16px; display: flex; gap: 8px; align-items: center; }
   .count { font-size: 12px; background: var(--card); border: 1px solid var(--line);
            border-radius: 999px; padding: 1px 8px; color: var(--muted); }
   .note { margin: 2px 0 10px; font-size: 12px; color: var(--muted); }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
-          padding: 10px 12px; margin-bottom: 8px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
   .top, .bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .company { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
   .fit { font-size: 11px; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
@@ -47,57 +62,190 @@
   .title:hover { color: var(--accent); text-decoration: underline; }
   .meta { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
   .place { font-size: 11px; font-weight: 700; margin-right: 4px; }
-  .p-barcelona { color: var(--bcn); } .p-remote { color: var(--remote); } .p-spain { color: var(--spain); }
+  .p-Barcelona { color: var(--bcn); } .p-Remote { color: var(--remote); } .p-Spain { color: var(--spain); }
+  .tag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
   .bottom { margin-top: 6px; font-size: 12px; color: var(--muted); }
   .hide { font: inherit; font-size: 12px; color: var(--muted); background: none;
           border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
   .hide:hover { color: var(--text); }
-  .empty { color: var(--muted); font-size: 13px; }
-  body:not(.show-hidden) .card.hidden { display: none; }
   .card.hidden { opacity: .45; }
+  .empty { color: var(--muted); font-size: 13px; }
 </style>
 </head>
 <body>
-<header>
-  <h1>Job<span>Scout</span></h1>
-  <span class="sub">Updated {{UPDATED}} &middot; {{TOTAL}} matching jobs &middot; scans every hour</span>
-  <label class="toggle"><input type="checkbox" id="show-hidden"> show hidden</label>
-</header>
-<main>{{COLUMNS}}
-</main>
+<div class="wrap">
+  <header>
+    <h1>Job<span>Scout</span></h1>
+    <span class="sub" id="updated"></span>
+  </header>
+  <section class="stats" id="stats"></section>
+  <section class="filters">
+    <div class="group" id="place-filter"><span>Location</span></div>
+    <div class="group" id="role-filter"><span>Role</span></div>
+    <label class="toggle"><input type="checkbox" id="show-hidden"> show hidden</label>
+  </section>
+  <main id="board"></main>
+</div>
+<script type="application/json" id="data">{{DATA}}</script>
 <script>
-  // "Hide" remembers dismissed jobs in this browser only (per device).
+  // All page data (jobs + stats) is embedded above by build_page.py.
+  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var stats = DATA.stats;
+  var filters = { place: "All", role: "All" };
+  var showHidden = false;
+
+  // ---- small helpers ----
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+  function ago(iso) {
+    if (!iso) return "never";
+    var minutes = Math.round((Date.now() - new Date(iso)) / 60000);
+    if (minutes < 60) return minutes + " min ago";
+    if (minutes < 48 * 60) return Math.round(minutes / 60) + " h ago";
+    return Math.round(minutes / 1440) + " days ago";
+  }
+  function dayAge(iso) {
+    var days = Math.floor((Date.now() - new Date(iso)) / 86400000);
+    return days <= 0 ? "today" : days + "d ago";
+  }
+  function num(value) { return value === null || value === undefined ? "-" : value.toLocaleString("en-US"); }
+
+  // ---- "Hide" remembers dismissed jobs in this browser only (per device) ----
   var KEY = "jobscout-hidden";
-  function readHidden() {
-    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; }
-  }
-  function saveHidden(list) {
-    try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
-  }
-  var hidden = readHidden();
-  document.querySelectorAll(".card").forEach(function (card) {
-    var id = card.dataset.id;
-    var button = card.querySelector(".hide");
-    function paint() {
-      var isHidden = hidden.indexOf(id) !== -1;
-      card.classList.toggle("hidden", isHidden);
-      button.textContent = isHidden ? "Unhide" : "Hide";
-    }
-    button.addEventListener("click", function () {
-      var index = hidden.indexOf(id);
-      if (index === -1) { hidden.push(id); } else { hidden.splice(index, 1); }
-      saveHidden(hidden);
-      // the same job can sit in two columns (e.g. New and Best fit)
-      document.querySelectorAll('.card[data-id="' + CSS.escape(id) + '"]').forEach(function (c) {
-        c.classList.toggle("hidden", hidden.indexOf(id) !== -1);
-        c.querySelector(".hide").textContent = hidden.indexOf(id) !== -1 ? "Unhide" : "Hide";
-      });
+  var hidden = [];
+  try { hidden = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { hidden = []; }
+  function saveHidden() { try { localStorage.setItem(KEY, JSON.stringify(hidden)); } catch (e) {} }
+
+  // ---- stats bar ----
+  function renderStats() {
+    document.getElementById("updated").textContent =
+      "Page built " + ago(stats.updated) + " · scans twice an hour · jobs older than " + DATA.max_age_days + " days are removed";
+    var healthy = stats.boards && stats.boards_ok === stats.boards;
+    var items = [
+      ["Last scan", ago(stats.last_scan), (stats.scans_24h || 0) + (stats.scans_24h === 1 ? " scan" : " scans") + " in last 24 h", healthy ? "var(--ok)" : "var(--warn)"],
+      ["Jobs scanned", num(stats.scanned), num(stats.boards_ok) + " / " + num(stats.boards) + " company boards OK"],
+      ["New postings", num(stats.new_postings_24h), num(stats.new_postings_last) + " in last scan · all titles, 24 h"],
+      ["Matches on board", num(stats.total), num(stats.new_matches_24h) + " new in last 24 h"],
+      ["Barcelona", num(stats.barcelona), "Remote " + num(stats.remote) + " · Spain " + num(stats.spain)],
+      ["Core roles", num(stats.core), "Adjacent " + num(stats.total - stats.core)]
+    ];
+    var box = document.getElementById("stats");
+    items.forEach(function (item) {
+      var stat = el("div", "stat");
+      var label = el("div", "label");
+      if (item[3]) { var dot = el("span", "dot"); dot.style.background = item[3]; label.appendChild(dot); }
+      label.appendChild(document.createTextNode(item[0]));
+      stat.appendChild(label);
+      stat.appendChild(el("div", "value", item[1]));
+      stat.appendChild(el("div", "detail", item[2]));
+      box.appendChild(stat);
     });
-    paint();
-  });
+  }
+
+  // ---- filter chips ----
+  function renderChips(boxId, key, options) {
+    var box = document.getElementById(boxId);
+    options.forEach(function (option) {
+      var chip = el("button", "chip", option[1]);
+      chip.type = "button";
+      chip.dataset.value = option[0];
+      chip.setAttribute("aria-pressed", String(filters[key] === option[0]));
+      chip.addEventListener("click", function () {
+        filters[key] = option[0];
+        box.querySelectorAll(".chip").forEach(function (c) {
+          c.setAttribute("aria-pressed", String(c.dataset.value === filters[key]));
+        });
+        renderBoard();
+      });
+      box.appendChild(chip);
+    });
+  }
+
+  // ---- job cards and columns ----
+  function card(job) {
+    var isHidden = hidden.indexOf(job.id) !== -1;
+    var node = el("article", "card" + (isHidden ? " hidden" : ""));
+    var top = el("div", "top");
+    top.appendChild(el("span", "company", job.company));
+    var fit = el("span", "fit fit" + Math.floor(Math.min(job.fit, 8) / 3), "fit " + job.fit);
+    fit.title = "Fit score " + job.fit + "/8 (location x2 + role)";
+    top.appendChild(fit);
+    node.appendChild(top);
+
+    var link = el("a", "title", job.title);
+    link.href = job.url; link.target = "_blank"; link.rel = "noopener";
+    node.appendChild(link);
+
+    var meta = el("div", "meta");
+    meta.appendChild(el("span", "place p-" + job.place, job.place));
+    meta.appendChild(document.createTextNode(job.location + " "));
+    meta.appendChild(el("span", "tag", job.role));
+    node.appendChild(meta);
+
+    var bottom = el("div", "bottom");
+    var when = (job.posted_at ? "posted " + dayAge(job.posted_at) + " · " : "") + "found " + dayAge(job.found_at);
+    bottom.appendChild(el("span", "", when));
+    var button = el("button", "hide", isHidden ? "Unhide" : "Hide");
+    button.type = "button";
+    button.addEventListener("click", function () {
+      var index = hidden.indexOf(job.id);
+      if (index === -1) { hidden.push(job.id); } else { hidden.splice(index, 1); }
+      saveHidden();
+      renderBoard();
+    });
+    bottom.appendChild(button);
+    node.appendChild(bottom);
+    return node;
+  }
+
+  function column(title, note, jobs) {
+    var section = el("section", "column");
+    var heading = el("h2", "", title + " ");
+    heading.appendChild(el("span", "count", String(jobs.length)));
+    section.appendChild(heading);
+    section.appendChild(el("p", "note", note));
+    if (!jobs.length) section.appendChild(el("p", "empty", "Nothing here."));
+    jobs.forEach(function (job) { section.appendChild(card(job)); });
+    return section;
+  }
+
+  function renderBoard() {
+    var newCutoff = Date.now() - DATA.new_for_hours * 3600000;
+    // Apply the filters (and hide dismissed jobs unless "show hidden" is ticked).
+    var jobs = DATA.jobs.filter(function (job) {
+      if (filters.place !== "All" && job.place !== filters.place) return false;
+      if (filters.role !== "All" && job.role !== filters.role) return false;
+      if (!showHidden && hidden.indexOf(job.id) !== -1) return false;
+      return true;
+    });
+    // Best fit first; ties go to the most recently found.
+    jobs.sort(function (a, b) { return b.fit - a.fit || (b.found_at > a.found_at ? 1 : -1); });
+
+    var fresh = jobs.filter(function (job) { return new Date(job.found_at) >= newCutoff; });
+    var best = jobs.slice(0, 10);
+    var used = {};
+    fresh.concat(best).forEach(function (job) { used[job.id] = true; });
+    var older = jobs.filter(function (job) { return !used[job.id]; });
+
+    var board = document.getElementById("board");
+    board.textContent = "";
+    board.appendChild(column("New", "First seen in the last " + DATA.new_for_hours + " hours", fresh));
+    board.appendChild(column("Best fit", "Top 10: Barcelona > remote > Spain, core roles first", best));
+    board.appendChild(column("Older", "Everything else still open", older));
+  }
+
+  renderStats();
+  renderChips("place-filter", "place", [["All", "All"], ["Barcelona", "Barcelona"], ["Remote", "Remote"], ["Spain", "Spain"]]);
+  renderChips("role-filter", "role", [["All", "All"], ["core", "Core"], ["adjacent", "Adjacent"]]);
   document.getElementById("show-hidden").addEventListener("change", function (e) {
-    document.body.classList.toggle("show-hidden", e.target.checked);
+    showHidden = e.target.checked;
+    renderBoard();
   });
+  renderBoard();
 </script>
 </body>
 </html>

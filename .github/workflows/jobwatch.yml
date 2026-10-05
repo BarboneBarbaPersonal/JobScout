@@ -15,7 +15,7 @@ name: jobwatch
 
 on:
   schedule:
-    - cron: "13 * * * *" # every hour (UTC); odd minute avoids the on-the-hour rush
+    - cron: "13,43 * * * *" # twice an hour: GitHub drops some scheduled runs, so this lands near hourly
   workflow_dispatch:
     inputs:
       initialize_state:
@@ -114,7 +114,10 @@ jobs:
             git worktree add --orphan -b gh-pages site
           fi
           touch new_matches.jsonl
-          python3 jobscout/build_page.py new_matches.jsonl site
+          # A bootstrap is a full rescan: rebuild the board from its matches.
+          MODE=""
+          if [ "${{ steps.restore.outputs.mode }}" = "bootstrap" ]; then MODE="rebuild"; fi
+          python3 jobscout/build_page.py new_matches.jsonl site run.log $MODE
           cd site
           touch .nojekyll
           git add -A
