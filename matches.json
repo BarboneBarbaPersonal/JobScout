@@ -1,84 +1,12 @@
 [
  {
-  "id": "greenhouse/automatticcareers/7585684",
-  "company": "Automattic",
-  "title": "Customer Success Engineer, VIP",
-  "location": "Remote",
-  "url": "https://job-boards.greenhouse.io/automatticcareers/jobs/7585684",
-  "posted_at": "2026-08-06T17:18:41Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/automatticcareers/7875064",
-  "company": "Automattic",
-  "title": "Support Engineer, VIP",
-  "location": "Remote",
-  "url": "https://job-boards.greenhouse.io/automatticcareers/jobs/7875064",
-  "posted_at": "2026-08-06T17:18:41Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/automatticcareers/6458591",
-  "company": "Automattic",
-  "title": "Technical Account Manager, Automattic Special Projects Team",
-  "location": "Remote",
-  "url": "https://job-boards.greenhouse.io/automatticcareers/jobs/6458591",
-  "posted_at": "2026-08-26T19:01:55Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/automatticcareers/5442133",
-  "company": "Automattic",
-  "title": "Technical Account Manager, Newspack",
-  "location": "Remote",
-  "url": "https://job-boards.greenhouse.io/automatticcareers/jobs/5442133",
-  "posted_at": "2026-08-06T17:18:41Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/canonical/6448444",
-  "company": "Canonical",
-  "title": "Associate Linux Support Engineer",
-  "location": "Home based - Worldwide",
-  "url": "https://job-boards.greenhouse.io/canonical/jobs/6448444",
-  "posted_at": "2026-08-05T22:23:33Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/canonical/2456563",
-  "company": "Canonical",
-  "title": "Cloud Support Engineer",
-  "location": "Home based - Worldwide",
-  "url": "https://job-boards.greenhouse.io/canonical/jobs/2456563",
-  "posted_at": "2026-08-05T22:23:33Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/canonical/6856788",
-  "company": "Canonical",
-  "title": "Enterprise Customer Success Manager",
-  "location": "Home based - Worldwide",
-  "url": "https://job-boards.greenhouse.io/canonical/jobs/6856788",
-  "posted_at": "2026-08-05T22:23:33Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/canonical/6103331",
-  "company": "Canonical",
-  "title": "Graduate Customer Success Manager",
-  "location": "Home based - Worldwide",
-  "url": "https://job-boards.greenhouse.io/canonical/jobs/6103331",
-  "posted_at": "2026-08-05T22:23:33Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/canonical/6635593",
-  "company": "Canonical",
-  "title": "Software Support Engineer",
-  "location": "Home based - Worldwide",
-  "url": "https://job-boards.greenhouse.io/canonical/jobs/6635593",
-  "posted_at": "2026-08-05T22:23:33Z",
-  "found_at": "2026-10-01T16:14:21Z"
+  "id": "greenhouse/adyen/8185712",
+  "company": "Adyen",
+  "title": "Account Manager",
+  "location": "Madrid",
+  "url": "https://job-boards.greenhouse.io/adyen/jobs/8185712",
+  "posted_at": "2026-09-18T14:25:37Z",
+  "found_at": "2026-10-05T15:25:45Z"
  },
  {
   "id": "greenhouse/celonis/7995509003",
@@ -86,60 +14,6 @@
   "title": "Associate Applied (AI) Value Engineer (APAC) - Orbit Program",
   "location": "Madrid, Spain",
   "url": "https://job-boards.greenhouse.io/celonis/jobs/7995509003?gh_jid=7995509003",
-  "posted_at": "2026-09-30T12:39:15Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/celonis/7990158003",
-  "company": "Celonis",
-  "title": "Associate Applied (AI) Value Engineer (Benelux) - Orbit Program",
-  "location": "Madrid, Spain",
-  "url": "https://job-boards.greenhouse.io/celonis/jobs/7990158003?gh_jid=7990158003",
-  "posted_at": "2026-09-30T12:39:15Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/celonis/7816927003",
-  "company": "Celonis",
-  "title": "Associate Applied (AI) Value Engineer (DACH) - Orbit Program",
-  "location": "Madrid, Spain",
-  "url": "https://job-boards.greenhouse.io/celonis/jobs/7816927003?gh_jid=7816927003",
-  "posted_at": "2026-09-30T12:39:15Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/celonis/7981565003",
-  "company": "Celonis",
-  "title": "Associate Applied (AI) Value Engineer (France) - Orbit Program",
-  "location": "Madrid, Spain",
-  "url": "https://job-boards.greenhouse.io/celonis/jobs/7981565003?gh_jid=7981565003",
-  "posted_at": "2026-09-30T12:39:15Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/celonis/7786762003",
-  "company": "Celonis",
-  "title": "Associate Applied (AI) Value Engineer (Japan) - Orbit Program",
-  "location": "Madrid, Spain",
-  "url": "https://job-boards.greenhouse.io/celonis/jobs/7786762003?gh_jid=7786762003",
-  "posted_at": "2026-09-30T12:39:15Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/celonis/7885913003",
-  "company": "Celonis",
-  "title": "Associate Applied (AI) Value Engineer (Nordics) - Orbit Program",
-  "location": "Madrid, Spain",
-  "url": "https://job-boards.greenhouse.io/celonis/jobs/7885913003?gh_jid=7885913003",
-  "posted_at": "2026-09-30T12:39:15Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/celonis/7795949003",
-  "company": "Celonis",
-  "title": "Associate Applied (AI) Value Engineer (Scale EMEA/German-Speaking) - Orbit Program",
-  "location": "Madrid, Spain",
-  "url": "https://job-boards.greenhouse.io/celonis/jobs/7795949003?gh_jid=7795949003",
   "posted_at": "2026-09-30T12:39:15Z",
   "found_at": "2026-10-01T16:14:21Z"
  },
@@ -207,15 +81,6 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "greenhouse/cloudflare/8200786",
-  "company": "Cloudflare",
-  "title": "Principal Customer Engineer, Majors",
-  "location": "Distributed",
-  "url": "https://boards.greenhouse.io/cloudflare/jobs/8200786?gh_jid=8200786",
-  "posted_at": "2026-09-16T09:35:41Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
   "id": "greenhouse/cloudflare/7967144",
   "company": "Cloudflare",
   "title": "Principal Customer Engineer, Majors",
@@ -225,12 +90,12 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "greenhouse/datadog/7982225",
-  "company": "DataDog",
-  "title": "Technical Account Manager 2 - Madrid",
-  "location": "Madrid, Spain",
-  "url": "https://careers.datadoghq.com/detail/7982225/?gh_jid=7982225",
-  "posted_at": "2026-09-29T17:18:57Z",
+  "id": "greenhouse/cloudflare/8200786",
+  "company": "Cloudflare",
+  "title": "Principal Customer Engineer, Majors",
+  "location": "Distributed",
+  "url": "https://boards.greenhouse.io/cloudflare/jobs/8200786?gh_jid=8200786",
+  "posted_at": "2026-09-16T09:35:41Z",
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
@@ -269,24 +134,6 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "greenhouse/jetbrains/4814057101",
-  "company": "JetBrains",
-  "title": "Staff Forward Deployed Engineer – AI-Native Software Development",
-  "location": "Amsterdam, Netherlands; Berlin, Germany; London, United Kingdom; Madrid, Spain; Munich, Germany; Prague, Czech Republic; Warsaw, Poland",
-  "url": "https://job-boards.eu.greenhouse.io/jetbrains/jobs/4814057101",
-  "posted_at": "2026-08-20T16:59:01Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "lever/lodgify/2d1bb36d-8afd-4934-8359-0bb853614b50",
-  "company": "Lodgify",
-  "title": "Customer Onboarding Specialist  w/ French",
-  "location": "Barcelona - Cataluña",
-  "url": "https://jobs.lever.co/lodgify/2d1bb36d-8afd-4934-8359-0bb853614b50",
-  "posted_at": "2025-09-04T15:44:02Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
   "id": "greenhouse/mongodb/8230143",
   "company": "MongoDB",
   "title": "Engagement Manager (Services Sales)",
@@ -305,6 +152,14 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
+  "id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359",
+  "company": "Palo Alto Networks",
+  "title": "Major Identity Account Manager",
+  "location": "Madrid, Spain",
+  "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359",
+  "found_at": "2026-10-05T15:25:45Z"
+ },
+ {
   "id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer_JR-017945",
   "company": "Palo Alto Networks",
   "title": "Senior Technical Support Engineer",
@@ -318,14 +173,6 @@
   "title": "Senior Technical Support Engineer - Focused Services",
   "location": "Remote - Spain",
   "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services_JR-017373",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer---Focused-Services--wiith-either-German--French--Italian-_JR-017371",
-  "company": "Palo Alto Networks",
-  "title": "Senior Technical Support Engineer - Focused Services (wiith either German, French, Italian)",
-  "location": "Madrid, Spain",
-  "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer---Focused-Services--wiith-either-German--French--Italian-_JR-017371",
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
@@ -345,39 +192,12 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "workday/paloaltonetworks/panwexternalcareers/job/Office---Spain---Madrid/Sr-Technical-Support-Engineer--Focused-Services_JR-019446",
+  "id": "workday/paloaltonetworks/panwexternalcareers/job/Office---Spain---Barcelona/Territory-Account-Manager_JR-016061",
   "company": "Palo Alto Networks",
-  "title": "Sr Technical Support Engineer, Focused Services - SD-WAN",
-  "location": "Office - Spain - Madrid",
-  "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Office---Spain---Madrid/Sr-Technical-Support-Engineer--Focused-Services_JR-019446",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/payhawkio/4767464101",
-  "company": "Payhawk",
-  "title": "Implementation Manager, French speaking",
-  "location": "Barcelona",
-  "url": "https://job-boards.eu.greenhouse.io/payhawkio/jobs/4767464101",
-  "posted_at": "2026-10-01T12:00:50Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "greenhouse/payhawkio/4767470101",
-  "company": "Payhawk",
-  "title": "Implementation Manager, German Speaking",
-  "location": "Barcelona",
-  "url": "https://job-boards.eu.greenhouse.io/payhawkio/jobs/4767470101",
-  "posted_at": "2026-10-01T12:00:50Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "ashby/perk/311118f0-2ae1-4cb4-9dd1-bb37e2eb79db",
-  "company": "Perk (ex-TravelPerk)",
-  "title": "Implementation Specialist (French Market)",
-  "location": "Barcelona",
-  "url": "https://jobs.ashbyhq.com/perk/311118f0-2ae1-4cb4-9dd1-bb37e2eb79db",
-  "posted_at": "2026-08-27T10:59:13Z",
-  "found_at": "2026-10-01T16:14:21Z"
+  "title": "Territory Account Manager",
+  "location": "Office - Spain - Barcelona",
+  "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Office---Spain---Barcelona/Territory-Account-Manager_JR-016061",
+  "found_at": "2026-10-05T15:25:45Z"
  },
  {
   "id": "ashby/perk/7bf86d89-60fe-46f0-8d1d-fc1eccb19556",
@@ -398,15 +218,6 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "ashby/perk/c3bb2b26-c350-4653-9c09-59df2285f4ac",
-  "company": "Perk (ex-TravelPerk)",
-  "title": "Onboarding Specialist - Italian Speaking",
-  "location": "Barcelona",
-  "url": "https://jobs.ashbyhq.com/perk/c3bb2b26-c350-4653-9c09-59df2285f4ac",
-  "posted_at": "2026-09-30T12:25:09Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
   "id": "ashby/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f",
   "company": "PostHog",
   "title": "Technical Customer Success Manager - EMEA",
@@ -414,6 +225,14 @@
   "url": "https://jobs.ashbyhq.com/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f",
   "posted_at": "2026-09-18T08:41:19Z",
   "found_at": "2026-10-01T16:14:21Z"
+ },
+ {
+  "id": "workday/salesforce/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110",
+  "company": "Salesforce",
+  "title": "D360 Forward Deployed Engineer",
+  "location": "Spain - Madrid",
+  "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110",
+  "found_at": "2026-10-05T15:25:45Z"
  },
  {
   "id": "workday/salesforce/External_Career_Site/job/Spain---Barcelona/Forward-Deployed-Engineer_JR350067",
@@ -432,66 +251,29 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "smartrecruiters/ServiceNow/744000152780379",
-  "company": "ServiceNow",
-  "title": "Customer Success Executive - Financial Services ",
-  "location": "Remote Vienna",
-  "url": "https://jobs.smartrecruiters.com/ServiceNow/744000152780379-customer-success-executive-financial-services-?oga=true",
-  "posted_at": "2026-09-30T22:49:00Z",
-  "found_at": "2026-10-01T16:14:21Z"
+  "id": "workday/salesforce/External_Career_Site/job/Spain---Madrid/Senior-Account-Manager--Professional-Services_JR361394",
+  "company": "Salesforce",
+  "title": "Senior Account Manager, Professional Services",
+  "location": "Spain - Madrid",
+  "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Madrid/Senior-Account-Manager--Professional-Services_JR361394",
+  "found_at": "2026-10-05T15:25:45Z"
  },
  {
-  "id": "teamtailor/careers.sumsub.com/a5c025f0-859b-416d-aeb9-d122c4ab34fe",
-  "company": "Sumsub",
-  "title": "Customer Success Manager",
-  "location": "Limassol, Cyprus, Multiple locations; Remote",
-  "url": "https://careers.sumsub.com/jobs/7829680-customer-success-manager",
-  "posted_at": "2026-06-01T13:57:40Z",
-  "found_at": "2026-10-01T16:14:21Z"
+  "id": "greenhouse/sumup/8503607002",
+  "company": "SumUp",
+  "title": "Account Manager (HVM) - Italian",
+  "location": "Barcelona, Barcelona, Spain",
+  "url": "https://sumup.com/careers/positions/8503607002?gh_jid=8503607002",
+  "posted_at": "2026-09-22T12:18:21Z",
+  "found_at": "2026-10-05T15:25:45Z"
  },
  {
-  "id": "ashby/supabase/3889002e-536e-4046-a330-70e942b0cc96",
-  "company": "Supabase",
-  "title": "Database Support Engineer (EMEA)",
-  "location": "Remote, EMEA",
-  "url": "https://jobs.ashbyhq.com/supabase/3889002e-536e-4046-a330-70e942b0cc96",
-  "posted_at": "2025-12-17T21:45:16Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "ashby/supabase/590a0742-97f1-47f4-81a2-567efc939ae2",
-  "company": "Supabase",
-  "title": "Support Engineer (EMEA - Weekends)",
-  "location": "Remote, Global",
-  "url": "https://jobs.ashbyhq.com/supabase/590a0742-97f1-47f4-81a2-567efc939ae2",
-  "posted_at": "2026-07-31T19:04:49Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "ashby/supabase/c01f7436-1fdd-4a3e-8b96-8cadc33b006e",
-  "company": "Supabase",
-  "title": "Support Engineer (EMEA)",
-  "location": "Remote, EMEA",
-  "url": "https://jobs.ashbyhq.com/supabase/c01f7436-1fdd-4a3e-8b96-8cadc33b006e",
-  "posted_at": "2025-05-30T20:36:32Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "ashby/supabase/f52fd120-5fbe-4e0d-949d-01e217ec77d6",
-  "company": "Supabase",
-  "title": "Technical Account Management (TAM) Leader",
-  "location": "Remote, Global",
-  "url": "https://jobs.ashbyhq.com/supabase/f52fd120-5fbe-4e0d-949d-01e217ec77d6",
-  "posted_at": "2026-08-24T22:01:46Z",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "smartrecruiters/ServiceNow/744000153013069",
-  "company": "ServiceNow",
-  "title": "Customer Success Executive",
-  "location": "Remote Addison",
-  "url": "https://jobs.smartrecruiters.com/ServiceNow/744000153013069-customer-success-executive?oga=true",
-  "posted_at": "2026-10-01T18:49:59Z",
-  "found_at": "2026-10-01T20:22:47Z"
+  "id": "greenhouse/sumup/8520357002",
+  "company": "SumUp",
+  "title": "Team Lead Account Manager  - English ",
+  "location": "Barcelona, Barcelona, Spain",
+  "url": "https://sumup.com/careers/positions/8520357002?gh_jid=8520357002",
+  "posted_at": "2026-09-22T12:18:21Z",
+  "found_at": "2026-10-05T15:25:45Z"
  }
 ]

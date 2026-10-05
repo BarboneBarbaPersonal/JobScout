@@ -1,0 +1,11 @@
+[
+ {
+  "time": "2026-10-05T15:25:46.087441+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 128,
+  "scanned": 19282,
+  "new_postings": 19278,
+  "new_matches": 32
+ }
+]
