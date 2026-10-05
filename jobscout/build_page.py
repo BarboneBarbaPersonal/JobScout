@@ -147,6 +147,9 @@ def main():
     # Remember this scan for the stats bar.
     runs = read_json(site / "runs.json", [])
     record = run_record(log_path, len(new_lines), now)
+    if record and rebuild:
+        # A full rescan sees every open job as "new"; that is not a real count.
+        record["new_postings"] = 0
     if record:
         runs = (runs + [record])[-KEEP_RUNS:]
 
