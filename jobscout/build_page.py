@@ -86,7 +86,9 @@ def run_record(log_path, new_match_count, now):
         fields = dict(re.findall(r'(\w+)=("[^"]*"|\S+)', line))
         if " BOARD " in line:
             boards += 1
-            boards_ok += fields.get("status") == "ok"
+            # "partial" / "capped" / "recovered" boards still returned their jobs
+            # (e.g. one malformed posting skipped); only "failed" means nothing loaded.
+            boards_ok += fields.get("status") != "failed"
             scanned += int(fields.get("open", 0))
             new_postings += int(fields.get("new", 0))
         elif " RUN " in line:

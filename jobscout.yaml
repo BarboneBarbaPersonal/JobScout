@@ -208,7 +208,7 @@ companies:
   - {name: "Ebury", source: greenhouse, params: {board_token: "ebury"}}  # via careers-page
   - {name: "TrueLayer", source: greenhouse, params: {board_token: "truelayer"}}  # via slug-guess
   - {name: "Feedzai", source: greenhouse, params: {board_token: "feedzai"}}  # via slug-guess
-  - {name: "Clarity AI", source: greenhouse, params: {board_token: "clarityai"}}  # via slug-guess
+  # Clarity AI: Greenhouse board gone (404, 2026-10-08); careers page embeds an EU board that also 404s -- see companies.missing.csv
   - {name: "Capchase", source: ashby, params: {board_name: "capchase"}}  # via careers-page
   - {name: "Remote.com", source: greenhouse, params: {board_token: "descript"}}  # via careers-page
   - {name: "Oyster HR", source: ashby, params: {board_name: "oyster"}}  # via careers-page
@@ -251,7 +251,7 @@ companies:
   - {name: "Contentful", source: greenhouse, params: {board_token: "contentful"}}  # via careers-page
   - {name: "Storyblok", source: greenhouse, params: {board_token: "storyblok"}}  # via slug-guess
   - {name: "Buffer", source: ashby, params: {board_name: buffer}}  # via upstream
-  - {name: "HubSpot", source: greenhouse, params: {board_token: "hubspotjobs"}}  # via upstream
+  # HubSpot: Greenhouse board gone (404, 2026-10-08), new ATS not found yet -- see companies.missing.csv
   - {name: "Intercom", source: greenhouse, params: {board_token: "intercom"}}  # via careers-page
   - {name: "Pipedrive", source: lever, params: {site: "pipedrive"}}  # via slug-guess
   - {name: "Canonical", source: greenhouse, params: {board_token: canonical}}  # via upstream
