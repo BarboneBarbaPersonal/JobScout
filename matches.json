@@ -9,6 +9,15 @@
   "found_at": "2026-10-05T15:25:45Z"
  },
  {
+  "id": "greenhouse/anthropic/5391237008",
+  "company": "Anthropic",
+  "title": "Partner Account Manager - Spain & MEA",
+  "location": "Madrid, Spain",
+  "url": "https://job-boards.greenhouse.io/anthropic/jobs/5391237008",
+  "posted_at": "2026-10-07T10:48:53Z",
+  "found_at": "2026-10-07T13:53:24Z"
+ },
+ {
   "id": "greenhouse/celonis/7995509003",
   "company": "Celonis",
   "title": "Associate Applied (AI) Value Engineer (APAC) - Orbit Program",
@@ -81,6 +90,15 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
+  "id": "greenhouse/cloudflare/8200786",
+  "company": "Cloudflare",
+  "title": "Principal Customer Engineer, Majors",
+  "location": "Distributed",
+  "url": "https://boards.greenhouse.io/cloudflare/jobs/8200786?gh_jid=8200786",
+  "posted_at": "2026-09-16T09:35:41Z",
+  "found_at": "2026-10-01T16:14:21Z"
+ },
+ {
   "id": "greenhouse/cloudflare/7967144",
   "company": "Cloudflare",
   "title": "Principal Customer Engineer, Majors",
@@ -90,13 +108,12 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "greenhouse/cloudflare/8200786",
-  "company": "Cloudflare",
-  "title": "Principal Customer Engineer, Majors",
-  "location": "Distributed",
-  "url": "https://boards.greenhouse.io/cloudflare/jobs/8200786?gh_jid=8200786",
-  "posted_at": "2026-09-16T09:35:41Z",
-  "found_at": "2026-10-01T16:14:21Z"
+  "id": "workday/criteo/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186",
+  "company": "Criteo",
+  "title": "Customer Success Manager (6 months' FTC)",
+  "location": "Barcelona",
+  "url": "https://criteo.wd3.myworkdayjobs.com/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186",
+  "found_at": "2026-10-06T16:16:22Z"
  },
  {
   "id": "ashby/docplanner/7b7335ad-48bd-4d5f-9bfa-d759a04f7664",
@@ -117,13 +134,12 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "ashby/elevenlabs/78c564eb-ee87-46d9-b2fd-4322a223a547",
-  "company": "ElevenLabs",
-  "title": "Customer Success - Southern Europe",
-  "location": "Spain",
-  "url": "https://jobs.ashbyhq.com/elevenlabs/78c564eb-ee87-46d9-b2fd-4322a223a547",
-  "posted_at": "2026-09-30T14:21:47Z",
-  "found_at": "2026-10-01T16:14:21Z"
+  "id": "recruitee/holded/2254754",
+  "company": "Holded (Visma)",
+  "title": "Customer Onboarding Specialist",
+  "location": "Barcelona, Catalunya [Cataluña], Spain",
+  "url": "https://jobs.holded.com/o/onboarding-specialist",
+  "found_at": "2026-10-06T16:16:22Z"
  },
  {
   "id": "recruitee/holded/2686194",
@@ -168,14 +184,6 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "workday/paloaltonetworks/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services_JR-017373",
-  "company": "Palo Alto Networks",
-  "title": "Senior Technical Support Engineer - Focused Services",
-  "location": "Remote - Spain",
-  "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services_JR-017373",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
   "id": "workday/paloaltonetworks/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services--Cortex-XSIAM_JR-008267-1",
   "company": "Palo Alto Networks",
   "title": "Senior Technical Support Engineer - Focused Services, Cortex XSIAM",
@@ -189,23 +197,6 @@
   "title": "Senior Technical Support Engineer, Focused Services DE",
   "location": "Office - Spain - Madrid",
   "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Office---Spain---Madrid/Senior-Technical-Support-Engineer--Focused-Services-DE_JR-019732",
-  "found_at": "2026-10-01T16:14:21Z"
- },
- {
-  "id": "workday/paloaltonetworks/panwexternalcareers/job/Office---Spain---Barcelona/Territory-Account-Manager_JR-016061",
-  "company": "Palo Alto Networks",
-  "title": "Territory Account Manager",
-  "location": "Office - Spain - Barcelona",
-  "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Office---Spain---Barcelona/Territory-Account-Manager_JR-016061",
-  "found_at": "2026-10-05T15:25:45Z"
- },
- {
-  "id": "ashby/perk/7bf86d89-60fe-46f0-8d1d-fc1eccb19556",
-  "company": "Perk (ex-TravelPerk)",
-  "title": "Implementation Specialist - Growth",
-  "location": "Barcelona",
-  "url": "https://jobs.ashbyhq.com/perk/7bf86d89-60fe-46f0-8d1d-fc1eccb19556",
-  "posted_at": "2026-09-30T12:14:05Z",
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
@@ -242,23 +233,6 @@
   "found_at": "2026-10-01T16:14:21Z"
  },
  {
-  "id": "workday/salesforce/External_Career_Site/job/Spain---Madrid/Senior-Account-Manager--Professional-Services_JR361394",
-  "company": "Salesforce",
-  "title": "Senior Account Manager, Professional Services",
-  "location": "Spain - Madrid",
-  "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Madrid/Senior-Account-Manager--Professional-Services_JR361394",
-  "found_at": "2026-10-05T15:25:45Z"
- },
- {
-  "id": "greenhouse/sumup/8503607002",
-  "company": "SumUp",
-  "title": "Account Manager (HVM) - Italian",
-  "location": "Barcelona, Barcelona, Spain",
-  "url": "https://sumup.com/careers/positions/8503607002?gh_jid=8503607002",
-  "posted_at": "2026-09-22T12:18:21Z",
-  "found_at": "2026-10-05T15:25:45Z"
- },
- {
   "id": "greenhouse/sumup/8520357002",
   "company": "SumUp",
   "title": "Team Lead Account Manager  - English ",
@@ -266,30 +240,5 @@
   "url": "https://sumup.com/careers/positions/8520357002?gh_jid=8520357002",
   "posted_at": "2026-09-22T12:18:21Z",
   "found_at": "2026-10-05T15:25:45Z"
- },
- {
-  "id": "workday/criteo/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186",
-  "company": "Criteo",
-  "title": "Customer Success Manager (6 months' FTC)",
-  "location": "Barcelona",
-  "url": "https://criteo.wd3.myworkdayjobs.com/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186",
-  "found_at": "2026-10-06T16:16:22Z"
- },
- {
-  "id": "recruitee/holded/2254754",
-  "company": "Holded (Visma)",
-  "title": "Customer Onboarding Specialist",
-  "location": "Barcelona, Catalunya [Cataluña], Spain",
-  "url": "https://jobs.holded.com/o/onboarding-specialist",
-  "found_at": "2026-10-06T16:16:22Z"
- },
- {
-  "id": "greenhouse/anthropic/5391237008",
-  "company": "Anthropic",
-  "title": "Partner Account Manager - Spain & MEA",
-  "location": "Madrid, Spain",
-  "url": "https://job-boards.greenhouse.io/anthropic/jobs/5391237008",
-  "posted_at": "2026-10-07T10:48:53Z",
-  "found_at": "2026-10-07T13:53:24Z"
  }
 ]
