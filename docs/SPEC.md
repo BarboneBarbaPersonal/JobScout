@@ -49,17 +49,11 @@ again keep their original "found" date.
 
 ---
 
-# v3 (2026-10-08): Barcelona market search + CV proposals
+# v3 (2026-10-08): CV proposals
 
-## 9. Market search (Adzuna)
-- New jobwatch source `adzuna` (Go, same pattern as the other sources):
-  `GET https://api.adzuna.com/v1/api/jobs/es/search/{page}?app_id&app_key&what=...&where=Barcelona&max_days_old=30`
-  Keys come from repo secrets `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` (free developer account, created by the user).
-- One config entry per search term (customer success, technical account manager,
-  customer success engineer, forward deployed, service delivery manager, implementation manager).
-- Results pass the same prefilter, title, language, location and 30-day rules.
-- Page: jobs get a source tag, **Target** (company boards) or **Market** (Adzuna),
-  with a Source filter. A Market job with the same company + title as a Target job is hidden.
+## 9. Market search -- DROPPED (2026-10-08)
+Adzuna was considered (free key, personal use allowed) and dropped by the user.
+Coverage grows by adding more companies to the Google Sheet instead.
 
 ## 10. Like -> CV proposals (private repo `jobscout-cv`)
 - Each card gets a **Like** button. It opens a pre-filled new issue in the private
@@ -76,5 +70,4 @@ again keep their original "found" date.
 - Later option: run a bigger Gemma on the user's PC (32 GB+ RAM) for higher-quality proposals.
 
 ## Needs from the user
-- Adzuna developer account: app_id + app_key (added as repo secrets by the user).
 - OK to create the private repo `jobscout-cv` and store the CV text there.
