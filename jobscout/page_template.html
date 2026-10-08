@@ -68,6 +68,7 @@
   .hide { font: inherit; font-size: 12px; color: var(--muted); background: none;
           border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
   .hide:hover { color: var(--text); }
+  .like { text-decoration: none; margin-left: auto; color: var(--accent); border-color: var(--accent); }
   .card.hidden { opacity: .45; }
   .empty { color: var(--muted); font-size: 13px; }
 </style>
@@ -189,6 +190,16 @@
     var bottom = el("div", "bottom");
     var when = (job.posted_at ? "posted " + dayAge(job.posted_at) + " · " : "") + "found " + dayAge(job.found_at);
     bottom.appendChild(el("span", "", when));
+    // "Like" opens a pre-filled issue in the private jobscout-cv repo; submitting
+    // it starts the CV analysis there. Only you can open that repo.
+    var like = el("a", "hide like", "Like");
+    like.href = "https://github.com/BarboneBarbaPersonal/jobscout-cv/issues/new?labels=liked" +
+      "&title=" + encodeURIComponent(job.company + " - " + job.title) +
+      "&body=" + encodeURIComponent("JobScout id: " + job.id + "\nLink: " + job.url +
+        "\nCompany: " + job.company + "\nTitle: " + job.title + "\nLocation: " + job.location +
+        "\n\nSubmit this issue to run the CV analysis.");
+    like.target = "_blank"; like.rel = "noopener";
+    bottom.appendChild(like);
     var button = el("button", "hide", isHidden ? "Unhide" : "Hide");
     button.type = "button";
     button.addEventListener("click", function () {

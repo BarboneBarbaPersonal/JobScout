@@ -42,7 +42,12 @@ type jsonMatch struct {
 	URL      string `json:"url"`
 	PostedAt string `json:"posted_at,omitempty"`
 	FoundAt  string `json:"found_at"`
+	// Description is the posting text, used by the CV analysis (jobscout-cv).
+	// Capped so one huge posting cannot bloat the board's data file.
+	Description string `json:"description,omitempty"`
 }
+
+const maxDescriptionChars = 15000
 
 func (j jsonFile) Notify(_ context.Context, matches []Match) error {
 	file, err := os.OpenFile(j.path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
@@ -61,6 +66,10 @@ func (j jsonFile) Notify(_ context.Context, matches []Match) error {
 			Location: m.Job.Location,
 			URL:      m.Job.URL,
 			FoundAt:  now,
+		}
+		line.Description = m.Job.Description
+		if runes := []rune(line.Description); len(runes) > maxDescriptionChars {
+			line.Description = string(runes[:maxDescriptionChars])
 		}
 		if !m.Job.PostedAt.IsZero() {
 			line.PostedAt = m.Job.PostedAt.UTC().Format(time.RFC3339)

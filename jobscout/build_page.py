@@ -158,7 +158,9 @@ def main():
     # What the page needs per job: the raw fields plus place, role type and fit.
     page_jobs = []
     for job in kept:
-        page_jobs.append({**job, "place": location_tier(job["location"])[1],
+        # Descriptions stay in matches.json (for the CV analysis) but not in the page itself.
+        page_job = {key: value for key, value in job.items() if key != "description"}
+        page_jobs.append({**page_job, "place": location_tier(job["location"])[1],
                           "role": "core" if is_core(job["title"]) else "adjacent",
                           "fit": fit_score(job)})
     data = {"jobs": page_jobs, "stats": build_stats(kept, runs, now),
