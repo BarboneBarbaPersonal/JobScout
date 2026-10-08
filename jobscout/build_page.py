@@ -139,7 +139,9 @@ def main():
         # that no longer pass the rules disappear), keeping old found dates.
         jobs = {}
         for job in new_lines:
-            jobs[job["id"]] = old_jobs.get(job["id"], job)
+            # Fresh data from this scan (e.g. the description), old "found" date.
+            old = old_jobs.get(job["id"])
+            jobs[job["id"]] = {**job, "found_at": old["found_at"]} if old else job
     else:
         jobs = old_jobs
         for job in new_lines:
