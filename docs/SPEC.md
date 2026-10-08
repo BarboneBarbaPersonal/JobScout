@@ -46,3 +46,35 @@ have", so checking them would drop good jobs.
 When the state is reset (bootstrap run), the board is rebuilt from that scan's
 matches, so jobs that no longer pass the rules disappear. Jobs that match
 again keep their original "found" date.
+
+---
+
+# v3 (2026-10-08): Barcelona market search + CV proposals
+
+## 9. Market search (Adzuna)
+- New jobwatch source `adzuna` (Go, same pattern as the other sources):
+  `GET https://api.adzuna.com/v1/api/jobs/es/search/{page}?app_id&app_key&what=...&where=Barcelona&max_days_old=30`
+  Keys come from repo secrets `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` (free developer account, created by the user).
+- One config entry per search term (customer success, technical account manager,
+  customer success engineer, forward deployed, service delivery manager, implementation manager).
+- Results pass the same prefilter, title, language, location and 30-day rules.
+- Page: jobs get a source tag, **Target** (company boards) or **Market** (Adzuna),
+  with a Source filter. A Market job with the same company + title as a Target job is hidden.
+
+## 10. Like -> CV proposals (private repo `jobscout-cv`)
+- Each card gets a **Like** button. It opens a pre-filled new issue in the private
+  repo `BarboneBarbaPersonal/jobscout-cv` (title = company + job title, body = job link + JobScout id).
+  Nothing about liked jobs or the CV is ever stored in the public JobScout repo.
+- `jobscout-cv` holds the master CV as text plus 2-3 base versions (e.g. CSM/TAM, FDE/technical).
+- A workflow runs on every new issue:
+  1. fetch the job description from the link;
+  2. **keyword gap (no AI)**: important terms in the job description missing from the CV;
+  3. **Gemma 3 4B via Ollama** on the runner (free, no key): pick the best base version and
+     write 3-5 concrete edits (keyword to add, bullet to reword or move up, summary line), plus a fit score;
+  4. post the result as a comment on the issue (visible in the GitHub app).
+- For important jobs the user asks Claude in a session for a polished version (on request only).
+- Later option: run a bigger Gemma on the user's PC (32 GB+ RAM) for higher-quality proposals.
+
+## Needs from the user
+- Adzuna developer account: app_id + app_key (added as repo secrets by the user).
+- OK to create the private repo `jobscout-cv` and store the CV text there.
