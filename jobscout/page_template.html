@@ -152,7 +152,10 @@
   var KEY = "jobscout-hidden";
   var hidden = [];
   try { hidden = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { hidden = []; }
-  function saveHidden() { try { localStorage.setItem(KEY, JSON.stringify(hidden)); } catch (e) {} }
+  function saveHidden() {
+    try { localStorage.setItem(KEY, JSON.stringify(hidden)); } catch (e) {}
+    saveHiddenRemote(); // with CV insights connected, also keep it in the private repo (all devices)
+  }
 
   // ---- stats bar ----
   function renderStats() {
@@ -436,6 +439,34 @@
     return panel;
   }
 
+  // ---- Hidden jobs, shared across devices ----
+  // Stored as the body of one closed issue in the private repo ("JobScout hidden jobs"),
+  // one job id per line. Editing an issue body sends no notification emails.
+  var HIDDEN_TITLE = "JobScout hidden jobs";
+  var hiddenTimer = null;
+  function hiddenBody() { return "Hidden jobs (managed by the JobScout dashboard):\n" + hidden.join("\n"); }
+  function readHiddenBody(body) {
+    return (body || "").split("\n").slice(1).map(function (line) { return line.trim(); })
+      .filter(function (line) { return line; });
+  }
+  function saveHiddenRemote() {
+    if (!PRIV.token || !PRIV.cv) return;
+    clearTimeout(hiddenTimer);
+    // Wait a second so several quick clicks become one save.
+    hiddenTimer = setTimeout(function () {
+      var request = PRIV.hiddenIssue
+        ? api("/issues/" + PRIV.hiddenIssue, { method: "PATCH", body: JSON.stringify({ body: hiddenBody() }) })
+        : api("/issues", { method: "POST", body: JSON.stringify({ title: HIDDEN_TITLE, body: hiddenBody() }) })
+            .then(function (issue) {
+              PRIV.hiddenIssue = issue.number;
+              return api("/issues/" + issue.number, { method: "PATCH", body: JSON.stringify({ state: "closed" }) });
+            });
+      request.catch(function (error) {
+        document.getElementById("private-status").textContent = "Could not save hidden jobs (" + error.message + ").";
+      });
+    }, 1000);
+  }
+
   // Load everything private: CV, term list, job descriptions, liked jobs and results.
   function connect() {
     var status = document.getElementById("private-status");
@@ -450,16 +481,28 @@
     ]).then(function (all) {
       PRIV.cv = all[0] || "";
       PRIV.vocab = JSON.parse(all[1] || "[]");
+      var remoteHidden = null;
       (all[2] || []).forEach(function (issue) {
+        if (issue.title === HIDDEN_TITLE) {
+          PRIV.hiddenIssue = issue.number;
+          remoteHidden = readHiddenBody(issue.body);
+          return;
+        }
         var match = /JobScout id:\s*(\S+)/.exec(issue.body || "");
         if (match && !PRIV.issues[match[1]]) PRIV.issues[match[1]] = issue.number;
       });
+      // Merge this device's hidden jobs with the shared list, then save the union.
+      var before = (remoteHidden || []).length;
+      hidden = (remoteHidden || []).concat(hidden.filter(function (id) { return (remoteHidden || []).indexOf(id) === -1; }));
+      try { localStorage.setItem(KEY, JSON.stringify(hidden)); } catch (e) {}
       (all[3] || []).forEach(function (file) {
         if (/\.json$/.test(file.name)) PRIV.results[file.name.replace(/\.json$/, "")] = true;
       });
       all[4].forEach(function (job) { if (job.description) PRIV.descriptions[job.id] = job.description; });
-      status.textContent = "Connected: CV loaded, " + Object.keys(PRIV.issues).length + " liked jobs.";
+      status.textContent = "Connected: CV loaded, " + Object.keys(PRIV.issues).length + " liked jobs, " +
+        hidden.length + " hidden jobs (shared across devices).";
       updatePrivateToggle();
+      if (hidden.length !== before) saveHiddenRemote(); // this device had hides the shared list lacked
       renderBoard();
     }).catch(function (error) {
       status.textContent = "Could not connect (" + error.message + "). Check the key's repo access and permissions.";
