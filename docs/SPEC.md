@@ -71,3 +71,31 @@ Coverage grows by adding more companies to the Google Sheet instead.
 
 ## Needs from the user
 - OK to create the private repo `jobscout-cv` and store the CV text there.
+
+---
+
+# v4 (2026-10-09): CV insights inside the dashboard (no GitHub visits, no emails)
+
+## 11. Private access key (per device)
+- Dashboard settings: the user pastes a fine-grained GitHub token limited to the private
+  repo `jobscout-cv` (Contents: read, Issues: read and write). Stored only in that
+  browser's localStorage. Without a key the page looks and works as before (public view).
+- With the key the page reads private data straight from `jobscout-cv` via the GitHub API.
+  Nothing CV-related is ever written to the public JobScout repo or page.
+
+## 12. Draft for every job (in the browser, no AI)
+- The page loads `cv/master.md` and `data/vocabulary.json` from `jobscout-cv` and each job's
+  description from the public `matches.json`.
+- Each card shows: **match %** (share of the job's important terms found in the CV) and the
+  top missing keywords.
+
+## 13. Like -> proposals in the dashboard
+- Like creates an issue in `jobscout-cv` through the API (no GitHub page opened).
+- The `analyze` workflow (triggered by the new issue) writes `results/<job>.json`:
+  1. main missing keywords (no AI);
+  2. intro rewrite: 2-3 sentences for the Professional Summary (Gemma 3 4B), fact-checked;
+  3. past roles: CV bullets ranked by relevance to the job (no AI): 2 to lead with, 2 to
+     shorten; plus up to 3 short Gemma flags on big changes.
+- No issue comments (so no notification emails). The card shows "Analyzing..." and then a
+  **Proposals** panel, polling the results file every 30 s while open.
+- Deeper edits: "CV edits for jobscout-cv issue #N" to Claude in a session (unchanged).
