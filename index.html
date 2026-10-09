@@ -69,6 +69,27 @@
           border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
   .hide:hover { color: var(--text); }
   .like { text-decoration: none; margin-left: auto; color: var(--accent); border-color: var(--accent); }
+  .like:disabled { opacity: .7; cursor: default; }
+
+  /* CV insights (private) */
+  .private-toggle { margin-left: auto; }
+  .private-box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; }
+  .private-box p { margin: 0 0 8px; }
+  .private-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .private-row input { flex: 1; min-width: 180px; font: inherit; padding: 4px 8px; border: 1px solid var(--line);
+                       border-radius: 6px; background: var(--bg); color: var(--text); }
+  .private-status { color: var(--muted); margin-top: 6px !important; }
+  .draft { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .draft .match { font-weight: 700; color: var(--text); }
+  .proposals { border-top: 1px dashed var(--line); margin-top: 8px; padding-top: 6px; font-size: 13px; }
+  .proposals h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); margin: 8px 0 4px; }
+  .proposals p { margin: 0 0 6px; overflow-wrap: anywhere; }
+  .proposals .quote { border-left: 3px solid var(--accent); padding-left: 8px; }
+  .proposals .lead::before { content: "▲ "; color: var(--ok); }
+  .proposals .shorten::before { content: "▼ "; color: var(--warn); }
+  .proposals .warn { color: var(--warn); font-size: 12px; }
+  .kw { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+  .kw-missing { font-size: 12px; border: 1px solid var(--warn); color: var(--warn); border-radius: 999px; padding: 0 8px; }
   .card.hidden { opacity: .45; }
   .empty { color: var(--muted); font-size: 13px; }
 </style>
@@ -78,7 +99,19 @@
   <header>
     <h1>Job<span>Scout</span></h1>
     <span class="sub" id="updated"></span>
+    <button type="button" class="chip private-toggle" id="private-toggle">CV insights: off</button>
   </header>
+  <!-- Private access: a GitHub key limited to the private jobscout-cv repo, kept in this browser only -->
+  <section class="private-box" id="private-box" hidden>
+    <p>Paste your GitHub access key for the private <b>jobscout-cv</b> repo. It is stored only in this
+       browser and used to load your CV insights and send Likes. Nothing private is in this public page.</p>
+    <div class="private-row">
+      <input type="password" id="private-key" placeholder="github_pat_..." autocomplete="off">
+      <button type="button" class="chip" id="private-save">Connect</button>
+      <button type="button" class="chip" id="private-forget">Disconnect</button>
+    </div>
+    <p class="private-status" id="private-status"></p>
+  </section>
   <section class="stats" id="stats"></section>
   <section class="filters">
     <div class="group" id="place-filter"><span>Location</span></div>
@@ -87,7 +120,7 @@
   </section>
   <main id="board"></main>
 </div>
-<script type="application/json" id="data">{"jobs": [{"id": "greenhouse/adyen/8185712", "company": "Adyen", "title": "Account Manager", "location": "Madrid", "url": "https://job-boards.greenhouse.io/adyen/jobs/8185712", "posted_at": "2026-09-18T14:25:37Z", "found_at": "2026-10-05T15:25:45Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/anthropic/5391237008", "company": "Anthropic", "title": "Partner Account Manager - Spain & MEA", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/anthropic/jobs/5391237008", "posted_at": "2026-10-07T10:48:53Z", "found_at": "2026-10-07T13:53:24Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7995509003", "company": "Celonis", "title": "Associate Applied (AI) Value Engineer (APAC) - Orbit Program", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7995509003?gh_jid=7995509003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7979056003", "company": "Celonis", "title": "Associate Applied (AI) Value Engineer (UK) - Orbit Program", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7979056003?gh_jid=7979056003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7989831003", "company": "Celonis", "title": "Associate Competitive Value Engineer", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7989831003?gh_jid=7989831003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7825731003", "company": "Celonis", "title": "Senior Value Engineer ", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7825731003?gh_jid=7825731003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7825757003", "company": "Celonis", "title": "Value Engineer (Scale EMEA/Italian Speaking) ", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7825757003?gh_jid=7825757003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/cloudflare/8043339", "company": "Cloudflare", "title": "Forward Deployed Engineer, Professional Services", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8043339?gh_jid=8043339", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "greenhouse/cloudflare/8043305", "company": "Cloudflare", "title": "Forward Deployed Engineer, Professional Services", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8043305?gh_jid=8043305", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "greenhouse/cloudflare/8185549", "company": "Cloudflare", "title": "Principal Customer Engineer, Digital Natives", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8185549?gh_jid=8185549", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "greenhouse/cloudflare/8200786", "company": "Cloudflare", "title": "Principal Customer Engineer, Majors", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8200786?gh_jid=8200786", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "greenhouse/cloudflare/7967144", "company": "Cloudflare", "title": "Principal Customer Engineer, Majors", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/7967144?gh_jid=7967144", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "workday/criteo/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186", "company": "Criteo", "title": "Customer Success Manager (6 months' FTC)", "location": "Barcelona", "url": "https://criteo.wd3.myworkdayjobs.com/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186", "found_at": "2026-10-06T16:16:22Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "ashby/docplanner/7b7335ad-48bd-4d5f-9bfa-d759a04f7664", "company": "Docplanner (Doctoralia)", "title": "Global Project Manager - Customer Success PMS (Clinics/Enterprises)", "location": "Spain", "url": "https://jobs.ashbyhq.com/docplanner/7b7335ad-48bd-4d5f-9bfa-d759a04f7664", "posted_at": "2026-09-30T11:21:51Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "ashby/docplanner/eb5c468d-75ae-4bd4-a0a7-7d9896d404b7", "company": "Docplanner (Doctoralia)", "title": "Global Strategy Analyst - Customer Success (Remote Friendly)", "location": "Barcelona", "url": "https://jobs.ashbyhq.com/docplanner/eb5c468d-75ae-4bd4-a0a7-7d9896d404b7", "posted_at": "2026-10-01T11:07:12Z", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "adjacent", "fit": 7}, {"id": "recruitee/holded/2254754", "company": "Holded (Visma)", "title": "Customer Onboarding Specialist", "location": "Barcelona, Catalunya [Cataluña], Spain", "url": "https://jobs.holded.com/o/onboarding-specialist", "found_at": "2026-10-06T16:16:22Z", "place": "Barcelona", "role": "adjacent", "fit": 7}, {"id": "recruitee/holded/2686194", "company": "Holded (Visma)", "title": "Implementation Manager", "location": "Barcelona, Catalunya [Cataluña], Spain", "url": "https://jobs.holded.com/o/implementation-manager", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "adjacent", "fit": 7}, {"id": "greenhouse/mongodb/8230143", "company": "MongoDB", "title": "Engagement Manager (Services Sales)", "location": "Madrid", "url": "https://www.mongodb.com/careers/job/?gh_jid=8230143", "posted_at": "2026-10-05T23:30:53Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359", "company": "Palo Alto Networks", "title": "Major Identity Account Manager", "location": "Madrid, Spain", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359", "found_at": "2026-10-05T15:25:45Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer_JR-017945", "company": "Palo Alto Networks", "title": "Senior Technical Support Engineer", "location": "Madrid, Spain", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer_JR-017945", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services--Cortex-XSIAM_JR-008267-1", "company": "Palo Alto Networks", "title": "Senior Technical Support Engineer - Focused Services, Cortex XSIAM", "location": "Remote - Spain", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services--Cortex-XSIAM_JR-008267-1", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Office---Spain---Madrid/Senior-Technical-Support-Engineer--Focused-Services-DE_JR-019732", "company": "Palo Alto Networks", "title": "Senior Technical Support Engineer, Focused Services DE", "location": "Office - Spain - Madrid", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Office---Spain---Madrid/Senior-Technical-Support-Engineer--Focused-Services-DE_JR-019732", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "ashby/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f", "company": "PostHog", "title": "Technical Customer Success Manager - EMEA", "location": "Remote (EMEA)", "url": "https://jobs.ashbyhq.com/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f", "posted_at": "2026-09-18T08:41:19Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "workday/salesforce/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110", "company": "Salesforce", "title": "D360 Forward Deployed Engineer", "location": "Spain - Madrid", "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110", "found_at": "2026-10-05T15:25:45Z", "place": "Spain", "role": "core", "fit": 4}, {"id": "workday/salesforce/External_Career_Site/job/Spain---Barcelona/Forward-Deployed-Engineer_JR350067", "company": "Salesforce", "title": "Forward Deployed Engineer - Spanish Speaker", "location": "Spain - Barcelona", "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Barcelona/Forward-Deployed-Engineer_JR350067", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "workday/salesforce/External_Career_Site/job/Spain---Barcelona/Lead-Forward-Deployed-Engineer---Spanish-Speaker_JR348967", "company": "Salesforce", "title": "Lead Forward Deployed Engineer - Spanish Speaker", "location": "Spain - Barcelona", "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Barcelona/Lead-Forward-Deployed-Engineer---Spanish-Speaker_JR348967", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "greenhouse/sumup/8520357002", "company": "SumUp", "title": "Team Lead Account Manager  - English ", "location": "Barcelona, Barcelona, Spain", "url": "https://sumup.com/careers/positions/8520357002?gh_jid=8520357002", "posted_at": "2026-09-22T12:18:21Z", "found_at": "2026-10-05T15:25:45Z", "place": "Barcelona", "role": "adjacent", "fit": 7}], "stats": {"updated": "2026-10-09T06:02:15.556110+00:00", "last_scan": "2026-10-09T06:02:15.556110+00:00", "last_status": "degraded", "scans_24h": 6, "scanned": 19210, "boards": 127, "boards_ok": 126, "new_postings_last": 52, "new_postings_24h": 394, "new_matches_24h": 0, "total": 27, "barcelona": 7, "remote": 7, "spain": 13, "core": 7}, "new_for_hours": 48, "max_age_days": 30}</script>
+<script type="application/json" id="data">{"jobs": [{"id": "greenhouse/adyen/8185712", "company": "Adyen", "title": "Account Manager", "location": "Madrid", "url": "https://job-boards.greenhouse.io/adyen/jobs/8185712", "posted_at": "2026-09-18T14:25:37Z", "found_at": "2026-10-05T15:25:45Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/anthropic/5391237008", "company": "Anthropic", "title": "Partner Account Manager - Spain & MEA", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/anthropic/jobs/5391237008", "posted_at": "2026-10-07T10:48:53Z", "found_at": "2026-10-07T13:53:24Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7995509003", "company": "Celonis", "title": "Associate Applied (AI) Value Engineer (APAC) - Orbit Program", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7995509003?gh_jid=7995509003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7979056003", "company": "Celonis", "title": "Associate Applied (AI) Value Engineer (UK) - Orbit Program", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7979056003?gh_jid=7979056003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7989831003", "company": "Celonis", "title": "Associate Competitive Value Engineer", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7989831003?gh_jid=7989831003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7825731003", "company": "Celonis", "title": "Senior Value Engineer ", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7825731003?gh_jid=7825731003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/celonis/7825757003", "company": "Celonis", "title": "Value Engineer (Scale EMEA/Italian Speaking) ", "location": "Madrid, Spain", "url": "https://job-boards.greenhouse.io/celonis/jobs/7825757003?gh_jid=7825757003", "posted_at": "2026-09-30T12:39:15Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "greenhouse/cloudflare/8043339", "company": "Cloudflare", "title": "Forward Deployed Engineer, Professional Services", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8043339?gh_jid=8043339", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "greenhouse/cloudflare/8043305", "company": "Cloudflare", "title": "Forward Deployed Engineer, Professional Services", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8043305?gh_jid=8043305", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "greenhouse/cloudflare/8185549", "company": "Cloudflare", "title": "Principal Customer Engineer, Digital Natives", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8185549?gh_jid=8185549", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "greenhouse/cloudflare/8200786", "company": "Cloudflare", "title": "Principal Customer Engineer, Majors", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/8200786?gh_jid=8200786", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "greenhouse/cloudflare/7967144", "company": "Cloudflare", "title": "Principal Customer Engineer, Majors", "location": "Distributed", "url": "https://boards.greenhouse.io/cloudflare/jobs/7967144?gh_jid=7967144", "posted_at": "2026-10-02T18:24:13Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "workday/criteo/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186", "company": "Criteo", "title": "Customer Success Manager (6 months' FTC)", "location": "Barcelona", "url": "https://criteo.wd3.myworkdayjobs.com/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186", "found_at": "2026-10-06T16:16:22Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "ashby/docplanner/7b7335ad-48bd-4d5f-9bfa-d759a04f7664", "company": "Docplanner (Doctoralia)", "title": "Global Project Manager - Customer Success PMS (Clinics/Enterprises)", "location": "Spain", "url": "https://jobs.ashbyhq.com/docplanner/7b7335ad-48bd-4d5f-9bfa-d759a04f7664", "posted_at": "2026-09-30T11:21:51Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "ashby/docplanner/eb5c468d-75ae-4bd4-a0a7-7d9896d404b7", "company": "Docplanner (Doctoralia)", "title": "Global Strategy Analyst - Customer Success (Remote Friendly)", "location": "Barcelona", "url": "https://jobs.ashbyhq.com/docplanner/eb5c468d-75ae-4bd4-a0a7-7d9896d404b7", "posted_at": "2026-10-01T11:07:12Z", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "adjacent", "fit": 7}, {"id": "recruitee/holded/2254754", "company": "Holded (Visma)", "title": "Customer Onboarding Specialist", "location": "Barcelona, Catalunya [Cataluña], Spain", "url": "https://jobs.holded.com/o/onboarding-specialist", "found_at": "2026-10-06T16:16:22Z", "place": "Barcelona", "role": "adjacent", "fit": 7}, {"id": "recruitee/holded/2686194", "company": "Holded (Visma)", "title": "Implementation Manager", "location": "Barcelona, Catalunya [Cataluña], Spain", "url": "https://jobs.holded.com/o/implementation-manager", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "adjacent", "fit": 7}, {"id": "greenhouse/mongodb/8230143", "company": "MongoDB", "title": "Engagement Manager (Services Sales)", "location": "Madrid", "url": "https://www.mongodb.com/careers/job/?gh_jid=8230143", "posted_at": "2026-10-05T23:30:53Z", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359", "company": "Palo Alto Networks", "title": "Major Identity Account Manager", "location": "Madrid, Spain", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359", "found_at": "2026-10-05T15:25:45Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer_JR-017945", "company": "Palo Alto Networks", "title": "Senior Technical Support Engineer", "location": "Madrid, Spain", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer_JR-017945", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services--Cortex-XSIAM_JR-008267-1", "company": "Palo Alto Networks", "title": "Senior Technical Support Engineer - Focused Services, Cortex XSIAM", "location": "Remote - Spain", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services--Cortex-XSIAM_JR-008267-1", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "adjacent", "fit": 5}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Office---Spain---Madrid/Senior-Technical-Support-Engineer--Focused-Services-DE_JR-019732", "company": "Palo Alto Networks", "title": "Senior Technical Support Engineer, Focused Services DE", "location": "Office - Spain - Madrid", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Office---Spain---Madrid/Senior-Technical-Support-Engineer--Focused-Services-DE_JR-019732", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "adjacent", "fit": 3}, {"id": "ashby/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f", "company": "PostHog", "title": "Technical Customer Success Manager - EMEA", "location": "Remote (EMEA)", "url": "https://jobs.ashbyhq.com/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f", "posted_at": "2026-09-18T08:41:19Z", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "workday/salesforce/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110", "company": "Salesforce", "title": "D360 Forward Deployed Engineer", "location": "Spain - Madrid", "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110", "found_at": "2026-10-05T15:25:45Z", "place": "Spain", "role": "core", "fit": 4}, {"id": "workday/salesforce/External_Career_Site/job/Spain---Barcelona/Forward-Deployed-Engineer_JR350067", "company": "Salesforce", "title": "Forward Deployed Engineer - Spanish Speaker", "location": "Spain - Barcelona", "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Barcelona/Forward-Deployed-Engineer_JR350067", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "workday/salesforce/External_Career_Site/job/Spain---Barcelona/Lead-Forward-Deployed-Engineer---Spanish-Speaker_JR348967", "company": "Salesforce", "title": "Lead Forward Deployed Engineer - Spanish Speaker", "location": "Spain - Barcelona", "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Barcelona/Lead-Forward-Deployed-Engineer---Spanish-Speaker_JR348967", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "greenhouse/sumup/8520357002", "company": "SumUp", "title": "Team Lead Account Manager  - English ", "location": "Barcelona, Barcelona, Spain", "url": "https://sumup.com/careers/positions/8520357002?gh_jid=8520357002", "posted_at": "2026-09-22T12:18:21Z", "found_at": "2026-10-05T15:25:45Z", "place": "Barcelona", "role": "adjacent", "fit": 7}, {"id": "ashby/perk/6836964a-d670-4f6e-913d-aa75d47455f5", "company": "Perk (ex-TravelPerk)", "title": "Account Manager Long Tail - Italian Speaking", "location": "Barcelona", "url": "https://jobs.ashbyhq.com/perk/6836964a-d670-4f6e-913d-aa75d47455f5", "posted_at": "2026-10-09T07:21:19Z", "found_at": "2026-10-09T09:59:20Z", "place": "Barcelona", "role": "adjacent", "fit": 7}], "stats": {"updated": "2026-10-09T09:59:21.230873+00:00", "last_scan": "2026-10-09T09:59:21.230873+00:00", "last_status": "ok", "scans_24h": 7, "scanned": 19228, "boards": 127, "boards_ok": 127, "new_postings_last": 70, "new_postings_24h": 464, "new_matches_24h": 1, "total": 28, "barcelona": 8, "remote": 7, "spain": 13, "core": 7}, "new_for_hours": 48, "max_age_days": 30}</script>
 <script>
   // All page data (jobs + stats) is embedded above by build_page.py.
   var DATA = JSON.parse(document.getElementById("data").textContent);
@@ -187,19 +220,14 @@
     meta.appendChild(el("span", "tag", job.role));
     node.appendChild(meta);
 
+    // Private CV draft (match % + missing keywords), only when the access key is set.
+    var draft = draftLine(job);
+    if (draft) node.appendChild(draft);
+
     var bottom = el("div", "bottom");
     var when = (job.posted_at ? "posted " + dayAge(job.posted_at) + " · " : "") + "found " + dayAge(job.found_at);
     bottom.appendChild(el("span", "", when));
-    // "Like" opens a pre-filled issue in the private jobscout-cv repo; submitting
-    // it starts the CV analysis there. Only you can open that repo.
-    var like = el("a", "hide like", "Like");
-    like.href = "https://github.com/BarboneBarbaPersonal/jobscout-cv/issues/new?labels=liked" +
-      "&title=" + encodeURIComponent(job.company + " - " + job.title) +
-      "&body=" + encodeURIComponent("JobScout id: " + job.id + "\nLink: " + job.url +
-        "\nCompany: " + job.company + "\nTitle: " + job.title + "\nLocation: " + job.location +
-        "\n\nSubmit this issue to run the CV analysis.");
-    like.target = "_blank"; like.rel = "noopener";
-    bottom.appendChild(like);
+    bottom.appendChild(likeButton(job));
     var button = el("button", "hide", isHidden ? "Unhide" : "Hide");
     button.type = "button";
     button.addEventListener("click", function () {
@@ -210,6 +238,7 @@
     });
     bottom.appendChild(button);
     node.appendChild(bottom);
+    if (PRIV.open[job.id]) node.appendChild(proposalsPanel(job));
     return node;
   }
 
@@ -249,6 +278,213 @@
     board.appendChild(column("Older", "Everything else still open", older));
   }
 
+  // =====================================================================
+  // CV insights (private). Everything below only runs with the access key
+  // the user saved in this browser; it talks to the private jobscout-cv
+  // repo through the GitHub API. The public page contains no CV data.
+  // =====================================================================
+  var CV_REPO = "BarboneBarbaPersonal/jobscout-cv";
+  var TOKEN_KEY = "jobscout-cv-token";
+  var PRIV = { token: "", cv: "", vocab: [], descriptions: {}, issues: {}, results: {}, open: {}, polling: {} };
+  try { PRIV.token = localStorage.getItem(TOKEN_KEY) || ""; } catch (e) {}
+
+  // Call the GitHub API with the saved key. raw=true returns a file's plain text.
+  function api(path, options, raw) {
+    options = options || {};
+    options.headers = {
+      "Authorization": "Bearer " + PRIV.token,
+      "Accept": raw ? "application/vnd.github.raw+json" : "application/vnd.github+json"
+    };
+    return fetch("https://api.github.com/repos/" + CV_REPO + path, options).then(function (response) {
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error("GitHub API " + response.status);
+      return raw ? response.text() : response.json();
+    });
+  }
+
+  // Same file names as scripts/analyze.py safe_name().
+  function safeName(id) { return id.replace(/[^A-Za-z0-9._-]/g, "_"); }
+
+  function termRegex(term) {
+    return new RegExp("(?<![\\w-])" + term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w-])", "gi");
+  }
+
+  // Draft for one job: share of the job's important terms that the CV mentions.
+  function draft(job) {
+    var text = PRIV.descriptions[job.id];
+    if (!PRIV.cv || !text) return null;
+    var found = [];
+    PRIV.vocab.forEach(function (term) {
+      var hits = (text.match(termRegex(term)) || []).length;
+      if (hits) found.push({ term: term, count: hits, inCv: termRegex(term).test(PRIV.cv) });
+    });
+    if (!found.length) return null;
+    found.sort(function (a, b) { return b.count - a.count; });
+    var present = found.filter(function (f) { return f.inCv; }).length;
+    return { match: Math.round(100 * present / found.length),
+             missing: found.filter(function (f) { return !f.inCv; }).slice(0, 4) };
+  }
+
+  function draftLine(job) {
+    var d = draft(job);
+    if (!d) return null;
+    var line = el("div", "draft");
+    line.appendChild(el("span", "match", d.match + "% match"));
+    if (d.missing.length) {
+      line.appendChild(document.createTextNode(" · missing: " +
+        d.missing.map(function (m) { return m.term; }).join(", ")));
+    }
+    return line;
+  }
+
+  // Like / Analyzing / Proposals button, depending on the job's state.
+  function likeButton(job) {
+    var button = el("button", "hide like");
+    button.type = "button";
+    var issue = PRIV.issues[job.id];
+    var result = PRIV.results[safeName(job.id)];
+    if (!PRIV.token) {
+      button.textContent = "Like";
+      button.title = "Connect CV insights (top right) to use Like";
+      button.addEventListener("click", function () { togglePrivateBox(true); });
+    } else if (result) {
+      button.textContent = PRIV.open[job.id] ? "Close" : "Proposals";
+      button.addEventListener("click", function () {
+        PRIV.open[job.id] = !PRIV.open[job.id];
+        loadResult(job).then(renderBoard);
+      });
+    } else if (issue) {
+      button.textContent = "Analyzing...";
+      button.disabled = true;
+      button.title = "Takes about 10 minutes; this card updates by itself";
+      pollResult(job);
+    } else {
+      button.textContent = "Like";
+      button.addEventListener("click", function () { likeJob(job, button); });
+    }
+    return button;
+  }
+
+  // Like = open an issue in the private repo; its workflow writes results/<job>.json.
+  function likeJob(job, button) {
+    button.disabled = true;
+    button.textContent = "Sending...";
+    var body = "JobScout id: " + job.id + "\nLink: " + job.url + "\nCompany: " + job.company +
+               "\nTitle: " + job.title + "\nLocation: " + job.location;
+    api("/issues", { method: "POST", body: JSON.stringify({ title: job.company + " - " + job.title, body: body }) })
+      .then(function (issue) { PRIV.issues[job.id] = issue.number; renderBoard(); })
+      .catch(function (error) { button.disabled = false; button.textContent = "Like"; alert("Like failed: " + error.message); });
+  }
+
+  // While a job is being analyzed, check for its result every 30 seconds.
+  function pollResult(job) {
+    if (PRIV.polling[job.id]) return;
+    PRIV.polling[job.id] = setInterval(function () {
+      api("/contents/results/" + safeName(job.id) + ".json", {}, true).then(function (text) {
+        if (!text) return;
+        clearInterval(PRIV.polling[job.id]);
+        PRIV.results[safeName(job.id)] = JSON.parse(text);
+        PRIV.open[job.id] = true;
+        renderBoard();
+      }).catch(function () {});
+    }, 30000);
+  }
+
+  function loadResult(job) {
+    var name = safeName(job.id);
+    if (PRIV.results[name] && PRIV.results[name] !== true) return Promise.resolve();
+    return api("/contents/results/" + name + ".json", {}, true).then(function (text) {
+      if (text) PRIV.results[name] = JSON.parse(text);
+    });
+  }
+
+  // The proposals panel under a liked job's card.
+  function proposalsPanel(job) {
+    var r = PRIV.results[safeName(job.id)];
+    var panel = el("div", "proposals");
+    if (!r || r === true) { panel.appendChild(el("p", "empty", "Loading...")); return panel; }
+    if (r.status !== "done") { panel.appendChild(el("p", "empty", r.error || "Analysis failed.")); return panel; }
+
+    function section(title) { var h = el("h3", "", title); panel.appendChild(h); }
+    function para(text, className) { panel.appendChild(el("p", className || "", text)); }
+    function warnings(list) { (list || []).forEach(function (w) { para("Check: " + w, "warn"); }); }
+
+    section("1. Keywords the job needs (" + r.match + "% match)");
+    var chips = el("div", "kw");
+    (r.missing || []).forEach(function (m) { chips.appendChild(el("span", "kw-missing", m.term + " ×" + m.count)); });
+    if (!(r.missing || []).length) para("None missing.");
+    panel.appendChild(chips);
+
+    section("2. Intro rewrite (Gemma draft)");
+    if (r.intro) { para(r.intro, "quote"); warnings(r.intro_warnings); }
+    else para(r.gemma_error || "No draft.", "empty");
+
+    section("3. Past roles");
+    (r.lead || []).forEach(function (b) { para("Lead with (" + b.role + "): " + b.text, "lead"); });
+    (r.shorten || []).forEach(function (b) { para("Shorten (" + b.role + "): " + b.text, "shorten"); });
+    (r.flags || []).forEach(function (f) { para("Gemma: " + f); });
+    warnings(r.flag_warnings);
+
+    if (r.claude_edits && r.claude_edits.length) {
+      section("Claude edits");
+      r.claude_edits.forEach(function (e) {
+        para(e.section + ": \"" + e.current + "\" → \"" + e.new + "\" (" + e.why + ")");
+      });
+    } else {
+      para("Deeper edits: ask Claude \"CV edits for jobscout-cv issue #" + (r.issue || "?") + "\".", "empty");
+    }
+    return panel;
+  }
+
+  // Load everything private: CV, term list, job descriptions, liked jobs and results.
+  function connect() {
+    var status = document.getElementById("private-status");
+    if (!PRIV.token) { updatePrivateToggle(); return; }
+    status.textContent = "Connecting...";
+    Promise.all([
+      api("/contents/cv/master.md", {}, true),
+      api("/contents/data/vocabulary.json", {}, true),
+      api("/issues?state=all&per_page=100"),
+      api("/contents/results"),
+      fetch("matches.json").then(function (r) { return r.json(); })
+    ]).then(function (all) {
+      PRIV.cv = all[0] || "";
+      PRIV.vocab = JSON.parse(all[1] || "[]");
+      (all[2] || []).forEach(function (issue) {
+        var match = /JobScout id:\s*(\S+)/.exec(issue.body || "");
+        if (match && !PRIV.issues[match[1]]) PRIV.issues[match[1]] = issue.number;
+      });
+      (all[3] || []).forEach(function (file) {
+        if (/\.json$/.test(file.name)) PRIV.results[file.name.replace(/\.json$/, "")] = true;
+      });
+      all[4].forEach(function (job) { if (job.description) PRIV.descriptions[job.id] = job.description; });
+      status.textContent = "Connected: CV loaded, " + Object.keys(PRIV.issues).length + " liked jobs.";
+      updatePrivateToggle();
+      renderBoard();
+    }).catch(function (error) {
+      status.textContent = "Could not connect (" + error.message + "). Check the key's repo access and permissions.";
+    });
+  }
+
+  function updatePrivateToggle() {
+    document.getElementById("private-toggle").textContent = "CV insights: " + (PRIV.cv ? "on" : "off");
+  }
+  function togglePrivateBox(show) {
+    var box = document.getElementById("private-box");
+    box.hidden = show === undefined ? !box.hidden : !show;
+  }
+  document.getElementById("private-toggle").addEventListener("click", function () { togglePrivateBox(); });
+  document.getElementById("private-save").addEventListener("click", function () {
+    PRIV.token = document.getElementById("private-key").value.trim();
+    try { localStorage.setItem(TOKEN_KEY, PRIV.token); } catch (e) {}
+    document.getElementById("private-key").value = "";
+    connect();
+  });
+  document.getElementById("private-forget").addEventListener("click", function () {
+    try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+    location.reload();
+  });
+
   renderStats();
   renderChips("place-filter", "place", [["All", "All"], ["Barcelona", "Barcelona"], ["Remote", "Remote"], ["Spain", "Spain"]]);
   renderChips("role-filter", "role", [["All", "All"], ["core", "Core"], ["adjacent", "Adjacent"]]);
@@ -257,6 +493,7 @@
     renderBoard();
   });
   renderBoard();
+  connect();
 </script>
 </body>
 </html>
