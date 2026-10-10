@@ -232,5 +232,14 @@
   "scanned": 19214,
   "new_postings": 5,
   "new_matches": 0
+ },
+ {
+  "time": "2026-10-10T19:30:50.694017+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 126,
+  "scanned": 19195,
+  "new_postings": 7,
+  "new_matches": 0
  }
 ]
