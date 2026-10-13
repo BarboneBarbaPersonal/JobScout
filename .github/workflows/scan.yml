@@ -1,0 +1,56 @@
+# Scan every hour: read the Google Sheet, check all job boards, publish the page.
+name: Scan
+
+on:
+  schedule:
+    - cron: "13 * * * *" # every hour at :13 (GitHub may start it a little later)
+  workflow_dispatch: # the "Run workflow" button
+
+permissions:
+  contents: write # to publish the page on the gh-pages branch
+
+concurrency:
+  group: scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # The page published by the last scan (keeps each job's "found" date).
+      - name: Get the current page
+        run: |
+          git fetch --depth 1 origin gh-pages && git worktree add site origin/gh-pages || mkdir -p site
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      # Remembered between scans, never published: which board each company uses.
+      - uses: actions/cache@v4
+        with:
+          path: cache
+          key: scan-${{ github.run_id }}
+          restore-keys: scan-
+
+      - name: Scan
+        env:
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+        run: python -m scout.main site
+
+      - name: Publish the page
+        run: |
+          cd site
+          rm -rf .git
+          git init -q -b gh-pages
+          git config user.name "JobScout"
+          git config user.email "jobscout@users.noreply.github.com"
+          git add index.html setup.html matches.json runs.json
+          git commit -q -m "Scan $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" gh-pages

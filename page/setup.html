@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Get your own JobScout</title>
+<style>
+  /* Same colours as the job board */
+  :root {
+    --bg: #f6f4ef; --panel: #ece8df; --card: #ffffff; --text: #1d1b18; --muted: #6b665d;
+    --line: #ddd7cb; --accent: #b5341a; --ok: #2e7d32; --warn: #b26a00; --hint: #fff6d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --panel: #1f1d1a; --card: #282622; --text: #eeeae2; --muted: #a39d92;
+      --line: #3a3732; --accent: #e0714f; --ok: #7bc47f; --warn: #e0a64f; --hint: #3a3322;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 48px; }
+  header { padding: 20px 0 4px; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+  h1 { margin: 0; font-size: 22px; }
+  h1 span { color: var(--accent); }
+  h2 { font-size: 17px; margin: 28px 0 8px; }
+  a { color: var(--accent); }
+  .sub { color: var(--muted); font-size: 13px; }
+  .intro { color: var(--muted); }
+  code { background: var(--panel); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+
+  /* Progress bar */
+  .progress { height: 8px; background: var(--panel); border-radius: 4px; overflow: hidden; margin: 12px 0 4px; }
+  .progress div { height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+
+  /* One card per step */
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+          padding: 14px 16px; margin: 10px 0; }
+  .step.done { opacity: .6; }
+  .step-head { display: flex; gap: 10px; align-items: center; }
+  .step-head input { width: 20px; height: 20px; accent-color: var(--ok); flex: none; }
+  .step-head h3 { margin: 0; font-size: 16px; }
+  .step-head .time { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .step ol, .step ul { margin: 8px 0 0; padding-left: 22px; }
+  .step li { margin: 3px 0; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+         border: 0; border-radius: 6px; padding: 7px 14px; font: inherit; font-weight: 600;
+         cursor: pointer; margin: 8px 8px 0 0; }
+  .btn.secondary { background: var(--panel); color: var(--text); border: 1px solid var(--line); }
+  .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+  .hint { background: var(--hint); border-radius: 6px; padding: 8px 10px; margin-top: 10px; font-size: 14px; }
+  .field { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; }
+  .field input { font: inherit; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px;
+                 background: var(--bg); color: var(--text); width: 100%; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+  .result { margin-top: 8px; font-size: 14px; }
+  .result.ok { color: var(--ok); }
+  .result.bad { color: var(--warn); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; margin-top: 8px; }
+  th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 6px 4px; vertical-align: top; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 6px 0; }
+  summary { cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Get your own Job<span>Scout</span></h1>
+    <a class="sub" href="./">Back to the job board</a>
+  </header>
+  <p class="intro">JobScout checks the careers pages of the companies you choose every hour
+    and shows the jobs that fit you on your own web page. It's free and you don't need to write
+    any code: you fill in a Google Sheet and click through a few settings on GitHub.
+    Setup takes about 15 minutes. Tick each step when you finish it; this page remembers where you are.</p>
+  <div class="progress"><div id="bar"></div></div>
+  <div class="sub" id="progress-text"></div>
+
+  <h2>Before you start</h2>
+  <div class="step" data-step="accounts">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>1. Two free accounts</h3><span class="time">2 min</span></div>
+    <ul>
+      <li>A <b>Google account</b> (Gmail), for your settings sheet.</li>
+      <li>A <b>GitHub account</b>. GitHub is the website that runs JobScout for you.
+        Your page address will contain your GitHub username.</li>
+    </ul>
+    <a class="btn secondary" href="https://github.com/signup" target="_blank" rel="noopener">Create a GitHub account</a>
+  </div>
+
+  <h2>Part 1 - Your settings sheet</h2>
+  <div class="step" data-step="copy">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>2. Copy the template sheet</h3><span class="time">1 min</span></div>
+    <p>Click the button, then <b>Make a copy</b>. The copy goes into your own Google Drive.
+      From now on, only work in <b>your copy</b>.</p>
+    <a class="btn" id="sheet-copy" target="_blank" rel="noopener">Copy the template sheet</a>
+  </div>
+
+  <div class="step" data-step="fill">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>3. Fill in your preferences and companies</h3><span class="time">5 min+</span></div>
+    <p><b>Preferences tab</b>: change only the yellow cells. Separate words with commas.</p>
+    <table>
+      <tr><th>Setting</th><th>What to write</th></tr>
+      <tr><td>Core roles</td><td>Words in the job titles you want most, e.g. <code>customer success manager, csm</code></td></tr>
+      <tr><td>Also interested in</td><td>Other roles you would consider</td></tr>
+      <tr><td>Exclude titles with</td><td>Words that mean "not for me", e.g. <code>intern, director</code></td></tr>
+      <tr><td>Languages I speak</td><td>Jobs that require other languages are hidden</td></tr>
+      <tr><td>Location 1, 2, 3</td><td>Your places, best first. Add other names for the same place after commas, e.g.
+        <code>Barcelona, Catalunya</code>. Write <code>Remote</code> to include remote jobs.</td></tr>
+      <tr><td>Remote must be open to</td><td><code>Europe</code> or <code>Worldwide</code></td></tr>
+      <tr><td>Max job age (days)</td><td>Hide older jobs, e.g. <code>30</code></td></tr>
+    </table>
+    <p><b>Companies tab</b>: delete the example rows and add one company per row
+      (name and website).</p>
+    <div class="hint"><b>Tip:</b> also paste the company's <b>careers page link</b> in column C if you can.
+      To find it, go to the company website, click <i>Careers</i> or <i>Jobs</i> (often at the bottom of the page),
+      then <i>See all jobs</i>, and copy the address once you see the list of jobs. With that link JobScout finds the jobs every time.
+      Without it, JobScout tries to find the list on its own.</div>
+  </div>
+
+  <div class="step" data-step="share">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>4. Share your sheet (view only)</h3><span class="time">1 min</span></div>
+    <ol>
+      <li>In your copy, click <b>Share</b> (top right).</li>
+      <li>Under <b>General access</b>, change "Restricted" to <b>Anyone with the link</b>.</li>
+      <li>Check that the role says <b>Viewer</b>, not Editor.</li>
+      <li>Click <b>Copy link</b>, then <b>Done</b>.</li>
+    </ol>
+    <label class="field">Paste your sheet link here to test it:
+      <input id="sheet-url" placeholder="https://docs.google.com/spreadsheets/d/..." autocomplete="off">
+    </label>
+    <button type="button" class="btn secondary" id="sheet-check">Check my sheet</button>
+    <div class="result" id="sheet-result"></div>
+    <div class="hint">Is this safe? Your sheet doesn't become public or searchable. Only people who have
+      this exact link can <b>view</b> it, and nobody can edit it. The test above runs in your browser and only talks to Google.
+      In step 6 you save the link as a hidden setting, so it never appears on your page.</div>
+  </div>
+
+  <h2>Part 2 - Your JobScout on GitHub</h2>
+  <div class="step" data-step="repo">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>5. Create your own JobScout</h3><span class="time">2 min</span></div>
+    <ol>
+      <li>Sign in to GitHub and click the button below.</li>
+      <li><b>Repository name:</b> <code>jobscout</code> (or any name you like; it becomes part of your page address).</li>
+      <li>Choose <b>Public</b>. Free accounts can only publish pages from public projects. The project
+        only holds the program, not your companies or preferences.</li>
+      <li>Click <b>Create repository</b>.</li>
+    </ol>
+    <a class="btn" id="use-template" target="_blank" rel="noopener">Use the JobScout template</a>
+    <p>Then type your GitHub username and the name you chose. The next buttons will take you straight to the right pages.</p>
+    <div class="row">
+      <label class="field">GitHub username <input id="gh-user" placeholder="e.g. maria-rossi" autocomplete="off"></label>
+      <label class="field">Repository name <input id="gh-repo" value="jobscout" autocomplete="off"></label>
+    </div>
+  </div>
+
+  <div class="step" data-step="secret">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>6. Save your sheet link as a secret</h3><span class="time">1 min</span></div>
+    <p>A <b>secret</b> is a hidden setting. Once you save it, nobody can see it again, not even you.</p>
+    <ol>
+      <li>Click the button below. It opens your project's <i>Settings, Secrets and variables, Actions</i> page.</li>
+      <li><b>Name:</b> <code>SHEET_URL</code> <button type="button" class="btn secondary" id="copy-name" style="margin:0 0 0 6px;padding:2px 8px">Copy</button></li>
+      <li><b>Secret:</b> paste your sheet link from step 4.</li>
+      <li>Click <b>Add secret</b>.</li>
+    </ol>
+    <a class="btn needs-repo" data-path="/settings/secrets/actions/new" target="_blank" rel="noopener">Open the "New secret" page</a>
+  </div>
+
+  <div class="step" data-step="scan">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>7. Run your first scan</h3><span class="time">5-10 min</span></div>
+    <ol>
+      <li>Click the button below. If GitHub shows <i>"I understand my workflows, go ahead and enable them"</i>, click it,
+        then click the button below again.</li>
+      <li>Click <b>Run workflow</b> on the right, then the green <b>Run workflow</b> button.</li>
+      <li>Wait. A yellow dot means it's running; a <b>green tick</b> means it's done.</li>
+    </ol>
+    <a class="btn needs-repo" data-path="/actions/workflows/scan.yml" target="_blank" rel="noopener">Open the Scan page</a>
+  </div>
+
+  <div class="step" data-step="pages">
+    <div class="step-head"><input type="checkbox" aria-label="Done"><h3>8. Turn on your page</h3><span class="time">2 min</span></div>
+    <ol>
+      <li>Click the button below (Settings, Pages).</li>
+      <li>Under <b>Source</b>, choose <b>Deploy from a branch</b>.</li>
+      <li>Under <b>Branch</b>, choose <b>gh-pages</b> and <b>/ (root)</b>, then click <b>Save</b>.
+        If gh-pages isn't in the list yet, the first scan hasn't finished.</li>
+      <li>After 1-2 minutes your page is live. Bookmark it on your phone and laptop.</li>
+    </ol>
+    <a class="btn needs-repo" data-path="/settings/pages" target="_blank" rel="noopener">Open the Pages settings</a>
+    <a class="btn secondary needs-repo" data-page="1" target="_blank" rel="noopener">Open my job board</a>
+  </div>
+
+  <h2>After setup</h2>
+  <details><summary>How do I change what I'm looking for?</summary>
+    <p>Edit your Google Sheet: roles, places or companies. The next hourly scan uses the new settings.
+      You don't need to go back to GitHub.</p></details>
+  <details><summary>Something isn't working</summary>
+    <table>
+      <tr><th>What you see</th><th>What to do</th></tr>
+      <tr><td>A red cross on the Scan page, "Could not read the sheet"</td><td>The sheet isn't shared. Redo step 4.</td></tr>
+      <tr><td>"SHEET_URL is missing"</td><td>The secret name is wrong. Redo step 6 and type <code>SHEET_URL</code> exactly.</td></tr>
+      <tr><td>Your page shows "404"</td><td>The first scan hasn't finished yet, or step 8 was skipped.</td></tr>
+      <tr><td>A company never shows jobs</td><td>Open the latest scan run: the summary lists companies JobScout couldn't find.
+        Add their careers page link in your sheet.</td></tr>
+    </table></details>
+  <details><summary>Who can see what?</summary>
+    <table>
+      <tr><th>What</th><th>Who can see it</th></tr>
+      <tr><td>Your settings sheet</td><td>Only people who have its link (view only)</td></tr>
+      <tr><td>The sheet link</td><td>Nobody. It's stored as a hidden secret.</td></tr>
+      <tr><td>Your GitHub project</td><td>Anyone, but it only holds the program, not your data</td></tr>
+      <tr><td>Your job page</td><td>Anyone who has its address. It only shows matching jobs, and it asks search engines not to list it.</td></tr>
+    </table></details>
+  <details><summary>Does it cost anything? How do I pause it?</summary>
+    <p>It's free: it uses the free plans of GitHub and Google. To pause it, open the Scan page (step 7), click the
+      <b>...</b> menu at the top right and choose <b>Disable workflow</b>.</p></details>
+</div>
+
+<script>
+  // ---- Links that are the same for everyone ----
+  const TEMPLATE_SHEET = "13m_zl9jKkAHnLnwL4PRx2R84i5jqD4YlsbCJo3EkAJA";
+  const TEMPLATE_REPO = "BarboneBarbaPersonal/JobScout";
+  document.getElementById("sheet-copy").href =
+    `https://docs.google.com/spreadsheets/d/${TEMPLATE_SHEET}/copy`;
+  document.getElementById("use-template").href = `https://github.com/${TEMPLATE_REPO}/generate`;
+
+  // ---- Remember progress in this browser only (works without it, too) ----
+  const KEY = "jobscout-setup";
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { saved = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} }
+
+  // ---- Step checkboxes and the progress bar ----
+  const steps = [...document.querySelectorAll(".step")];
+  function updateProgress() {
+    const done = steps.filter(s => s.querySelector("input[type=checkbox]").checked).length;
+    document.getElementById("bar").style.width = `${(done / steps.length) * 100}%`;
+    document.getElementById("progress-text").textContent =
+      done === steps.length ? "All done. Enjoy your job board!" : `${done} of ${steps.length} steps done`;
+  }
+  steps.forEach(step => {
+    const box = step.querySelector("input[type=checkbox]");
+    box.checked = !!(saved.done || {})[step.dataset.step];
+    step.classList.toggle("done", box.checked);
+    box.addEventListener("change", () => {
+      saved.done = { ...(saved.done || {}), [step.dataset.step]: box.checked };
+      step.classList.toggle("done", box.checked);
+      save(); updateProgress();
+    });
+  });
+  updateProgress();
+
+  // ---- Direct links into the user's own GitHub project ----
+  const userInput = document.getElementById("gh-user");
+  const repoInput = document.getElementById("gh-repo");
+  if (saved.user) userInput.value = saved.user;
+  if (saved.repo) repoInput.value = saved.repo;
+  function updateRepoLinks() {
+    const user = userInput.value.trim().replace(/^@/, "");
+    const repo = repoInput.value.trim() || "jobscout";
+    saved.user = user; saved.repo = repo; save();
+    document.querySelectorAll(".needs-repo").forEach(link => {
+      if (!user) {
+        link.removeAttribute("href");
+        link.setAttribute("aria-disabled", "true");
+        link.title = "Type your GitHub username in step 5 first";
+        return;
+      }
+      link.removeAttribute("aria-disabled");
+      link.title = "";
+      link.href = link.dataset.page
+        ? `https://${user.toLowerCase()}.github.io/${repo}/`
+        : `https://github.com/${user}/${repo}${link.dataset.path}`;
+    });
+  }
+  userInput.addEventListener("input", updateRepoLinks);
+  repoInput.addEventListener("input", updateRepoLinks);
+  updateRepoLinks();
+
+  // ---- "Copy" button for the secret name ----
+  document.getElementById("copy-name").addEventListener("click", async e => {
+    try { await navigator.clipboard.writeText("SHEET_URL"); e.target.textContent = "Copied"; }
+    catch (err) { e.target.textContent = "Select and copy it by hand"; }
+  });
+
+  // ---- Check the sheet: can Google give us both tabs without a login? ----
+  async function readTab(id, tab) {
+    const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(tab)}`;
+    const response = await fetch(url);
+    const type = response.headers.get("Content-Type") || "";
+    if (!response.ok || !type.includes("text/csv")) throw new Error("not shared");
+    return response.text();
+  }
+  document.getElementById("sheet-check").addEventListener("click", async () => {
+    const result = document.getElementById("sheet-result");
+    const match = document.getElementById("sheet-url").value.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/);
+    result.className = "result";
+    if (!match) {
+      result.className = "result bad";
+      result.textContent = "This doesn't look like a Google Sheets link. Copy it again with the Share button.";
+      return;
+    }
+    if (match[1] === TEMPLATE_SHEET) {
+      result.className = "result bad";
+      result.textContent = "This is the template, not your copy. Open your copy (step 2) and share that one.";
+      return;
+    }
+    result.textContent = "Checking...";
+    try {
+      const prefs = await readTab(match[1], "Preferences");
+      const companies = await readTab(match[1], "Companies");
+      // Count the non-empty company rows (first line is the header)
+      const count = companies.trim().split("\n").slice(1).filter(l => l.replace(/[",\s]/g, "")).length;
+      if (!/core roles/i.test(prefs)) throw new Error("tabs");
+      result.className = "result ok";
+      result.textContent = `Your sheet is ready: preferences found, ${count} companies. Go on to step 5.`;
+    } catch (err) {
+      result.className = "result bad";
+      result.textContent = err.message === "tabs"
+        ? "JobScout can read the sheet, but the Preferences or Companies tab is missing or renamed. Keep the tab names from the template."
+        : "JobScout can't read this sheet yet. Check step 4: it must say 'Anyone with the link' and 'Viewer'.";
+    }
+  });
+</script>
+</body>
+</html>
