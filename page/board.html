@@ -385,8 +385,23 @@
     var body = "JobScout id: " + job.id + "\nLink: " + job.url + "\nCompany: " + job.company +
                "\nTitle: " + job.title + "\nLocation: " + job.location;
     api("/issues", { method: "POST", body: JSON.stringify({ title: job.company + " - " + job.title, body: body }) })
-      .then(function (issue) { PRIV.issues[job.id] = issue.number; renderBoard(); })
-      .catch(function (error) { button.disabled = false; button.textContent = "Like"; alert("Like failed: " + error.message); });
+      .then(function (issue) {
+        if (!issue) throw new Error("GitHub API 404");
+        PRIV.issues[job.id] = issue.number;
+        renderBoard();
+      })
+      .catch(function (error) { button.disabled = false; button.textContent = "Like"; alert("Like failed. " + keyProblem(error)); });
+  }
+
+  // Plain-language reason for a failed GitHub call, with what to do about it.
+  function keyProblem(error) {
+    var code = (/GitHub API (\d+)/.exec(error.message) || [])[1];
+    var fix = " Create a new key on GitHub (Settings > Developer settings > Fine-grained tokens, repository " +
+              CV_REPO + ", permissions Contents: read and Issues: read and write), then paste it under CV insights.";
+    if (code === "401") return "Your access key has expired or is wrong." + fix;
+    if (code === "403") return "Your access key is not allowed to create issues." + fix;
+    if (code === "404") return "Your access key cannot see the " + CV_REPO + " repo." + fix;
+    return "Could not reach GitHub (" + error.message + "). Check your connection and try again.";
   }
 
   // While a job is being analyzed, check for its result every 30 seconds.
@@ -516,7 +531,8 @@
       if (hidden.length !== before) saveHiddenRemote(); // this device had hides the shared list lacked
       renderBoard();
     }).catch(function (error) {
-      status.textContent = "Could not connect (" + error.message + "). Check the key's repo access and permissions.";
+      status.textContent = "Could not connect. " + keyProblem(error);
+      togglePrivateBox(true); // show the problem right away, not only on the next Like
     });
   }
 
