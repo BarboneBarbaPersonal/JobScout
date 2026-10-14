@@ -226,3 +226,23 @@ def revolut(params, hints):
         jobs.append(job(f"revolut/{p['id']}", p.get("text"),
                         f"https://www.revolut.com/careers/position/{slug}-{p['id']}/", location))
     return jobs
+
+
+def bendingspoons(params, hints):
+    """Bending Spoons' own careers site: all jobs are written into the page (Next.js data)."""
+    page = util.get("https://jobs.bendingspoons.com/").text
+    found = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', page, re.S)
+    positions = json.loads(found.group(1))["props"]["pageProps"]["list"] if found else []
+    jobs = []
+    for p in positions:
+        if p.get("status", "active") != "active":
+            continue
+        places = [office.get("title", "") for office in p.get("officeLocations") or []]
+        if p.get("availableAsRemoteInDefaultCountries"):
+            places.append("Remote")
+        description = util.html_to_text((p.get("highLevelDescription") or "")
+                                        + "".join(p.get("responsibilities") or []))
+        jobs.append(job(f"bendingspoons/{p['id']}", p.get("jobTitle"),
+                        f"https://jobs.bendingspoons.com/positions/{p['id']}", "; ".join(places),
+                        description=description))
+    return jobs

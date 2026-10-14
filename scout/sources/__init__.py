@@ -38,6 +38,7 @@ READERS = {
     "dynatrace": enterprise.dynatrace,
     "deel": enterprise.deel,
     "revolut": enterprise.revolut,
+    "bendingspoons": enterprise.bendingspoons,
 }
 
 DETAILS = {

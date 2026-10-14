@@ -50,6 +50,7 @@ KNOWN = [
     (r"aiven\.io", "htmllinks", {"url": "https://aiven.io/careers/job", "link": r"/careers/job/[0-9]+",
                                  "text_location": "true"}),
     (r"jobs\.sap\.com", "successfactors", {"host": "jobs.sap.com"}),
+    (r"bendingspoons\.com", "bendingspoons", {}),
 ]
 
 
