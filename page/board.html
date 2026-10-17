@@ -72,7 +72,6 @@
   .like:disabled { opacity: .7; cursor: default; }
 
   /* CV insights (private) */
-  .private-toggle { margin-left: auto; }
   .private-box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; }
   .private-box p { margin: 0 0 8px; }
   .private-row { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -92,15 +91,33 @@
   .kw-missing { font-size: 12px; border: 1px solid var(--warn); color: var(--warn); border-radius: 999px; padding: 0 8px; }
   .card.hidden { opacity: .45; }
   .empty { color: var(--muted); font-size: 13px; }
+  /* Account (log in with an email link) */
+  .account-toggle { margin-left: auto; }
+  .account-box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; }
+  .account-box p { margin: 0 0 8px; }
 </style>
+<!-- Login and private data (hidden jobs, applications): Supabase. The key below is the
+     public "publishable" key; database rules let each logged-in user see only their own rows. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1 id="page-title">Job<span>Scout</span></h1>
     <span class="sub" id="updated"></span>
-    <button type="button" class="chip private-toggle" id="private-toggle">CV insights: off</button>
+    <button type="button" class="chip account-toggle" id="account-toggle">Log in</button>
+    <button type="button" class="chip" id="private-toggle">CV insights: off</button>
   </header>
+  <!-- Log in once per device with a link sent by email; hidden jobs then sync on all devices -->
+  <section class="account-box" id="account-box" hidden>
+    <p id="account-text"></p>
+    <div class="private-row" id="account-form">
+      <input type="email" id="account-email" placeholder="you@example.com" autocomplete="email">
+      <button type="button" class="chip" id="account-send">Send login link</button>
+    </div>
+    <button type="button" class="chip" id="account-logout" hidden>Log out</button>
+    <p class="private-status" id="account-status"></p>
+  </section>
   <!-- Private access: a GitHub key limited to the private jobscout-cv repo, kept in this browser only -->
   <section class="private-box" id="private-box" hidden>
     <p>Paste your GitHub access key for the private <b>jobscout-cv</b> repo. It is stored only in this
@@ -154,7 +171,6 @@
   try { hidden = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { hidden = []; }
   function saveHidden() {
     try { localStorage.setItem(KEY, JSON.stringify(hidden)); } catch (e) {}
-    saveHiddenRemote(); // with CV insights connected, also keep it in the private repo (all devices)
   }
 
   // ---- stats bar ----
@@ -238,11 +254,13 @@
       var index = hidden.indexOf(job.id);
       if (index === -1) { hidden.push(job.id); } else { hidden.splice(index, 1); }
       saveHidden();
-      if (!PRIV.cv) {
-        // Not connected: the hide lives only in this browser and can be wiped. Say so.
-        togglePrivateBox(true);
-        document.getElementById("private-status").textContent =
-          "Hidden on this browser only. Connect CV insights to keep hidden jobs on all devices.";
+      if (USER) {
+        saveHiddenToDatabase(job.id, index === -1);
+      } else {
+        // Not logged in: the hide lives only in this browser and can be wiped. Say so.
+        toggleAccountBox(true);
+        document.getElementById("account-status").textContent =
+          "Hidden on this browser only. Log in to keep hidden jobs on all your devices.";
       }
       renderBoard();
     });
@@ -463,32 +481,92 @@
   }
 
   // ---- Hidden jobs, shared across devices ----
-  // Stored as the body of one closed issue in the private repo ("JobScout hidden jobs"),
-  // one job id per line. Editing an issue body sends no notification emails.
-  var HIDDEN_TITLE = "JobScout hidden jobs";
-  var hiddenTimer = null;
-  function hiddenBody() { return "Hidden jobs (managed by the JobScout dashboard):\n" + hidden.join("\n"); }
-  function readHiddenBody(body) {
-    return (body || "").split("\n").slice(1).map(function (line) { return line.trim(); })
-      .filter(function (line) { return line; });
+  // ---- Account and private data (Supabase) ----
+  var SUPABASE_URL = "https://pffopwzydbjdblojhcwm.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_qs5yz6gDAqx3WGJ2qzy_mw_NtOgQzKS";
+  var db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  var USER = null;
+  var HIDDEN_TITLE = "JobScout hidden jobs"; // old storage, only read once to move its list over
+
+  function toggleAccountBox(show) {
+    var box = document.getElementById("account-box");
+    box.hidden = show === undefined ? !box.hidden : !show;
   }
-  function saveHiddenRemote() {
-    if (!PRIV.token || !PRIV.cv) return;
-    clearTimeout(hiddenTimer);
-    // Wait a second so several quick clicks become one save.
-    hiddenTimer = setTimeout(function () {
-      var request = PRIV.hiddenIssue
-        ? api("/issues/" + PRIV.hiddenIssue, { method: "PATCH", body: JSON.stringify({ body: hiddenBody() }) })
-        : api("/issues", { method: "POST", body: JSON.stringify({ title: HIDDEN_TITLE, body: hiddenBody() }) })
-            .then(function (issue) {
-              PRIV.hiddenIssue = issue.number;
-              return api("/issues/" + issue.number, { method: "PATCH", body: JSON.stringify({ state: "closed" }) });
-            });
-      request.catch(function (error) {
-        document.getElementById("private-status").textContent = "Could not save hidden jobs (" + error.message + ").";
+
+  function showAccount() {
+    document.getElementById("account-toggle").textContent = USER ? "Logged in" : "Log in";
+    document.getElementById("account-form").hidden = !!USER;
+    document.getElementById("account-logout").hidden = !USER;
+    document.getElementById("account-text").textContent = USER
+      ? "Logged in as " + USER.email + ". Hidden jobs sync on all your devices."
+      : "Log in to keep hidden jobs (and later your applications) in sync on all your devices. " +
+        "Type your email and open the link we send you on this device.";
+  }
+
+  // Save one hide or unhide in the database.
+  function saveHiddenToDatabase(jobId, isHidden) {
+    var request = isHidden
+      ? db.from("hidden_jobs").upsert({ job_id: jobId }, { onConflict: "user_id,job_id" })
+      : db.from("hidden_jobs").delete().eq("job_id", jobId);
+    request.then(function (result) {
+      if (result.error) document.getElementById("account-status").textContent = "Could not save: " + result.error.message;
+    });
+  }
+
+  // Database list + this browser's list, so nothing hidden on any device is lost.
+  function syncHidden() {
+    if (!USER) return;
+    db.from("hidden_jobs").select("job_id").then(function (result) {
+      if (result.error) { document.getElementById("account-status").textContent = "Could not load: " + result.error.message; return; }
+      var remote = result.data.map(function (row) { return row.job_id; });
+      var missing = hidden.filter(function (id) { return remote.indexOf(id) === -1; });
+      hidden = remote.concat(missing);
+      saveHidden();
+      if (missing.length) {
+        db.from("hidden_jobs").upsert(missing.map(function (id) { return { job_id: id }; }),
+                                      { onConflict: "user_id,job_id" }).then(function () {});
+      }
+      renderBoard();
+    });
+  }
+
+  function startAccount() {
+    showAccount();
+    if (!db) { document.getElementById("account-toggle").hidden = true; return; }
+    // Hides and unhides made on another device arrive here while the page is open.
+    db.channel("hidden-jobs").on("postgres_changes", { event: "*", schema: "public", table: "hidden_jobs" },
+      function (change) {
+        var id = (change.new && change.new.job_id) || (change.old && change.old.job_id);
+        var index = hidden.indexOf(id);
+        if (change.eventType === "DELETE" && index !== -1) hidden.splice(index, 1);
+        if (change.eventType === "INSERT" && index === -1) hidden.push(id);
+        saveHidden();
+        renderBoard();
+      }).subscribe();
+    // Coming back to the page (e.g. switching apps on the phone) also refreshes the list.
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) syncHidden(); });
+    db.auth.onAuthStateChange(function (event, session) {
+      USER = session ? session.user : null;
+      showAccount();
+      syncHidden();
+    });
+  }
+
+  document.getElementById("account-toggle").addEventListener("click", function () { toggleAccountBox(); });
+  document.getElementById("account-send").addEventListener("click", function () {
+    var email = document.getElementById("account-email").value.trim();
+    var status = document.getElementById("account-status");
+    if (!email) { status.textContent = "Type your email first."; return; }
+    status.textContent = "Sending...";
+    db.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + location.pathname } })
+      .then(function (result) {
+        status.textContent = result.error ? "Could not send: " + result.error.message
+          : "Check your inbox and open the link on this device.";
       });
-    }, 1000);
-  }
+  });
+  document.getElementById("account-logout").addEventListener("click", function () {
+    db.auth.signOut().then(function () { location.reload(); });
+  });
 
   // Load everything private: CV, term list, job descriptions, liked jobs and results.
   function connect() {
@@ -508,25 +586,23 @@
       var remoteHidden = null;
       (all[2] || []).forEach(function (issue) {
         if (issue.title === HIDDEN_TITLE) {
-          PRIV.hiddenIssue = issue.number;
           remoteHidden = readHiddenBody(issue.body);
           return;
         }
         var match = /JobScout id:\s*(\S+)/.exec(issue.body || "");
         if (match && !PRIV.issues[match[1]]) PRIV.issues[match[1]] = issue.number;
       });
-      // Merge this device's hidden jobs with the shared list, then save the union.
-      var before = (remoteHidden || []).length;
-      hidden = (remoteHidden || []).concat(hidden.filter(function (id) { return (remoteHidden || []).indexOf(id) === -1; }));
-      try { localStorage.setItem(KEY, JSON.stringify(hidden)); } catch (e) {}
+      // One-time move: the old issue's hidden jobs join this list, then go to the database.
+      (remoteHidden || []).forEach(function (id) { if (hidden.indexOf(id) === -1) hidden.push(id); });
+      saveHidden();
+      syncHidden();
       (all[3] || []).forEach(function (file) {
         if (/\.json$/.test(file.name)) PRIV.results[file.name.replace(/\.json$/, "")] = true;
       });
       all[4].forEach(function (job) { if (job.description) PRIV.descriptions[job.id] = job.description; });
       status.textContent = "Connected: CV loaded, " + Object.keys(PRIV.issues).length + " liked jobs, " +
-        hidden.length + " hidden jobs (shared across devices).";
+        hidden.length + " hidden jobs.";
       updatePrivateToggle();
-      if (hidden.length !== before) saveHiddenRemote(); // this device had hides the shared list lacked
       renderBoard();
     }).catch(function (error) {
       status.textContent = "Could not connect. " + keyProblem(error);
@@ -564,6 +640,7 @@
     renderBoard();
   });
   renderBoard();
+  startAccount();
   connect();
 </script>
 </body>
