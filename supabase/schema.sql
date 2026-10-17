@@ -53,3 +53,14 @@ do $$ begin
   alter publication supabase_realtime add table public.hidden_jobs, public.applications;
 exception when duplicate_object then null;
 end $$;
+
+-- My CV (plain text), for the match % and the "Ask Claude" prompt. One row per user.
+create table if not exists public.profile (
+  user_id    uuid primary key default auth.uid() references auth.users on delete cascade,
+  cv_text    text not null default '',
+  updated_at timestamptz not null default now()
+);
+alter table public.profile enable row level security;
+drop policy if exists "own rows" on public.profile;
+create policy "own rows" on public.profile
+  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());

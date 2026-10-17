@@ -54,7 +54,7 @@ def build(site, prefs, matches, run, now=None):
                           "fit": prefs.fit_score(job["title"], job["location"])})
     places = [label for label, _, _ in prefs.locations]
     data = {"jobs": page_jobs, "stats": stats(page_jobs, runs, places, now),
-            "places": places, "page_title": prefs.page_title, "cv_repo": prefs.cv_repo,
+            "places": places, "page_title": prefs.page_title,
             "new_for_hours": NEW_FOR_HOURS, "max_age_days": prefs.max_age_days}
 
     (site / "matches.json").write_text(json.dumps(jobs, indent=1, ensure_ascii=False), encoding="utf-8")

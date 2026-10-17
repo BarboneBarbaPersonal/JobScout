@@ -18,7 +18,6 @@ class Preferences:
         if not self.core and not self.also:
             raise ValueError("Preferences: fill in 'Core roles' (the job titles you want).")
         self.max_age_days = _number(settings.get("max job age (days)"), 30)
-        self.cv_repo = settings.get("cv add-on repo", "").strip()  # optional, advanced
 
         # Locations, best first: "Location 1 (best)", "Location 2", ... (any number).
         rows = []
