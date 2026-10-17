@@ -8,21 +8,23 @@ One place to follow every application from "interesting" to "closed": the job bo
 plus a private Applications view, kept up to date largely by reading Gmail.
 
 ## Decisions (agreed 2026-10-17)
-- Managed **inside the job board** (private view, only when the CV key is connected).
-- Data lives in the **private jobscout-cv repo**; the public page never contains it.
+- Managed **inside the job board** (private view, only after logging in).
+- Private data lives in **Supabase** (free Postgres database, decided 2026-10-17): email login
+  on every device, row-level security so only Andrea can read or write, live sync.
+  The public page and matches.json never contain it. jobscout-cv keeps only the CV text.
 - Tracks a job **only when Andrea actually applies**: an **"I applied"** button on each job card,
   plus "Add application" for jobs found elsewhere (LinkedIn, referral, recruiter).
 - The slow Gemma CV analysis is removed. Each card instead shows the instant keyword match
   and an **"Ask Claude"** button that copies CV + job description as a ready prompt.
-- All private data (applications, hidden jobs) lives in **one file** in the private repo:
-  `tracker.json` (no more issues). Devices connect once with a "connect this device" link.
+- Applications and hidden jobs are Supabase tables (replacing the Like issues and the
+  "hidden jobs" issue). Existing hidden jobs are migrated.
 - **Gmail is read automatically** to detect replies; reminders also by email.
 
 ## Stages
 Applied -> Interviewing -> Offer -> Closed
 Closed always has a reason: Rejected, Withdrawn, No answer, Accepted.
 
-## One application = one entry in tracker.json
+## One application = one row in the `applications` table
 "I applied" creates one from a job card; "Add application" creates one for any link.
 Fields:
 - job: id (if scanned), link, company, title, location, source (scan / LinkedIn / referral / other)
@@ -41,9 +43,10 @@ Applications stay when the company closes the job posting.
 - "Add application" form (link, company, title).
 - Overview strip: applied, answered %, interviewing, offers, median days to first answer.
 
-## Gmail check (daily, GitHub Actions in jobscout-cv)
-- Reads new emails via IMAP with a **Gmail app password** stored as a secret in
-  jobscout-cv (created and pasted by Andrea; never in code, never on the page).
+## Gmail check (daily, GitHub Actions)
+- Reads new emails via IMAP with a **Gmail app password** stored as a GitHub secret
+  (created and pasted by Andrea; never in code, never on the page). Writes to Supabase
+  with a service key that is also only a GitHub secret.
 - Matches an email to an application by company name / domain or job board sender
   (greenhouse, lever, ashby, workday, ...).
 - Classifies by keywords, no AI: received ("thank you for applying"), rejection
@@ -59,8 +62,12 @@ Applications stay when the company closes the job posting.
 - Delivered as one short daily email to Andrea (same app password), only on days
   with something due, and highlighted on the board.
 
+## Way of working
+Backlog = GitHub issues; one branch + pull request per issue, with tests and screenshots;
+Andrea merges. Tests run automatically on every pull request.
+
 ## Phases
-0. Simplify (agreed): clean-up, tracker.json + device link, Ask Claude instead of Gemma.
+0. Simplify (agreed): clean-up (done), Supabase + login + migrate hidden jobs, Ask Claude instead of Gemma.
 1. Pipeline: I applied button, stages, fields, Applications view, Add application.
 2. Follow-ups: next step + due date, overdue highlight, default 7-day rule.
 3. Gmail: daily read + classify + update/suggest; daily reminder email.
