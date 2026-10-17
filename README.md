@@ -1,34 +1,32 @@
-# JobScout - your personal job board
+# JobScout (Andrea's)
 
-JobScout checks the careers pages of the companies **you** choose every hour, keeps only the
-jobs that fit **your** preferences, and shows them on your own web page.
-It's free, and you don't need to write any code.
+My personal job board: every hour it checks the careers pages of the companies in my
+Google Sheet and publishes the jobs that fit my preferences.
 
-## Get your own (about 15 minutes)
-
-**Follow the step-by-step guide:
-[barbonebarbapersonal.github.io/JobScout/setup.html](https://barbonebarbapersonal.github.io/JobScout/setup.html)**
-
-In short:
-1. Copy the [template Google Sheet](https://docs.google.com/spreadsheets/d/13m_zl9jKkAHnLnwL4PRx2R84i5jqD4YlsbCJo3EkAJA/copy),
-   fill in **Preferences** (roles, languages, locations) and **Companies**, then share it as
-   "Anyone with the link: Viewer".
-2. Click **Use this template** (top of this page) to create your own copy of this project (Public).
-3. In your copy, go to **Settings > Secrets and variables > Actions > New repository secret**:
-   name `SHEET_URL`, value = your sheet link.
-4. **Actions > Scan > Run workflow**, then **Settings > Pages**: deploy from branch `gh-pages`.
-5. Your page: `https://<your-username>.github.io/<repo-name>/`
-
-## Privacy - who can see what
-
-| What | Who can see it |
+## My links
+| What | Where |
 |---|---|
-| Your settings sheet | Only people who have its link (view only) |
-| The sheet link | Nobody. It's stored as a hidden secret. |
-| Your GitHub project | Anyone, but it only holds the program, not your data |
-| Your job page | Anyone who has its address. It only shows matching jobs, and it asks search engines not to list it. |
+| Job board | https://barbonebarbapersonal.github.io/JobScout/ |
+| Scan runs and their summary | https://github.com/BarboneBarbaPersonal/JobScout/actions |
+| My settings sheet (companies, roles, places) | Private: linked in my Notion "Job Scout" page and saved here as the `SHEET_URL` secret |
+| Private data (CV, applications) | https://github.com/BarboneBarbaPersonal/jobscout-cv (private) |
 
----
+The shareable version for other people is a separate project:
+https://github.com/BarboneBarbaPersonal/JobScout-Template
 
-*Open source, MIT license. JobScout reads the public job lists that companies publish on their
-careers pages. It doesn't use LinkedIn or any paid service.*
+## How it works
+- `scout/` reads the sheet, finds each company's job board, reads all open jobs, keeps the
+  ones that pass my rules (`scout/prefs.py`) and builds the page (`scout/board.py`, `page/board.html`).
+- `.github/workflows/scan.yml` runs it every hour and publishes to the `gh-pages` branch.
+
+## Everyday changes
+- Add a company or change roles/places: edit the sheet. The next hourly scan picks it up.
+- A company shows up in the scan summary as "without a job board found": paste the link of
+  its job list in column C of the Companies tab.
+
+## Run it on my PC
+```bash
+pip install -r requirements.txt
+python -m unittest
+```
+`SHEET_URL=<sheet link> python -m scout.main site` builds the page into `site/`.

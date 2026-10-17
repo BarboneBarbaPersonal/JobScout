@@ -3,11 +3,10 @@
 The board is exactly this scan's matches (closed jobs disappear at once); a job
 we already knew keeps the date we first found it. Files written to `site/`:
 index.html (the page), matches.json (jobs, read by the CV add-on), runs.json
-(scan history for the stats bar), setup.html (the "get your own" guide).
+(scan history for the stats bar).
 """
 
 import json
-import shutil
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -64,7 +63,6 @@ def build(site, prefs, matches, run, now=None):
     # Embedded as JSON; "</" is escaped so job text can never close the <script> tag.
     embedded = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     (site / "index.html").write_text(template.replace("{{DATA}}", embedded), encoding="utf-8")
-    shutil.copyfile(PAGE_DIR / "setup.html", site / "setup.html")
     return jobs
 
 

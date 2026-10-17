@@ -26,8 +26,7 @@ def main():
     site = Path(sys.argv[1] if len(sys.argv) > 1 else "site")
     source = os.environ.get("SHEET_URL", "").strip()
     if not source:
-        sys.exit("SHEET_URL is missing. Add it under Settings > Secrets and variables > Actions "
-                 "(see setup.html, step 6).")
+        sys.exit("SHEET_URL is missing. Add it under Settings > Secrets and variables > Actions.")
     try:
         prefs = Preferences(sheet.read_preferences(source))
         companies = sheet.read_companies(source)

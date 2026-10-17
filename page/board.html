@@ -63,7 +63,6 @@
   .meta { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
   .place { font-size: 11px; font-weight: 700; margin-right: 4px; }
   .p0 { color: var(--p0); } .p1 { color: var(--p1); } .p2 { color: var(--p2); } .p3 { color: var(--p3); }
-  .own { margin-left: auto; font-size: 13px; color: var(--accent); }
   .tag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
   .bottom { margin-top: 6px; font-size: 12px; color: var(--muted); }
   .hide { font: inherit; font-size: 12px; color: var(--muted); background: none;
@@ -101,7 +100,6 @@
     <h1 id="page-title">Job<span>Scout</span></h1>
     <span class="sub" id="updated"></span>
     <button type="button" class="chip private-toggle" id="private-toggle">CV insights: off</button>
-    <a class="own" href="setup.html">Get your own JobScout</a>
   </header>
   <!-- Private access: a GitHub key limited to the private jobscout-cv repo, kept in this browser only -->
   <section class="private-box" id="private-box" hidden>
@@ -124,7 +122,7 @@
 </div>
 <script type="application/json" id="data">{{DATA}}</script>
 <script>
-  // All page data (jobs + stats) is embedded above by build_page.py.
+  // All page data (jobs + stats) is embedded above by scout/board.py.
   var DATA = JSON.parse(document.getElementById("data").textContent);
   var stats = DATA.stats;
   var filters = { place: "All", role: "All" };
