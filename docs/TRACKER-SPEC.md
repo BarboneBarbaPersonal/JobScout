@@ -1,7 +1,7 @@
 # JobScout Tracker - spec (Andrea's version only)
 
 Date: 2026-10-17. Status: agreed. Applies only to `BarboneBarbaPersonal/JobScout`
-plus the private `BarboneBarbaPersonal/jobscout-cv`. The shared JobScout-Template does not get it.
+plus its Supabase project. The shared JobScout-Template does not get it.
 
 ## Goal
 One place to follow every application from "interesting" to "closed": the job board
@@ -11,7 +11,8 @@ plus a private Applications view, kept up to date largely by reading Gmail.
 - Managed **inside the job board** (private view, only after logging in).
 - Private data lives in **Supabase** (free Postgres database, decided 2026-10-17): email login
   on every device, row-level security so only Andrea can read or write, live sync.
-  The public page and matches.json never contain it. jobscout-cv keeps only the CV text.
+  The public page and matches.json never contain it. The CV text is there too (table `profile`);
+  the old jobscout-cv repo is archived after the one-time move.
 - Tracks a job **only when Andrea actually applies**: an **"I applied"** button on each job card,
   plus "Add application" for jobs found elsewhere (LinkedIn, referral, recruiter).
 - The slow Gemma CV analysis is removed. Each card instead shows the instant keyword match
