@@ -70,13 +70,18 @@ def scan_with_engine(companies, prefs):
     except Exception as error:
         print(f"Engine failed, the old scanner reads every company: {error}")
         return [], companies
-    results = []
+    results, retry = [], set(unrecognized)
     for item in boards:
+        if not item["ok"]:
+            # e.g. Workday answering "too many requests": the old scanner opens far fewer pages.
+            print(f"Engine could not read {item['company']} ({item['error'][:120]}); old scanner retries it")
+            retry.update([item["company"]] + (item.get("also") or []))
+            continue
         jobs = item["jobs"]
         matches = [dict(job, company=item["company"]) for job in jobs if keep(job, prefs)]
-        results.append((item["company"], item["ok"], {"count": len(jobs), "ids": [j["id"] for j in jobs]},
-                        matches, item.get("error", "")))
-    return results, [c for c in companies if c["name"] in set(unrecognized)]
+        results.append((item["company"], True, {"count": len(jobs), "ids": [j["id"] for j in jobs]},
+                        matches, ""))
+    return results, [c for c in companies if c["name"] in retry]
 
 
 def keep(job, prefs):
