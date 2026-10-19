@@ -9,7 +9,7 @@ Google Sheet and publishes the jobs that fit my preferences.
 | Job board | https://barbonebarbapersonal.github.io/JobScout/ |
 | Scan runs and their summary | https://github.com/BarboneBarbaPersonal/JobScout/actions |
 | My settings sheet (companies, roles, places) | Private: linked in my Notion "Job Scout" page and saved here as the `SHEET_URL` secret |
-| Private data (CV, applications) | https://github.com/BarboneBarbaPersonal/jobscout-cv (private) |
+| Private data (CV, hidden jobs, applications) | Supabase project `jobscout` (log in on the board) |
 
 The shareable version for other people is a separate project:
 https://github.com/BarboneBarbaPersonal/JobScout-Template

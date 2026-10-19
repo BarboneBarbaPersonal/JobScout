@@ -68,33 +68,24 @@
   .hide { font: inherit; font-size: 12px; color: var(--muted); background: none;
           border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
   .hide:hover { color: var(--text); }
-  .like { text-decoration: none; margin-left: auto; color: var(--accent); border-color: var(--accent); }
-  .like:disabled { opacity: .7; cursor: default; }
 
-  /* CV insights (private) */
-  .private-box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; }
-  .private-box p { margin: 0 0 8px; }
   .private-row { display: flex; gap: 6px; flex-wrap: wrap; }
   .private-row input { flex: 1; min-width: 180px; font: inherit; padding: 4px 8px; border: 1px solid var(--line);
                        border-radius: 6px; background: var(--bg); color: var(--text); }
   .private-status { color: var(--muted); margin-top: 6px !important; }
   .draft { font-size: 12px; color: var(--muted); margin-top: 4px; }
   .draft .match { font-weight: 700; color: var(--text); }
-  .proposals { border-top: 1px dashed var(--line); margin-top: 8px; padding-top: 6px; font-size: 13px; }
-  .proposals h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); margin: 8px 0 4px; }
-  .proposals p { margin: 0 0 6px; overflow-wrap: anywhere; }
-  .proposals .quote { border-left: 3px solid var(--accent); padding-left: 8px; }
-  .proposals .lead::before { content: "▲ "; color: var(--ok); }
-  .proposals .shorten::before { content: "▼ "; color: var(--warn); }
-  .proposals .warn { color: var(--warn); font-size: 12px; }
-  .kw { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
-  .kw-missing { font-size: 12px; border: 1px solid var(--warn); color: var(--warn); border-radius: 999px; padding: 0 8px; }
   .card.hidden { opacity: .45; }
   .empty { color: var(--muted); font-size: 13px; }
   /* Account (log in with an email link) */
   .account-toggle { margin-left: auto; }
   .account-box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; }
   .account-box p { margin: 0 0 8px; }
+  .account-box textarea { width: 100%; min-height: 140px; font: 12px/1.4 ui-monospace, monospace; padding: 6px 8px;
+                          border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
+  .cv-area { margin: 8px 0; }
+  .ask { margin-left: auto; color: var(--accent); border-color: var(--accent); white-space: nowrap; }
+  .prompt-box { width: 100%; height: 120px; margin-top: 6px; font: 11px/1.4 ui-monospace, monospace; }
 </style>
 <!-- Login and private data (hidden jobs, applications): Supabase. The key below is the
      public "publishable" key; database rules let each logged-in user see only their own rows. -->
@@ -106,7 +97,6 @@
     <h1 id="page-title">Job<span>Scout</span></h1>
     <span class="sub" id="updated"></span>
     <button type="button" class="chip account-toggle" id="account-toggle">Log in</button>
-    <button type="button" class="chip" id="private-toggle">CV insights: off</button>
   </header>
   <!-- Log in once per device with a link sent by email; hidden jobs then sync on all devices -->
   <section class="account-box" id="account-box" hidden>
@@ -115,19 +105,13 @@
       <input type="email" id="account-email" placeholder="you@example.com" autocomplete="email">
       <button type="button" class="chip" id="account-send">Send login link</button>
     </div>
+    <div class="cv-area" id="cv-area" hidden>
+      <p>My CV (plain text). Used for the match % on each job and for Ask Claude. Only you can see it.</p>
+      <textarea id="cv-text" spellcheck="false"></textarea>
+      <button type="button" class="chip" id="cv-save">Save CV</button>
+    </div>
     <button type="button" class="chip" id="account-logout" hidden>Log out</button>
     <p class="private-status" id="account-status"></p>
-  </section>
-  <!-- Private access: a GitHub key limited to the private jobscout-cv repo, kept in this browser only -->
-  <section class="private-box" id="private-box" hidden>
-    <p>Paste your GitHub access key for the private <b>jobscout-cv</b> repo. It is stored only in this
-       browser and used to load your CV insights and send Likes. Nothing private is in this public page.</p>
-    <div class="private-row">
-      <input type="password" id="private-key" placeholder="github_pat_..." autocomplete="off">
-      <button type="button" class="chip" id="private-save">Connect</button>
-      <button type="button" class="chip" id="private-forget">Disconnect</button>
-    </div>
-    <p class="private-status" id="private-status"></p>
   </section>
   <section class="stats" id="stats"></section>
   <section class="filters">
@@ -240,14 +224,14 @@
     meta.appendChild(el("span", "tag", job.role === "core" ? "core" : "also"));
     node.appendChild(meta);
 
-    // Private CV draft (match % + missing keywords), only when the access key is set.
+    // Match % and missing keywords, only after login with a saved CV.
     var draft = draftLine(job);
     if (draft) node.appendChild(draft);
 
     var bottom = el("div", "bottom");
     var when = (job.posted_at ? "posted " + dayAge(job.posted_at) + " · " : "") + "found " + dayAge(job.found_at);
     bottom.appendChild(el("span", "", when));
-    bottom.appendChild(likeButton(job));
+    if (USER && CV) bottom.appendChild(askButton(job));
     var button = el("button", "hide", isHidden ? "Unhide" : "Hide");
     button.type = "button";
     button.addEventListener("click", function () {
@@ -266,7 +250,6 @@
     });
     bottom.appendChild(button);
     node.appendChild(bottom);
-    if (PRIV.open[job.id]) node.appendChild(proposalsPanel(job));
     return node;
   }
 
@@ -307,45 +290,45 @@
   }
 
   // =====================================================================
-  // CV insights (private). Everything below only runs with the access key
-  // the user saved in this browser; it talks to the private jobscout-cv
-  // repo through the GitHub API. The public page contains no CV data.
+  // CV help (after login): instant keyword match on each card, and
+  // "Ask Claude", which copies a ready prompt (job + CV) for the Claude app.
+  // The CV text lives in the private database (table "profile").
   // =====================================================================
-  // Optional add-on: only when the sheet names a CV repo ("CV add-on repo").
-  var CV_REPO = DATA.cv_repo || "";
-  var TOKEN_KEY = "jobscout-cv-token";
-  var PRIV = { token: "", cv: "", vocab: [], descriptions: {}, issues: {}, results: {}, open: {}, polling: {} };
-  try { PRIV.token = localStorage.getItem(TOKEN_KEY) || ""; } catch (e) {}
+  var CV = "";
+  var DESCRIPTIONS = {}; // job id -> description, from matches.json (public job ads)
 
-  // Call the GitHub API with the saved key. raw=true returns a file's plain text.
-  function api(path, options, raw) {
-    options = options || {};
-    options.headers = {
-      "Authorization": "Bearer " + PRIV.token,
-      "Accept": raw ? "application/vnd.github.raw+json" : "application/vnd.github+json"
-    };
-    return fetch("https://api.github.com/repos/" + CV_REPO + path, options).then(function (response) {
-      if (response.status === 404) return null;
-      if (!response.ok) throw new Error("GitHub API " + response.status);
-      return raw ? response.text() : response.json();
-    });
-  }
-
-  // Same file names as scripts/analyze.py safe_name().
-  function safeName(id) { return id.replace(/[^A-Za-z0-9._-]/g, "_"); }
+  // Terms that matter in Customer Success / TAM job ads. A job's match % is the share
+  // of the terms its description uses that the CV also mentions.
+  var VOCABULARY = ["customer success", "customer journey", "onboarding", "adoption", "renewal", "renewals",
+    "expansion", "upsell", "cross-sell", "churn", "retention", "nrr", "grr", "arr", "health score",
+    "success plan", "qbr", "ebr", "business review", "executive sponsor", "stakeholder management",
+    "escalation", "escalations", "value realization", "roi", "kpi", "okr", "nps", "csat",
+    "customer advocacy", "playbook", "playbooks", "enablement", "workshops", "account planning",
+    "forecasting", "negotiation", "digital customer success", "enterprise", "mid-market", "smb",
+    "strategic accounts", "portfolio", "trusted advisor", "technical account manager", "implementation",
+    "integration", "integrations", "migration", "api", "apis", "sql", "python", "javascript",
+    "kubernetes", "docker", "aws", "azure", "gcp", "cloud", "saas", "observability", "monitoring",
+    "security", "devops", "ci/cd", "terraform", "jenkins", "gitlab", "github", "linux", "networking",
+    "analytics", "dashboards", "troubleshooting", "technical demos", "poc", "proof of concept",
+    "solution design", "architecture", "professional services", "sla", "incident management", "itil",
+    "service delivery", "ai", "llm", "llms", "generative ai", "machine learning", "prompt engineering",
+    "agents", "ai agents", "automation", "salesforce", "gainsight", "totango", "churnzero", "hubspot",
+    "zendesk", "jira", "confluence", "tableau", "power bi", "looker", "excel", "slack",
+    "cross-functional", "change management", "project management", "communication",
+    "spanish", "italian", "english", "portuguese", "french", "german"];
 
   function termRegex(term) {
     return new RegExp("(?<![\\w-])" + term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w-])", "gi");
   }
 
-  // Draft for one job: share of the job's important terms that the CV mentions.
+  // Match for one job: share of the job's important terms that the CV mentions.
   function draft(job) {
-    var text = PRIV.descriptions[job.id];
-    if (!PRIV.cv || !text) return null;
+    var text = DESCRIPTIONS[job.id];
+    if (!CV || !text) return null;
     var found = [];
-    PRIV.vocab.forEach(function (term) {
+    VOCABULARY.forEach(function (term) {
       var hits = (text.match(termRegex(term)) || []).length;
-      if (hits) found.push({ term: term, count: hits, inCv: termRegex(term).test(PRIV.cv) });
+      if (hits) found.push({ term: term, count: hits, inCv: termRegex(term).test(CV) });
     });
     if (!found.length) return null;
     found.sort(function (a, b) { return b.count - a.count; });
@@ -366,127 +349,101 @@
     return line;
   }
 
-  // Like / Analyzing / Proposals button, depending on the job's state.
-  function likeButton(job) {
-    var button = el("button", "hide like");
+  // The prompt for the Claude app: what to look at, then the job ad, then the CV.
+  function claudePrompt(job) {
+    return "I'm applying for the job below. Using only facts from my CV (never invent experience), tell me:\n" +
+      "1. The 5-8 most important skills or keywords in the job ad, and which ones my CV misses or under-sells.\n" +
+      "2. A 2-3 sentence rewrite of my CV intro for this role.\n" +
+      "3. Which bullets from my past roles to lead with, and which to shorten or cut.\n" +
+      "4. Big gaps I should be ready to explain in an interview.\n\n" +
+      "JOB: " + job.title + " at " + job.company + " (" + job.location + ")\n" + job.url + "\n\n" +
+      "--- JOB AD ---\n" + (DESCRIPTIONS[job.id] || "(Open the link above: the ad text was not available.)") +
+      "\n\n--- MY CV ---\n" + CV;
+  }
+
+  // Copy the prompt, then open Claude in a new tab: paste it there.
+  function askClaude(job, button) {
+    var text = claudePrompt(job);
+    navigator.clipboard.writeText(text).then(function () {
+      button.textContent = "Copied: paste in Claude";
+      window.open("https://claude.ai/new", "_blank", "noopener");
+    }, function () {
+      // Copying is blocked on some phones: show the prompt, selected, to copy by hand.
+      var card = button.closest(".card");
+      var box = card.querySelector(".prompt-box") || card.appendChild(el("textarea", "prompt-box"));
+      box.value = text;
+      box.readOnly = true;
+      box.focus();
+      box.select();
+      button.textContent = "Copy the text below";
+    });
+    setTimeout(function () { button.textContent = "Ask Claude"; }, 4000);
+  }
+
+  function askButton(job) {
+    var button = el("button", "hide ask", "Ask Claude");
     button.type = "button";
-    var issue = PRIV.issues[job.id];
-    var result = PRIV.results[safeName(job.id)];
-    if (!PRIV.token) {
-      button.textContent = "Like";
-      button.title = "Connect CV insights (top right) to use Like";
-      button.addEventListener("click", function () { togglePrivateBox(true); });
-    } else if (result) {
-      button.textContent = PRIV.open[job.id] ? "Close" : "Proposals";
-      button.addEventListener("click", function () {
-        PRIV.open[job.id] = !PRIV.open[job.id];
-        loadResult(job).then(renderBoard);
-      });
-    } else if (issue) {
-      button.textContent = "Analyzing...";
-      button.disabled = true;
-      button.title = "Takes about 10 minutes; this card updates by itself";
-      pollResult(job);
-    } else {
-      button.textContent = "Like";
-      button.addEventListener("click", function () { likeJob(job, button); });
-    }
+    button.title = "Copies a prompt with this job and your CV, then opens Claude: paste it there.";
+    button.addEventListener("click", function () { askClaude(job, button); });
     return button;
   }
 
-  // Like = open an issue in the private repo; its workflow writes results/<job>.json.
-  function likeJob(job, button) {
-    button.disabled = true;
-    button.textContent = "Sending...";
-    var body = "JobScout id: " + job.id + "\nLink: " + job.url + "\nCompany: " + job.company +
-               "\nTitle: " + job.title + "\nLocation: " + job.location;
-    api("/issues", { method: "POST", body: JSON.stringify({ title: job.company + " - " + job.title, body: body }) })
-      .then(function (issue) {
-        if (!issue) throw new Error("GitHub API 404");
-        PRIV.issues[job.id] = issue.number;
-        renderBoard();
-      })
-      .catch(function (error) { button.disabled = false; button.textContent = "Like"; alert("Like failed. " + keyProblem(error)); });
-  }
-
-  // Plain-language reason for a failed GitHub call, with what to do about it.
-  function keyProblem(error) {
-    var code = (/GitHub API (\d+)/.exec(error.message) || [])[1];
-    var fix = " Create a new key on GitHub (Settings > Developer settings > Fine-grained tokens, repository " +
-              CV_REPO + ", permissions Contents: read and Issues: read and write), then paste it under CV insights.";
-    if (code === "401") return "Your access key has expired or is wrong." + fix;
-    if (code === "403") return "Your access key is not allowed to create issues." + fix;
-    if (code === "404") return "Your access key cannot see the " + CV_REPO + " repo." + fix;
-    return "Could not reach GitHub (" + error.message + "). Check your connection and try again.";
-  }
-
-  // While a job is being analyzed, check for its result every 30 seconds.
-  function pollResult(job) {
-    if (PRIV.polling[job.id]) return;
-    PRIV.polling[job.id] = setInterval(function () {
-      api("/contents/results/" + safeName(job.id) + ".json", {}, true).then(function (text) {
-        if (!text) return;
-        clearInterval(PRIV.polling[job.id]);
-        PRIV.results[safeName(job.id)] = JSON.parse(text);
-        PRIV.open[job.id] = true;
-        renderBoard();
-      }).catch(function () {});
-    }, 30000);
-  }
-
-  function loadResult(job) {
-    var name = safeName(job.id);
-    if (PRIV.results[name] && PRIV.results[name] !== true) return Promise.resolve();
-    return api("/contents/results/" + name + ".json", {}, true).then(function (text) {
-      if (text) PRIV.results[name] = JSON.parse(text);
+  // The CV and the job descriptions, loaded after login.
+  function loadCv() {
+    db.from("profile").select("cv_text").maybeSingle().then(function (result) {
+      CV = (result.data && result.data.cv_text) || "";
+      document.getElementById("cv-text").value = CV;
+      if (!CV) migrateFromGitHub();
+      renderBoard();
     });
+    fetch("matches.json").then(function (r) { return r.json(); }).then(function (jobs) {
+      jobs.forEach(function (job) { if (job.description) DESCRIPTIONS[job.id] = job.description; });
+      renderBoard();
+    }).catch(function () {});
   }
 
-  // The proposals panel under a liked job's card.
-  function proposalsPanel(job) {
-    var r = PRIV.results[safeName(job.id)];
-    var panel = el("div", "proposals");
-    if (!r || r === true) { panel.appendChild(el("p", "empty", "Loading...")); return panel; }
-    if (r.status !== "done") { panel.appendChild(el("p", "empty", r.error || "Analysis failed.")); return panel; }
-
-    function section(title) { var h = el("h3", "", title); panel.appendChild(h); }
-    function para(text, className) { panel.appendChild(el("p", className || "", text)); }
-    function warnings(list) { (list || []).forEach(function (w) { para("Check: " + w, "warn"); }); }
-
-    section("1. Keywords the job needs (" + r.match + "% match)");
-    var chips = el("div", "kw");
-    (r.missing || []).forEach(function (m) { chips.appendChild(el("span", "kw-missing", m.term + " ×" + m.count)); });
-    if (!(r.missing || []).length) para("None missing.");
-    panel.appendChild(chips);
-
-    section("2. Intro rewrite (Gemma draft)");
-    if (r.intro) { para(r.intro, "quote"); warnings(r.intro_warnings); }
-    else para(r.gemma_error || "No draft.", "empty");
-
-    section("3. Past roles");
-    (r.lead || []).forEach(function (b) { para("Lead with (" + b.role + "): " + b.text, "lead"); });
-    (r.shorten || []).forEach(function (b) { para("Shorten (" + b.role + "): " + b.text, "shorten"); });
-    (r.flags || []).forEach(function (f) { para("Gemma: " + f); });
-    warnings(r.flag_warnings);
-
-    if (r.claude_edits && r.claude_edits.length) {
-      section("Claude edits");
-      r.claude_edits.forEach(function (e) {
-        para(e.section + ": \"" + e.current + "\" → \"" + e.new + "\" (" + e.why + ")");
+  function saveCv() {
+    var status = document.getElementById("account-status");
+    CV = document.getElementById("cv-text").value;
+    db.from("profile").upsert({ cv_text: CV, updated_at: new Date().toISOString() }, { onConflict: "user_id" })
+      .then(function (result) {
+        status.textContent = result.error ? "Could not save the CV: " + result.error.message : "CV saved.";
+        renderBoard();
       });
-    } else {
-      para("Deeper edits: ask Claude \"CV edits for jobscout-cv issue #" + (r.issue || "?") + "\".", "empty");
-    }
-    return panel;
   }
 
-  // ---- Hidden jobs, shared across devices ----
+  // One-time move from the old setup (a GitHub key saved in this browser, private repo
+  // jobscout-cv): copy the CV and the old hidden-jobs list, then forget the key.
+  function migrateFromGitHub() {
+    var token = "";
+    try { token = localStorage.getItem("jobscout-cv-token") || ""; } catch (e) {}
+    if (!token) return;
+    var repo = "https://api.github.com/repos/BarboneBarbaPersonal/jobscout-cv";
+    var headers = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github.raw+json" };
+    var cvRequest = fetch(repo + "/contents/cv/master.md", { headers: headers })
+      .then(function (r) { return r.ok ? r.text() : ""; });
+    var issuesRequest = fetch(repo + "/issues?state=all&per_page=100", { headers: { "Authorization": "Bearer " + token } })
+      .then(function (r) { return r.ok ? r.json() : []; });
+    Promise.all([cvRequest, issuesRequest]).then(function (all) {
+      if (all[0]) { document.getElementById("cv-text").value = all[0]; saveCv(); }
+      all[1].forEach(function (issue) {
+        if (issue.title !== "JobScout hidden jobs") return;
+        (issue.body || "").split("\n").slice(1).forEach(function (line) {
+          var id = line.trim();
+          if (id && hidden.indexOf(id) === -1) hidden.push(id);
+        });
+      });
+      saveHidden();
+      syncHidden();
+      if (all[0]) { try { localStorage.removeItem("jobscout-cv-token"); } catch (e) {} }
+    }).catch(function () {});
+  }
+
   // ---- Account and private data (Supabase) ----
   var SUPABASE_URL = "https://pffopwzydbjdblojhcwm.supabase.co";
   var SUPABASE_KEY = "sb_publishable_qs5yz6gDAqx3WGJ2qzy_mw_NtOgQzKS";
   var db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
   var USER = null;
-  var HIDDEN_TITLE = "JobScout hidden jobs"; // old storage, only read once to move its list over
 
   function toggleAccountBox(show) {
     var box = document.getElementById("account-box");
@@ -497,6 +454,7 @@
     document.getElementById("account-toggle").textContent = USER ? "Logged in" : "Log in";
     document.getElementById("account-form").hidden = !!USER;
     document.getElementById("account-logout").hidden = !USER;
+    document.getElementById("cv-area").hidden = !USER;
     document.getElementById("account-text").textContent = USER
       ? "Logged in as " + USER.email + ". Hidden jobs sync on all your devices."
       : "Log in to keep hidden jobs (and later your applications) in sync on all your devices. " +
@@ -549,6 +507,7 @@
       USER = session ? session.user : null;
       showAccount();
       syncHidden();
+      if (USER) loadCv();
     });
   }
 
@@ -568,66 +527,7 @@
     db.auth.signOut().then(function () { location.reload(); });
   });
 
-  // Load everything private: CV, term list, job descriptions, liked jobs and results.
-  function connect() {
-    var status = document.getElementById("private-status");
-    if (!CV_REPO) { document.getElementById("private-toggle").hidden = true; return; }
-    if (!PRIV.token) { updatePrivateToggle(); return; }
-    status.textContent = "Connecting...";
-    Promise.all([
-      api("/contents/cv/master.md", {}, true),
-      api("/contents/data/vocabulary.json", {}, true),
-      api("/issues?state=all&per_page=100"),
-      api("/contents/results"),
-      fetch("matches.json").then(function (r) { return r.json(); })
-    ]).then(function (all) {
-      PRIV.cv = all[0] || "";
-      PRIV.vocab = JSON.parse(all[1] || "[]");
-      var remoteHidden = null;
-      (all[2] || []).forEach(function (issue) {
-        if (issue.title === HIDDEN_TITLE) {
-          remoteHidden = readHiddenBody(issue.body);
-          return;
-        }
-        var match = /JobScout id:\s*(\S+)/.exec(issue.body || "");
-        if (match && !PRIV.issues[match[1]]) PRIV.issues[match[1]] = issue.number;
-      });
-      // One-time move: the old issue's hidden jobs join this list, then go to the database.
-      (remoteHidden || []).forEach(function (id) { if (hidden.indexOf(id) === -1) hidden.push(id); });
-      saveHidden();
-      syncHidden();
-      (all[3] || []).forEach(function (file) {
-        if (/\.json$/.test(file.name)) PRIV.results[file.name.replace(/\.json$/, "")] = true;
-      });
-      all[4].forEach(function (job) { if (job.description) PRIV.descriptions[job.id] = job.description; });
-      status.textContent = "Connected: CV loaded, " + Object.keys(PRIV.issues).length + " liked jobs, " +
-        hidden.length + " hidden jobs.";
-      updatePrivateToggle();
-      renderBoard();
-    }).catch(function (error) {
-      status.textContent = "Could not connect. " + keyProblem(error);
-      togglePrivateBox(true); // show the problem right away, not only on the next Like
-    });
-  }
-
-  function updatePrivateToggle() {
-    document.getElementById("private-toggle").textContent = "CV insights: " + (PRIV.cv ? "on" : "off");
-  }
-  function togglePrivateBox(show) {
-    var box = document.getElementById("private-box");
-    box.hidden = show === undefined ? !box.hidden : !show;
-  }
-  document.getElementById("private-toggle").addEventListener("click", function () { togglePrivateBox(); });
-  document.getElementById("private-save").addEventListener("click", function () {
-    PRIV.token = document.getElementById("private-key").value.trim();
-    try { localStorage.setItem(TOKEN_KEY, PRIV.token); } catch (e) {}
-    document.getElementById("private-key").value = "";
-    connect();
-  });
-  document.getElementById("private-forget").addEventListener("click", function () {
-    try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
-    location.reload();
-  });
+  document.getElementById("cv-save").addEventListener("click", saveCv);
 
   renderStats();
   // The page title and the Location chips come from the user's Preferences.
@@ -641,7 +541,6 @@
   });
   renderBoard();
   startAccount();
-  connect();
 </script>
 </body>
 </html>
