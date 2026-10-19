@@ -31,6 +31,7 @@ class JobIds(unittest.TestCase):
         self.assertEqual(engine.engine_board("comeet", {"company_slug": "groundcover", "company_uid": "88.008"}),
                          ("comeet", "groundcover/88.008"))
         self.assertIsNone(engine.engine_board("eightfold", {"host": "apply.careers.microsoft.com"}))
+        self.assertIsNone(engine.engine_board("phenom", {"host": "careers.allianz.com"}))
         self.assertIsNone(engine.engine_board("dynatrace", {}))
 
     def test_engine_job_becomes_jobscout_job(self):

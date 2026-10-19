@@ -19,8 +19,10 @@ ENGINE_TIMEOUT = 45 * 60  # seconds: the whole crawl must finish well inside the
 
 
 # Boards the old scanner found that freehire's engine can read too: (old service, params) ->
-# (freehire source, board). Microsoft (eightfold) and IBM stay with the old readers: freehire
-# would crawl their whole worldwide catalogue, our readers ask for Spain only.
+# (freehire source, board). Kept with the old readers (tested 2026-10-19): Allianz (phenom),
+# Microsoft (eightfold) and IBM, where freehire crawls the whole worldwide catalogue (scan time
+# 14 -> 38 min, and different job ids) while our readers ask for Spain only; SAP and
+# Signaturit (successfactors), whose sitemap freehire can't read.
 def engine_board(service, params):
     if service == "teamtailor":
         return "teamtailor", params["host"]
@@ -28,8 +30,8 @@ def engine_board(service, params):
         return "comeet", f"{params['company_slug']}/{params['company_uid']}"
     if service == "recruiterflow":
         return "recruiterflow", params["company_slug"]
-    if service in ("successfactors", "phenom", "factorial"):
-        return service, params["host"]
+    if service == "factorial":
+        return "factorial", params["host"]
     return None
 
 

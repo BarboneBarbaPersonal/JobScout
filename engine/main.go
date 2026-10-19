@@ -27,7 +27,7 @@ import (
 	"github.com/strelov1/freehire/internal/platform/htmltext"
 )
 
-const workers = 8                    // boards crawled at the same time
+const workers = 8                     // boards crawled at the same time
 const boardTimeout = 25 * time.Minute // a stuck board must not block the whole scan
 
 type company struct {
