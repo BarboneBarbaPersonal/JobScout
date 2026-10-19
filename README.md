@@ -15,8 +15,11 @@ The shareable version for other people is a separate project:
 https://github.com/BarboneBarbaPersonal/JobScout-Template
 
 ## How it works
-- `scout/` reads the sheet, finds each company's job board, reads all open jobs, keeps the
-  ones that pass my rules (`scout/prefs.py`) and builds the page (`scout/board.py`, `page/board.html`).
+- **freehire's crawling engine** (github.com/strelov1/freehire, MIT) reads the job boards:
+  `engine/main.go` is built inside freehire at the commit in `engine/FREEHIRE_VERSION`.
+  Companies it can't read go to the old readers in `scout/sources/`.
+- `scout/` reads the sheet, keeps the jobs that pass my rules (`scout/prefs.py`) and builds
+  the page (`scout/board.py`, `page/board.html`).
 - `.github/workflows/scan.yml` runs it every hour and publishes to the `gh-pages` branch.
 
 ## Everyday changes
