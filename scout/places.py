@@ -60,16 +60,21 @@ AREA_REGIONS = {
     "anywhere": [],
 }
 
+# Short codes that are also ordinary words ("la", "pa", "us"): they only count in capitals
+# ("Remote - CA", "Remote, US").
+PLACE_CODES = ["US", "UK", "CA", "AR", "MI", "PA", "NC", "LA", "TX", "OH", "NY", "WA", "FL", "GA", "IL",
+               "NJ", "VA", "MN", "AZ"]
+
 PLACES = [
     # Americas
-    "united states", "usa", "us", "u.s", "canada", "north america", "americas", "amer", "latam",
+    "united states", "usa", "u.s", "canada", "north america", "americas", "amer", "latam",
     "mexico", "brazil", "colombia", "argentina", "chile", "peru", "costa rica", "ontario", "toronto",
     # Middle East, Asia, Pacific, Africa
     "united arab emirates", "emirates", "apac", "asia", "india", "japan", "singapore", "australia",
     "new zealand", "philippines", "korea", "china", "hong kong", "taiwan", "israel", "uae", "dubai",
     "saudi arabia", "turkey", "south africa", "nigeria", "kenya", "egypt",
     # Europe (countries)
-    "united kingdom", "uk", "gbr", "england", "london", "ireland", "germany", "deutschland",
+    "united kingdom", "gbr", "england", "london", "ireland", "germany", "deutschland",
     "france", "poland", "bulgaria", "romania", "denmark", "finland", "sweden", "norway",
     "netherlands", "belgium", "portugal", "italy", "austria", "switzerland", "czech republic",
     "czechia", "hungary", "greece", "estonia", "lithuania", "latvia", "croatia", "serbia",
@@ -80,7 +85,6 @@ PLACES = [
     "los angeles", "nyc", "seattle", "nashville", "houston", "cincinnati", "minnesota", "detroit",
     "pittsburgh", "raleigh", "bentonville", "boston", "atlanta", "dallas", "san francisco",
     "bay area", "miami", "phoenix", "portland", "canberra", "southwest", "midwest", "northeast",
-    "ar", "mi", "pa", "nc", "la", "tx", "oh", "ny", "wa", "fl", "ga", "il", "nj", "va", "mn", "az",
     # Other big cities
     "addison", "vienna", "berlin", "munich", "hamburg", "frankfurt", "paris", "amsterdam", "dublin",
     "lisbon", "porto", "warsaw", "krakow", "prague", "stockholm", "copenhagen", "oslo", "helsinki",

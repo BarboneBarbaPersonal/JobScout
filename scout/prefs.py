@@ -62,6 +62,8 @@ class Preferences:
         self.remote_pattern = util.term_pattern(places.REMOTE_WORDS)
         self.elsewhere_pattern = util.term_pattern(
             [p for p in places.PLACES if p not in own_places] + sorted(other_regions))
+        self.codes_pattern = re.compile(  # capitals only, see places.PLACE_CODES
+            r"(?<![\w])(?:" + "|".join(places.PLACE_CODES) + r")(?![\w])")
         self.location_patterns = [(label, util.term_pattern(terms), remote)
                                   for label, terms, remote in self.locations]
 
@@ -79,7 +81,8 @@ class Preferences:
         """Remote, and not limited to some place outside the user's area."""
         return (util.find_term(self.remote_pattern, location) is not None
                 and util.find_term(self.elsewhere_pattern, location) is None
-                and util.find_term(self.elsewhere_pattern, title) is None)
+                and util.find_term(self.elsewhere_pattern, title) is None
+                and not self.codes_pattern.search(location) and not self.codes_pattern.search(title))
 
     def location_ok(self, title, location):
         for _, pattern, remote in self.location_patterns:
