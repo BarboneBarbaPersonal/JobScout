@@ -45,3 +45,12 @@ verified, what is open or next. Read the last entries to know where things stand
 - Verified: tests pass; test scan from the branch: 156/156 boards, 47 matches, all 47 with the
   same ids as the live board; labels on 22 of 47 jobs (13 before).
 - Next: T2 waits for Andrea (open the board on the "CV insights" laptop); then T3 links menu.
+
+## 2026-10-19 - T3 links menu
+- After login the account box shows "My links": Task list, Scan runs, Changes to approve,
+  Database, All my links (Notion). The sheet link stays off the public page (it is in Notion).
+- Fixed a bug from #2: the email login form stayed visible when logged in (a layout style beat
+  the "hidden" attribute); now hidden elements are always hidden.
+- Verified: tests pass; local page with the live jobs, simulated login: links only after login,
+  correct addresses, login form hidden, fits phone width (screenshots).
+- Next: T2 waits for Andrea; T4 small fixes.

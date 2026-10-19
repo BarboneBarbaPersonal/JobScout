@@ -22,10 +22,10 @@ Never push to main or merge."
   laptop that had "CV insights", so the CV moves to Supabase
   - Done when: Andrea confirms Log in > My CV shows the CV; jobscout-cv archived (read-only);
     the "CV add-on repo" row removed from the sheet.
-- [ ] **T3. Links menu on the board** (was #4)
-  - After login, a menu with: my sheet, scan runs, Supabase, Notion page.
-  - Done when: links come from the private database (never in the public page); screenshot on
-    laptop and phone width.
+- [x] **T3. Links menu on the board** (was #4)
+  - After login: Task list, Scan runs, Changes to approve, Database, All my links (Notion).
+  - Decided: no database table for links (would need another SQL step); the sheet stays
+    reachable through the Notion page, never on the public page.
 - [ ] **T4. Small fixes** (was #5)
   - Revolut (blocked on GitHub) no longer marks every scan "degraded"; 2-letter US state codes
     (la, pa, ar, mi...) can't wrongly drop remote jobs; reader settings nothing uses removed.
