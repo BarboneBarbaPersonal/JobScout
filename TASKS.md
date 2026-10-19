@@ -40,10 +40,12 @@ Never push to main or merge."
 - [x] **T6. Tracker 2: follow-ups** (was #7, phase 2)
   - Done when: next step + due date per application, overdue in red, default follow-up 7 days
     after applying; tested with a backdated test application.
-- [ ] **T7. Skill: fit my CV to a job posting -> Google Doc** (was #20)
+- [ ] **T7. Skill: fit my CV to a job posting -> Google Doc** (was #20) - in PR; waiting:
+  Andrea installs the skill (skills/fit-cv.zip) and runs it once from the board
   - Run by hand in the Claude app. Output: a Google Doc "<Company> - <Role> - CV" with the CV
     rewritten for the job (facts only, gaps marked) and a fit summary (1-10, strengths, gaps).
-  - Decide first: where the master CV lives (one copy only: Drive doc or Supabase).
+  - Decided 2026-10-19: the master CV lives on the board (Supabase); the board's "Fit my CV"
+    button sends CV + job ad to the skill.
   - Done when: tested on 3 real jobs, the docs checked for invented facts.
 - [ ] **T8. Skill: interview prep** (was #21)
   - Done when: a Google Doc with company, product, team, the story to tell, 3 questions;

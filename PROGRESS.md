@@ -86,3 +86,17 @@ verified, what is open or next. Read the last entries to know where things stand
   saved; closing cleared it. Layout fixed after a screenshot (step box was too narrow).
 - Still open: T5's real-database check by Andrea (one test application, then Remove).
 - Next: T7 CV skill (decide first where the master CV lives).
+
+## 2026-10-19 - T7 fit-cv skill
+- skills/fit-cv/SKILL.md: tailors the CV to one job, facts only (gaps marked, never filled),
+  and saves a Google Doc "<Company> - <Role> - CV" with fit summary (1-10), tailored CV,
+  what changed and why, gaps. The board's button is now "Fit my CV": it copies the job ad + CV
+  with an instruction to use the skill, and opens Claude.
+- Master CV decided: on the board (Supabase), one copy only.
+- Verified: followed the skill on 3 real jobs from the board (Criteo CSM Barcelona,
+  HiddenLayer CSM remote, ElevenLabs AM Southern Europe); 3 Google Docs created in Andrea's
+  Drive; Criteo doc read back (sections and bullets intact); all 35 numbers in its tailored CV
+  appear in the master CV; no tools or employers added; gaps marked (Jira, 5+ years CS,
+  voice AI, retail media). Contact line left as a placeholder in the test docs.
+- Not verified yet: the skill running inside Andrea's Claude app (he installs it).
+- Next: T8 interview prep skill.

@@ -128,7 +128,7 @@
       <button type="button" class="chip" id="account-send">Send login link</button>
     </div>
     <div class="cv-area" id="cv-area" hidden>
-      <p>My CV (plain text). Used for the match % on each job and for Ask Claude. Only you can see it.</p>
+      <p>My CV (plain text). Used for the match % on each job and for Fit my CV. Only you can see it.</p>
       <textarea id="cv-text" spellcheck="false"></textarea>
       <button type="button" class="chip" id="cv-save">Save CV</button>
     </div>
@@ -341,7 +341,7 @@
 
   // =====================================================================
   // CV help (after login): instant keyword match on each card, and
-  // "Ask Claude", which copies a ready prompt (job + CV) for the Claude app.
+  // "Fit my CV", which copies a ready prompt (job + CV) for the Claude app's fit-cv skill.
   // The CV text lives in the private database (table "profile").
   // =====================================================================
   var CV = "";
@@ -399,13 +399,10 @@
     return line;
   }
 
-  // The prompt for the Claude app: what to look at, then the job ad, then the CV.
+  // The prompt for the Claude app: it starts the fit-cv skill (skills/fit-cv/SKILL.md in the
+  // repo), which tailors the CV to this job and saves it as a Google Doc.
   function claudePrompt(job) {
-    return "I'm applying for the job below. Using only facts from my CV (never invent experience), tell me:\n" +
-      "1. The 5-8 most important skills or keywords in the job ad, and which ones my CV misses or under-sells.\n" +
-      "2. A 2-3 sentence rewrite of my CV intro for this role.\n" +
-      "3. Which bullets from my past roles to lead with, and which to shorten or cut.\n" +
-      "4. Big gaps I should be ready to explain in an interview.\n\n" +
+    return "Use my fit-cv skill: tailor my CV to the job below, facts only, and save it as a Google Doc.\n\n" +
       "JOB: " + job.title + " at " + job.company + " (" + job.location + ")\n" + job.url + "\n\n" +
       "--- JOB AD ---\n" + (DESCRIPTIONS[job.id] || "(Open the link above: the ad text was not available.)") +
       "\n\n--- MY CV ---\n" + CV;
@@ -427,13 +424,13 @@
       box.select();
       button.textContent = "Copy the text below";
     });
-    setTimeout(function () { button.textContent = "Ask Claude"; }, 4000);
+    setTimeout(function () { button.textContent = "Fit my CV"; }, 4000);
   }
 
   function askButton(job) {
-    var button = el("button", "hide ask", "Ask Claude");
+    var button = el("button", "hide ask", "Fit my CV");
     button.type = "button";
-    button.title = "Copies a prompt with this job and your CV, then opens Claude: paste it there.";
+    button.title = "Copies this job and your CV for the fit-cv skill, then opens Claude: paste it there. The tailored CV comes back as a Google Doc.";
     button.addEventListener("click", function () { askClaude(job, button); });
     return button;
   }
