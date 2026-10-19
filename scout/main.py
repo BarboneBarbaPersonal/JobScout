@@ -35,8 +35,9 @@ def main():
     print(f"{len(companies)} companies, roles: {', '.join(prefs.core + prefs.also)}")
 
     started = time.time()
-    results, left = scan_with_engine(companies, prefs)  # freehire's engine first
-    boards, not_found = find_boards(left)                # the old scanner reads the rest
+    results, left = scan_with_engine(companies, prefs)  # 1. freehire's engine reads the links it knows
+    boards, not_found = find_boards(left)                # 2. the old board finder handles the rest...
+    results += engine_reads_known_boards(boards, prefs)  # 3. ...and the engine reads what it can of those
     hints = {"countries": countries(prefs)}
     with ThreadPoolExecutor(WORKERS) as pool:
         results += list(pool.map(lambda item: scan_board(item, prefs, hints), boards.items()))
@@ -91,6 +92,27 @@ def all_cities(job):
             DETAILS["workday"](job, {})
         except Exception:
             pass  # keep the first city
+
+
+def engine_reads_known_boards(boards, prefs):
+    """Boards found by the old board finder that freehire's engine can also read (e.g. a
+    Teamtailor site on the company's own address): read them with the engine and remove them
+    from `boards`. Whatever the engine can't read stays in `boards` for the old scanner."""
+    known = {}
+    for key, (name, service, params) in boards.items():
+        target = engine.engine_board(service, params)
+        if target:
+            known[name] = (key, target)
+    if not known:
+        return []
+    rows = [{"name": name, "careers": "", "website": "", "source": source, "board": board}
+            for name, (key, (source, board)) in known.items()]
+    results, left = scan_with_engine(rows, prefs)
+    left_names = {row["name"] for row in left}
+    for name, (key, _) in known.items():
+        if name not in left_names:
+            del boards[key]
+    return results
 
 
 def keep(job, prefs, more_cities=None):
