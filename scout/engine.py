@@ -47,7 +47,7 @@ def scan(companies, binary):
     if result.returncode != 0:
         raise RuntimeError(f"engine failed: {result.stderr[-300:]}")
 
-    boards, unrecognized, jobs_by_board = [], [c["name"] for c in companies if not links[c["name"]]], {}
+    boards, unrecognized, jobs_by_board = [], without_board(companies), {}
     for line in result.stdout.splitlines():
         item = json.loads(line)
         if item["kind"] == "unrecognized":
@@ -63,6 +63,11 @@ def scan(companies, binary):
         if item["source"] == "teamtailor":
             keep_teamtailor_ids(item)
     return boards, unrecognized
+
+
+def without_board(companies):
+    """Companies the engine can't even try: no link and no known board."""
+    return [c["name"] for c in companies if not (c["careers"] or c["website"] or c.get("source"))]
 
 
 def keep_teamtailor_ids(item):

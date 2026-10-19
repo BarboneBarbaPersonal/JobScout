@@ -34,6 +34,11 @@ class JobIds(unittest.TestCase):
         self.assertIsNone(engine.engine_board("phenom", {"host": "careers.allianz.com"}))
         self.assertIsNone(engine.engine_board("dynatrace", {}))
 
+    def test_known_board_without_link_is_not_unrecognized(self):
+        rows = [{"name": "Paack", "careers": "", "website": "", "source": "teamtailor", "board": "careers.paack.co"},
+                {"name": "NoLink", "careers": "", "website": ""}]
+        self.assertEqual(engine.without_board(rows), ["NoLink"])
+
     def test_engine_job_becomes_jobscout_job(self):
         job = engine.to_job({"source": "greenhouse", "board": "adyen", "external_id": "1", "title": "Account  Manager",
                              "url": "https://job-boards.greenhouse.io/adyen/jobs/1?utm_source=freehire.me",
