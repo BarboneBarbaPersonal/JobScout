@@ -89,6 +89,18 @@
   .links a { color: var(--accent); white-space: nowrap; }
   .ask { margin-left: auto; color: var(--accent); border-color: var(--accent); white-space: nowrap; }
   .prompt-box { width: 100%; height: 120px; margin-top: 6px; font: 11px/1.4 ui-monospace, monospace; }
+  /* My applications */
+  .apps-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding-bottom: 32px; }
+  @media (max-width: 860px) { .apps-grid { grid-template-columns: 1fr; } }
+  .app-form { margin-bottom: 12px; }
+  .app-form input, .app-form select { font: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--line);
+                                      border-radius: 6px; background: var(--bg); color: var(--text); min-width: 140px; flex: 1; }
+  .stage { font: inherit; font-size: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--line);
+           border-radius: 4px; padding: 1px 4px; }
+  .notes { width: 100%; min-height: 44px; margin-top: 6px; font: inherit; font-size: 12px; padding: 4px 6px;
+           border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
+  .history { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .applied-tag { color: var(--ok); border-color: var(--ok); }
 </style>
 <!-- Login and private data (hidden jobs, applications): Supabase. The key below is the
      public "publishable" key; database rules let each logged-in user see only their own rows. -->
@@ -100,6 +112,7 @@
     <h1 id="page-title">Job<span>Scout</span></h1>
     <span class="sub" id="updated"></span>
     <button type="button" class="chip account-toggle" id="account-toggle">Log in</button>
+    <button type="button" class="chip" id="apps-toggle" aria-pressed="false" hidden>My applications</button>
   </header>
   <!-- Log in once per device with a link sent by email; hidden jobs then sync on all devices -->
   <section class="account-box" id="account-box" hidden>
@@ -125,6 +138,22 @@
     </p>
     <button type="button" class="chip" id="account-logout" hidden>Log out</button>
     <p class="private-status" id="account-status"></p>
+  </section>
+  <!-- My applications (after login): replaces the board while open -->
+  <section id="apps" hidden>
+    <div class="private-row app-form">
+      <input id="app-company" placeholder="Company">
+      <input id="app-title" placeholder="Role">
+      <input id="app-location" placeholder="Location">
+      <input id="app-link" placeholder="Link to the job (optional)">
+      <select id="app-source">
+        <option value="linkedin">LinkedIn</option><option value="referral">Referral</option>
+        <option value="recruiter">Recruiter</option><option value="other">Other</option>
+      </select>
+      <button type="button" class="chip" id="app-add">Add application</button>
+    </div>
+    <p class="private-status" id="apps-status"></p>
+    <div class="apps-grid" id="apps-board"></div>
   </section>
   <section class="stats" id="stats"></section>
   <section class="filters">
@@ -246,6 +275,7 @@
     var when = (job.posted_at ? "posted " + dayAge(job.posted_at) + " · " : "") + "found " + dayAge(job.found_at);
     bottom.appendChild(el("span", "", when));
     if (USER && CV) bottom.appendChild(askButton(job));
+    if (USER) bottom.appendChild(appliedButton(job));
     var button = el("button", "hide", isHidden ? "Unhide" : "Hide");
     button.type = "button";
     button.addEventListener("click", function () {
@@ -469,6 +499,8 @@
     document.getElementById("account-form").hidden = !!USER;
     document.getElementById("account-logout").hidden = !USER;
     document.getElementById("account-links").hidden = !USER;
+    document.getElementById("apps-toggle").hidden = !USER;
+    document.getElementById("apps-toggle").textContent = "My applications (" + APPS.length + ")";
     document.getElementById("cv-area").hidden = !USER;
     document.getElementById("account-text").textContent = USER
       ? "Logged in as " + USER.email + ". Hidden jobs sync on all your devices."
@@ -516,15 +548,194 @@
         saveHidden();
         renderBoard();
       }).subscribe();
+    db.channel("applications").on("postgres_changes", { event: "*", schema: "public", table: "applications" },
+      function () { if (USER) loadApps(); }).subscribe();
     // Coming back to the page (e.g. switching apps on the phone) also refreshes the list.
     document.addEventListener("visibilitychange", function () { if (!document.hidden) syncHidden(); });
     db.auth.onAuthStateChange(function (event, session) {
       USER = session ? session.user : null;
       showAccount();
       syncHidden();
-      if (USER) loadCv();
+      if (USER) { loadCv(); loadApps(); }
     });
   }
+
+  // =====================================================================
+  // Applications (after login): a job is tracked only once I actually apply.
+  // One row per application in the private table "applications" (supabase/schema.sql).
+  // =====================================================================
+  var APPS = [];
+  var showingApps = false;
+  var STAGES = [["applied", "Applied"], ["interviewing", "Interviewing"], ["offer", "Offer"], ["closed", "Closed"]];
+  var CLOSED_REASONS = ["rejected", "withdrawn", "no answer", "accepted"];
+
+  function today() { return new Date().toISOString().slice(0, 10); }
+
+  function appStatus(text) { document.getElementById("apps-status").textContent = text; }
+
+  function loadApps() {
+    db.from("applications").select("*").order("applied_on", { ascending: false }).then(function (result) {
+      if (result.error) { appStatus("Could not load applications: " + result.error.message); return; }
+      APPS = result.data;
+      showAccount();
+      renderApps();
+      renderBoard();
+    });
+  }
+
+  function applicationFor(job) {
+    for (var i = 0; i < APPS.length; i++) if (APPS[i].job_id === job.id) return APPS[i];
+    return null;
+  }
+
+  // Save a new application, then show it everywhere.
+  function createApplication(row) {
+    row.timeline = [{ date: today(), text: "Applied" }];
+    return db.from("applications").insert(row).select().then(function (result) {
+      if (result.error) { appStatus("Could not save: " + result.error.message); return; }
+      APPS = result.data.concat(APPS);
+      showAccount();
+      renderApps();
+      renderBoard();
+    });
+  }
+
+  // On a job card: "I applied", or a tag once the application exists.
+  function appliedButton(job) {
+    if (applicationFor(job)) return el("span", "tag applied-tag", "applied");
+    var button = el("button", "hide", "I applied");
+    button.type = "button";
+    button.title = "Start tracking this application (only once you have actually applied)";
+    button.addEventListener("click", function () {
+      button.disabled = true;
+      createApplication({ job_id: job.id, link: job.url, company: job.company, title: job.title,
+                          location: job.location, source: "scan" });
+    });
+    return button;
+  }
+
+  // Stage dropdown value: "applied", ..., or "closed:rejected" etc.
+  function stageValue(app) { return app.stage === "closed" ? "closed:" + (app.closed_reason || "") : app.stage; }
+
+  function setStage(app, value) {
+    var parts = value.split(":");
+    var label = parts[0] === "closed" ? "Closed (" + parts[1] + ")" : value.charAt(0).toUpperCase() + value.slice(1);
+    var change = { stage: parts[0], closed_reason: parts[1] || null, updated_at: new Date().toISOString(),
+                   timeline: (app.timeline || []).concat([{ date: today(), text: label }]) };
+    db.from("applications").update(change).eq("id", app.id).then(function (result) {
+      if (result.error) { appStatus("Could not move it: " + result.error.message); return; }
+      Object.assign(app, change);
+      renderApps();
+    });
+  }
+
+  function saveNotes(app, text) {
+    if (text === (app.notes || "")) return;
+    db.from("applications").update({ notes: text, updated_at: new Date().toISOString() }).eq("id", app.id)
+      .then(function (result) {
+        if (result.error) { appStatus("Could not save the notes: " + result.error.message); return; }
+        app.notes = text;
+        appStatus("Notes saved.");
+      });
+  }
+
+  function removeApp(app) {
+    if (!confirm("Remove the application to " + app.company + " - " + app.title + "?")) return;
+    db.from("applications").delete().eq("id", app.id).then(function (result) {
+      if (result.error) { appStatus("Could not remove it: " + result.error.message); return; }
+      APPS = APPS.filter(function (other) { return other.id !== app.id; });
+      showAccount();
+      renderApps();
+      renderBoard();
+    });
+  }
+
+  function appCard(app) {
+    var node = el("article", "card");
+    var top = el("div", "top");
+    top.appendChild(el("span", "company", app.company));
+    top.appendChild(el("span", "tag", app.source === "scan" ? "from board" : app.source));
+    node.appendChild(top);
+    var link = el(app.link ? "a" : "span", "title", app.title);
+    if (app.link) { link.href = app.link; link.target = "_blank"; link.rel = "noopener"; }
+    node.appendChild(link);
+    var days = Math.floor((Date.now() - new Date(app.applied_on)) / 86400000);
+    node.appendChild(el("div", "meta", (app.location ? app.location + " · " : "") +
+                        "applied " + app.applied_on + " (" + days + " days ago)"));
+
+    var stage = document.createElement("select");
+    stage.className = "stage";
+    STAGES.forEach(function (s) {
+      if (s[0] === "closed") {
+        CLOSED_REASONS.forEach(function (reason) {
+          var option = el("option", "", "Closed: " + reason);
+          option.value = "closed:" + reason;
+          stage.appendChild(option);
+        });
+      } else {
+        var option = el("option", "", s[1]);
+        option.value = s[0];
+        stage.appendChild(option);
+      }
+    });
+    stage.value = stageValue(app);
+    stage.addEventListener("change", function () { setStage(app, stage.value); });
+
+    var notes = el("textarea", "notes");
+    notes.placeholder = "Notes (who you talked to, what was said...)";
+    notes.value = app.notes || "";
+    notes.addEventListener("blur", function () { saveNotes(app, notes.value); });
+
+    var remove = el("button", "hide", "Remove");
+    remove.type = "button";
+    remove.addEventListener("click", function () { removeApp(app); });
+
+    var bottom = el("div", "bottom");
+    bottom.appendChild(stage);
+    bottom.appendChild(remove);
+    node.appendChild(bottom);
+    node.appendChild(notes);
+    if ((app.timeline || []).length) {
+      node.appendChild(el("div", "history", app.timeline.map(function (t) { return t.date + " " + t.text; }).join(" · ")));
+    }
+    return node;
+  }
+
+  function renderApps() {
+    var box = document.getElementById("apps-board");
+    box.textContent = "";
+    STAGES.forEach(function (s) {
+      var apps = APPS.filter(function (app) { return app.stage === s[0]; });
+      var section = el("section", "column");
+      var heading = el("h2", "", s[1] + " ");
+      heading.appendChild(el("span", "count", String(apps.length)));
+      section.appendChild(heading);
+      if (!apps.length) section.appendChild(el("p", "empty", "Nothing here."));
+      apps.forEach(function (app) { section.appendChild(appCard(app)); });
+      box.appendChild(section);
+    });
+  }
+
+  // Switch between the job board and my applications.
+  function toggleApps() {
+    showingApps = !showingApps;
+    ["stats", "board"].forEach(function (id) { document.getElementById(id).hidden = showingApps; });
+    document.querySelector(".filters").hidden = showingApps;
+    document.getElementById("apps").hidden = !showingApps;
+    document.getElementById("apps-toggle").setAttribute("aria-pressed", String(showingApps));
+  }
+
+  document.getElementById("apps-toggle").addEventListener("click", toggleApps);
+  document.getElementById("app-add").addEventListener("click", function () {
+    var fields = {};
+    ["link", "company", "title", "location", "source"].forEach(function (name) {
+      fields[name] = document.getElementById("app-" + name).value.trim();
+    });
+    if (!fields.company || !fields.title) { appStatus("Company and role are needed."); return; }
+    createApplication(fields).then(function () {
+      ["link", "company", "title", "location"].forEach(function (name) { document.getElementById("app-" + name).value = ""; });
+    });
+  });
 
   document.getElementById("account-toggle").addEventListener("click", function () { toggleAccountBox(); });
   document.getElementById("account-send").addEventListener("click", function () {
