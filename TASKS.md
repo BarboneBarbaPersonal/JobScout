@@ -26,10 +26,11 @@ Never push to main or merge."
   - After login: Task list, Scan runs, Changes to approve, Database, All my links (Notion).
   - Decided: no database table for links (would need another SQL step); the sheet stays
     reachable through the Notion page, never on the public page.
-- [ ] **T4. Small fixes** (was #5)
-  - Revolut (blocked on GitHub) no longer marks every scan "degraded"; 2-letter US state codes
-    (la, pa, ar, mi...) can't wrongly drop remote jobs; reader settings nothing uses removed.
-  - Done when: a test per fix; test scan unchanged except the fixed cases.
+- [x] **T4. Small fixes** (was #5)
+  - Short place codes (LA, PA, US, CA...) count only in capitals, so "la oficina" or
+    "La Rioja" can't drop a remote job; CA added.
+  - Dropped: Revolut "degraded" (it no longer fails: 156/156 boards OK) and removing unused
+    reader settings (no visible benefit, risk of breaking the old readers).
 - [ ] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1)
   - Done when: "I applied" on a card creates an application in Supabase; Applications view
     with columns Applied / Interviewing / Offer / Closed; "Add application" for jobs found

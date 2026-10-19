@@ -61,6 +61,13 @@ class LocationRules(unittest.TestCase):
         self.assertFalse(self.prefs.location_ok("CSM", "Remote, US"))
         self.assertFalse(self.prefs.location_ok("CSM, UK", "Remote"))
 
+    def test_us_state_codes_only_in_capitals(self):
+        # "la" / "pa" are also ordinary words; only "CA", "TX"... in capitals mean a US state.
+        self.assertTrue(self.prefs.location_ok("CSM", "Remote (la oficina es opcional)"))
+        self.assertTrue(self.prefs.location_ok("CSM", "Remote - Europe, país a elegir"))
+        self.assertFalse(self.prefs.location_ok("CSM", "Remote - CA"))
+        self.assertFalse(self.prefs.location_ok("CSM", "Remote, LA"))
+
     def test_place_label_and_fit(self):
         self.assertEqual(self.prefs.place_label("Barcelona"), "Barcelona")
         self.assertEqual(self.prefs.place_label("Remote - Spain"), "Remote")

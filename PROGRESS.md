@@ -54,3 +54,11 @@ verified, what is open or next. Read the last entries to know where things stand
 - Verified: tests pass; local page with the live jobs, simulated login: links only after login,
   correct addresses, login form hidden, fits phone width (screenshots).
 - Next: T2 waits for Andrea; T4 small fixes.
+
+## 2026-10-19 - T4 small fixes
+- Short place codes (US, UK, CA, LA, PA, TX...) now count only in capitals; before, "la", "pa",
+  "us" as ordinary words could wrongly drop a remote job. CA (California/Canada) was missing.
+- Dropped two T4 items (see TASKS.md) after checking they no longer matter.
+- Verified: test written first (failed), now 18 tests pass; all 46 live jobs still pass the
+  rules; test scan from the branch: 47 of 47 jobs identical to the live board (preventive fix).
+- Next: T2 waits for Andrea; then T5 tracker 1 ("I applied" + Applications view).
