@@ -37,7 +37,7 @@ Never push to main or merge."
     with columns Applied / Interviewing / Offer / Closed; "Add application" for jobs found
     elsewhere; applications stay when the job closes; tested with a test application on
     laptop and phone, then removed.
-- [ ] **T6. Tracker 2: follow-ups** (was #7, phase 2)
+- [x] **T6. Tracker 2: follow-ups** (was #7, phase 2)
   - Done when: next step + due date per application, overdue in red, default follow-up 7 days
     after applying; tested with a backdated test application.
 - [ ] **T7. Skill: fit my CV to a job posting -> Google Doc** (was #20)

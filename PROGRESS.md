@@ -75,3 +75,14 @@ verified, what is open or next. Read the last entries to know where things stand
 - Not verified yet: the real database (needs Andrea's login). Andrea: try one test
   application on laptop and phone, then Remove it.
 - Next: T6 follow-ups.
+
+## 2026-10-19 - T6 follow-ups
+- Each application has an editable next step + due date. "I applied" sets "Follow up if no
+  reply" due in 7 days (agreed default; freehire uses 21 days before "silent"). Due/overdue
+  applications are outlined, say "Overdue since ..." and sort first in their column; the button
+  reads "My applications (N · M due)". Closing an application clears its next step.
+- Verified: tests pass; local page with a pretend database: new application due in 7 days; a
+  10-day-old one shown overdue, sorted first, counted in the button; editing next step/date
+  saved; closing cleared it. Layout fixed after a screenshot (step box was too narrow).
+- Still open: T5's real-database check by Andrea (one test application, then Remove).
+- Next: T7 CV skill (decide first where the master CV lives).

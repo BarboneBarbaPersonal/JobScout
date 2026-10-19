@@ -100,6 +100,12 @@
   .notes { width: 100%; min-height: 44px; margin-top: 6px; font: inherit; font-size: 12px; padding: 4px 6px;
            border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
   .history { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .next { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .next input { font: inherit; font-size: 12px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px;
+                background: var(--bg); color: var(--text); min-width: 0; }
+  .next input[type=text] { flex: 1 1 100%; } /* the step on its own line, the date below */
+  .card.overdue { border-color: var(--warn); }
+  .due { font-size: 11px; font-weight: 700; color: var(--warn); }
   .applied-tag { color: var(--ok); border-color: var(--ok); }
 </style>
 <!-- Login and private data (hidden jobs, applications): Supabase. The key below is the
@@ -500,7 +506,9 @@
     document.getElementById("account-logout").hidden = !USER;
     document.getElementById("account-links").hidden = !USER;
     document.getElementById("apps-toggle").hidden = !USER;
-    document.getElementById("apps-toggle").textContent = "My applications (" + APPS.length + ")";
+    var due = APPS.filter(isDue).length;
+    document.getElementById("apps-toggle").textContent =
+      "My applications (" + APPS.length + (due ? " \u00b7 " + due + " due" : "") + ")";
     document.getElementById("cv-area").hidden = !USER;
     document.getElementById("account-text").textContent = USER
       ? "Logged in as " + USER.email + ". Hidden jobs sync on all your devices."
@@ -589,8 +597,21 @@
   }
 
   // Save a new application, then show it everywhere.
+  var FOLLOW_UP_DAYS = 7; // agreed default: chase a reply one week after applying
+
+  function addDays(isoDate, days) {
+    var date = new Date(isoDate + "T00:00:00Z");
+    date.setUTCDate(date.getUTCDate() + days);
+    return date.toISOString().slice(0, 10);
+  }
+
+  // An application needs attention when its next step's date is today or earlier.
+  function isDue(app) { return app.stage !== "closed" && app.next_due && app.next_due <= today(); }
+
   function createApplication(row) {
     row.timeline = [{ date: today(), text: "Applied" }];
+    row.next_step = "Follow up if no reply";
+    row.next_due = addDays(today(), FOLLOW_UP_DAYS);
     return db.from("applications").insert(row).select().then(function (result) {
       if (result.error) { appStatus("Could not save: " + result.error.message); return; }
       APPS = result.data.concat(APPS);
@@ -621,10 +642,23 @@
     var parts = value.split(":");
     var label = parts[0] === "closed" ? "Closed (" + parts[1] + ")" : value.charAt(0).toUpperCase() + value.slice(1);
     var change = { stage: parts[0], closed_reason: parts[1] || null, updated_at: new Date().toISOString(),
+                   next_step: parts[0] === "closed" ? null : app.next_step,
+                   next_due: parts[0] === "closed" ? null : app.next_due,
                    timeline: (app.timeline || []).concat([{ date: today(), text: label }]) };
     db.from("applications").update(change).eq("id", app.id).then(function (result) {
       if (result.error) { appStatus("Could not move it: " + result.error.message); return; }
       Object.assign(app, change);
+      renderApps();
+    });
+  }
+
+  function saveNext(app, step, dueDate) {
+    var change = { next_step: step || null, next_due: dueDate || null, updated_at: new Date().toISOString() };
+    if (change.next_step === (app.next_step || null) && change.next_due === (app.next_due || null)) return;
+    db.from("applications").update(change).eq("id", app.id).then(function (result) {
+      if (result.error) { appStatus("Could not save the next step: " + result.error.message); return; }
+      Object.assign(app, change);
+      showAccount();
       renderApps();
     });
   }
@@ -651,7 +685,7 @@
   }
 
   function appCard(app) {
-    var node = el("article", "card");
+    var node = el("article", "card" + (isDue(app) ? " overdue" : ""));
     var top = el("div", "top");
     top.appendChild(el("span", "company", app.company));
     top.appendChild(el("span", "tag", app.source === "scan" ? "from board" : app.source));
@@ -690,6 +724,24 @@
     remove.type = "button";
     remove.addEventListener("click", function () { removeApp(app); });
 
+    if (app.stage !== "closed") {
+      var next = el("div", "next");
+      var step = el("input");
+      step.type = "text";
+      step.placeholder = "Next step";
+      step.value = app.next_step || "";
+      var dueDate = el("input");
+      dueDate.type = "date";
+      dueDate.value = app.next_due || "";
+      [step, dueDate].forEach(function (input) {
+        input.addEventListener("change", function () { saveNext(app, step.value.trim(), dueDate.value); });
+      });
+      next.appendChild(step);
+      next.appendChild(dueDate);
+      if (isDue(app)) node.appendChild(el("div", "due", app.next_due === today() ? "Due today" : "Overdue since " + app.next_due));
+      node.appendChild(next);
+    }
+
     var bottom = el("div", "bottom");
     bottom.appendChild(stage);
     bottom.appendChild(remove);
@@ -706,6 +758,7 @@
     box.textContent = "";
     STAGES.forEach(function (s) {
       var apps = APPS.filter(function (app) { return app.stage === s[0]; });
+      apps.sort(function (a, b) { return (a.next_due || "9999") < (b.next_due || "9999") ? -1 : 1; });
       var section = el("section", "column");
       var heading = el("h2", "", s[1] + " ");
       heading.appendChild(el("span", "count", String(apps.length)));
