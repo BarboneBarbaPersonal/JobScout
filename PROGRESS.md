@@ -62,3 +62,16 @@ verified, what is open or next. Read the last entries to know where things stand
 - Verified: test written first (failed), now 18 tests pass; all 46 live jobs still pass the
   rules; test scan from the branch: 47 of 47 jobs identical to the live board (preventive fix).
 - Next: T2 waits for Andrea; then T5 tracker 1 ("I applied" + Applications view).
+
+## 2026-10-19 - T5 tracker 1
+- After login: "I applied" on each job card (creates an application in Supabase; the card
+  then shows "applied"); "My applications (N)" switches the page to 4 columns (Applied,
+  Interviewing, Offer, Closed) with a stage dropdown (Closed asks the reason), notes, Remove,
+  and a dated history; "Add application" form for jobs found elsewhere (LinkedIn, referral,
+  recruiter, other). Live sync to other devices. No database change needed (table from #2).
+- Verified: tests pass; local page with the live jobs and a pretend in-memory database: apply,
+  move to Interviewing, notes, add by hand, close as rejected, remove, back to the board; phone
+  width without sideways scrolling (screenshots).
+- Not verified yet: the real database (needs Andrea's login). Andrea: try one test
+  application on laptop and phone, then Remove it.
+- Next: T6 follow-ups.

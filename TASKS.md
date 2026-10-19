@@ -31,7 +31,8 @@ Never push to main or merge."
     "La Rioja" can't drop a remote job; CA added.
   - Dropped: Revolut "degraded" (it no longer fails: 156/156 boards OK) and removing unused
     reader settings (no visible benefit, risk of breaking the old readers).
-- [ ] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1)
+- [ ] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1) - in PR;
+  last step waiting: Andrea tries it with a test application on laptop and phone, then removes it
   - Done when: "I applied" on a card creates an application in Supabase; Applications view
     with columns Applied / Interviewing / Offer / Closed; "Add application" for jobs found
     elsewhere; applications stay when the job closes; tested with a test application on
