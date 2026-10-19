@@ -46,6 +46,10 @@ def to_job(item, company_link=""):
     job = make_job(job_id(item, company_link), item["title"], item["url"].split("?utm_source")[0],
                    item["location"], iso(item.get("posted_at")), item.get("description") or "")
     job["work_mode"] = item.get("work_mode") or ""
+    if item["source"] == "workday":
+        # freehire keeps only a Workday job's first city; the job page lists all of them.
+        host, _, site = item["board"].partition("/")
+        job["_extra"] = {"api": f"https://{host}/wday/cxs/{host.split('.')[0]}/{site}{item['external_id']}"}
     return job
 
 

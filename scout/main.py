@@ -78,15 +78,29 @@ def scan_with_engine(companies, prefs):
             retry.update([item["company"]] + (item.get("also") or []))
             continue
         jobs = item["jobs"]
-        matches = [dict(job, company=item["company"]) for job in jobs if keep(job, prefs)]
+        matches = [dict(job, company=item["company"]) for job in jobs if keep(job, prefs, all_cities)]
         results.append((item["company"], True, {"count": len(jobs), "ids": [j["id"] for j in jobs]},
                         matches, ""))
     return results, [c for c in companies if c["name"] in retry]
 
 
-def keep(job, prefs):
-    """The rules every job must pass: wanted title, wanted place, not too old."""
-    if not prefs.title_ok(job["title"]) or not prefs.location_ok(job["title"], job["location"]):
+def all_cities(job):
+    """Workday jobs from the engine carry only their first city: read the full list."""
+    if job.get("_extra", {}).get("api"):
+        try:
+            DETAILS["workday"](job, {})
+        except Exception:
+            pass  # keep the first city
+
+
+def keep(job, prefs, more_cities=None):
+    """The rules every job must pass: wanted title, wanted place, not too old.
+    more_cities(job) may fill in the full city list before the place is judged."""
+    if not prefs.title_ok(job["title"]):
+        return False
+    if not prefs.location_ok(job["title"], job["location"]) and more_cities:
+        more_cities(job)
+    if not prefs.location_ok(job["title"], job["location"]):
         return False
     cutoff = datetime.now(timezone.utc) - timedelta(days=prefs.max_age_days)
     return not (job["posted_at"] and board.parse_time(job["posted_at"]) < cutoff)
