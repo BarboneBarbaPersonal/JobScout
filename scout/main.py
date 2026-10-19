@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from . import board, resolve, sheet
+from . import board, engine, resolve, sheet
 from .prefs import Preferences
 from .sources import DETAILS, READERS
 
@@ -34,11 +34,13 @@ def main():
         sys.exit(f"Could not read the sheet: {error}")
     print(f"{len(companies)} companies, roles: {', '.join(prefs.core + prefs.also)}")
 
-    boards, not_found = find_boards(companies)
-    hints = {"countries": countries(prefs)}
     started = time.time()
+    results, left = scan_with_engine(companies, prefs)  # freehire's engine first
+    boards, not_found = find_boards(left)                # the old scanner reads the rest
+    hints = {"countries": countries(prefs)}
     with ThreadPoolExecutor(WORKERS) as pool:
-        results = list(pool.map(lambda item: scan_board(item, prefs, hints), boards.items()))
+        results += list(pool.map(lambda item: scan_board(item, prefs, hints), boards.items()))
+    board_count = len(results)
 
     matches, failed, scanned, all_ids = [], [], 0, set()
     for name, ok, open_jobs, found, error in results:
@@ -51,10 +53,38 @@ def main():
     new_postings = len(all_ids - seen_before) if seen_before else 0
     write_cache("seen.json", sorted(all_ids))
 
-    run = {"status": "ok" if not failed else "degraded", "boards": len(boards),
-           "boards_ok": len(boards) - len(failed), "scanned": scanned, "new_postings": new_postings}
+    run = {"status": "ok" if not failed else "degraded", "boards": board_count,
+           "boards_ok": board_count - len(failed), "scanned": scanned, "new_postings": new_postings}
     jobs = board.build(site, prefs, matches, run)
-    summary(prefs, companies, boards, jobs, failed, not_found, scanned, time.time() - started)
+    summary(companies, board_count, len(boards), jobs, failed, not_found, scanned, time.time() - started)
+
+
+def scan_with_engine(companies, prefs):
+    """Read every board freehire's engine recognizes. Returns (results like scan_board's,
+    companies left for the old scanner). Without the engine, or if it fails, all are left."""
+    binary = os.environ.get("JOBSCOUT_ENGINE", "")
+    if not binary:
+        return [], companies
+    try:
+        boards, unrecognized = engine.scan(companies, binary)
+    except Exception as error:
+        print(f"Engine failed, the old scanner reads every company: {error}")
+        return [], companies
+    results = []
+    for item in boards:
+        jobs = item["jobs"]
+        matches = [dict(job, company=item["company"]) for job in jobs if keep(job, prefs)]
+        results.append((item["company"], item["ok"], {"count": len(jobs), "ids": [j["id"] for j in jobs]},
+                        matches, item.get("error", "")))
+    return results, [c for c in companies if c["name"] in set(unrecognized)]
+
+
+def keep(job, prefs):
+    """The rules every job must pass: wanted title, wanted place, not too old."""
+    if not prefs.title_ok(job["title"]) or not prefs.location_ok(job["title"], job["location"]):
+        return False
+    cutoff = datetime.now(timezone.utc) - timedelta(days=prefs.max_age_days)
+    return not (job["posted_at"] and board.parse_time(job["posted_at"]) < cutoff)
 
 
 def find_boards(companies):
@@ -112,31 +142,28 @@ def scan_board(item, prefs, hints):
     if jobs is None:
         return company, False, {"count": 0, "ids": []}, [], error
 
-    cutoff = datetime.now(timezone.utc) - timedelta(days=prefs.max_age_days)
     matches = []
     for job in jobs:
         if not prefs.title_ok(job["title"]):
             continue
-        if service in DETAILS:
+        if service in DETAILS:  # only now open the job page: cheaper than for every job
             try:
                 job = DETAILS[service](job, params)
             except Exception:
                 pass  # keep the list data; the description is a nice-to-have
-        if not prefs.location_ok(job["title"], job["location"]):
-            continue
-        if job["posted_at"] and board.parse_time(job["posted_at"]) < cutoff:
-            continue
-        job["company"] = company
-        matches.append(job)
+        if keep(job, prefs):
+            job["company"] = company
+            matches.append(job)
     return company, True, {"count": len(jobs), "ids": [job["id"] for job in jobs]}, matches, ""
 
 
-def summary(prefs, companies, boards, jobs, failed, not_found, scanned, seconds):
+def summary(companies, board_count, old_boards, jobs, failed, not_found, scanned, seconds):
     """Print the result and, on GitHub, show it on the run's summary page."""
     lines = [f"## JobScout scan",
              f"- {len(jobs)} matching jobs on the board",
-             f"- {scanned} open jobs checked on {len(boards) - len(failed)} of {len(boards)} job boards "
-             f"({len(companies)} companies) in {seconds:.0f} s"]
+             f"- {scanned} open jobs checked on {board_count - len(failed)} of {board_count} job boards "
+             f"({len(companies)} companies) in {seconds:.0f} s",
+             f"- {board_count - old_boards} boards read by freehire's engine, {old_boards} by the old scanner"]
     if failed:
         lines.append(f"\n### Job boards that did not answer ({len(failed)})")
         lines += [f"- {name}: {error}" for name, error in failed]

@@ -1,0 +1,65 @@
+"""Read job boards with freehire's crawling engine (see engine/main.go and docs/MERGE-SPEC.md).
+
+The engine gets every company's link, recognizes the job board behind it, crawls all the
+boards and prints the jobs. This module turns its output into JobScout jobs with the same
+ids as before, so hidden jobs and applications keep working. Companies whose link the
+engine doesn't recognize are returned, and the old scanner reads those.
+"""
+
+import json
+import subprocess
+from urllib.parse import urlparse
+
+from .sources.common import iso, job as make_job
+
+ENGINE_TIMEOUT = 45 * 60  # seconds: the whole crawl must finish well inside the hourly slot
+
+
+def scan(companies, binary):
+    """Crawl with the engine. Returns (boards, unrecognized company names).
+    boards: [{"company", "source", "board", "ok", "error", "jobs": [JobScout jobs]}]"""
+    links = {c["name"]: c["careers"] or c["website"] for c in companies}
+    request = json.dumps([{"name": name, "link": link} for name, link in links.items() if link])
+    result = subprocess.run([binary], input=request, capture_output=True, text=True,
+                            encoding="utf-8", timeout=ENGINE_TIMEOUT)
+    if result.returncode != 0:
+        raise RuntimeError(f"engine failed: {result.stderr[-300:]}")
+
+    boards, unrecognized, jobs_by_board = [], [c["name"] for c in companies if not links[c["name"]]], {}
+    for line in result.stdout.splitlines():
+        item = json.loads(line)
+        if item["kind"] == "unrecognized":
+            unrecognized.append(item["company"])
+        elif item["kind"] == "job":
+            key = (item["source"], item["board"])
+            jobs_by_board.setdefault(key, []).append(to_job(item, links.get(item["company"], "")))
+        elif item["kind"] == "board":
+            boards.append(item)
+    for item in boards:
+        item["ok"] = not item.get("error")
+        item["jobs"] = jobs_by_board.get((item["source"], item["board"]), [])
+    return boards, unrecognized
+
+
+def to_job(item, company_link=""):
+    """One engine job -> a JobScout job (same keys as the old readers, plus work mode)."""
+    job = make_job(job_id(item, company_link), item["title"], item["url"].split("?utm_source")[0],
+                   item["location"], iso(item.get("posted_at")), item.get("description") or "")
+    job["work_mode"] = item.get("work_mode") or ""
+    return job
+
+
+def job_id(item, company_link=""):
+    """The id JobScout used before the engine: '<platform>/<board>/<job id>'."""
+    source, board, external = item["source"], item["board"], str(item["external_id"])
+    if source == "workday":
+        # board = "<tenant>.wdN.myworkdayjobs.com/<site>"; old id = workday/<tenant>/<site>/<path>
+        host, _, site = board.partition("/")
+        return f"workday/{host.split('.')[0]}/{site}/{external.lstrip('/')}"
+    if source == "personio":
+        # The old id used the board's address as written in the sheet (.de or .com).
+        host = urlparse(company_link).netloc
+        if not host.endswith((".jobs.personio.de", ".jobs.personio.com")):
+            host = f"{board}.jobs.personio.com"
+        return f"personio/{host}/{external}"
+    return f"{source}/{board}/{external}"

@@ -16,7 +16,7 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
 
@@ -32,6 +32,26 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      # freehire's crawling engine, at the version pinned in engine/FREEHIRE_VERSION,
+      # plus our runner (engine/main.go). See docs/MERGE-SPEC.md.
+      - name: Engine version
+        id: engine
+        run: echo "sha=$(cat engine/FREEHIRE_VERSION)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          repository: strelov1/freehire
+          ref: ${{ steps.engine.outputs.sha }}
+          path: freehire
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: freehire/go.mod
+          cache-dependency-path: freehire/go.sum
+      - name: Build the engine
+        run: |
+          mkdir -p freehire/cmd/jobscout-scan
+          cp engine/main.go freehire/cmd/jobscout-scan/main.go
+          cd freehire && go build -o ../jobscout-engine ./cmd/jobscout-scan
+
       # Remembered between scans, never published: which board each company uses.
       - uses: actions/cache@v4
         with:
@@ -42,9 +62,18 @@ jobs:
       - name: Scan
         env:
           SHEET_URL: ${{ secrets.SHEET_URL }}
+          JOBSCOUT_ENGINE: ./jobscout-engine
         run: python -m scout.main site
 
+      # Only main publishes. A test run from another branch keeps the page as a download.
+      - name: Keep the test page
+        if: github.ref != 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-page
+          path: site/*.*
       - name: Publish the page
+        if: github.ref == 'refs/heads/main'
         run: |
           cd site
           rm -rf .git
