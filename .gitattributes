@@ -1,0 +1,2 @@
+# Keep every text file with Linux line endings, whichever editor or tool writes it.
+* text=auto eol=lf
