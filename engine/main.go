@@ -5,6 +5,8 @@
 // module use its internal packages.
 //
 // Input (stdin): [{"name": "Adyen", "link": "https://job-boards.greenhouse.io/adyen"}, ...]
+// A company may also give "source" and "board" directly (e.g. {"source": "teamtailor",
+// "board": "careers.paack.co"}) when JobScout already knows the board.
 // Output (stdout), one JSON object per line:
 //
 //	{"kind": "job", ...}           one open job, with freehire's reading of its location
@@ -25,12 +27,14 @@ import (
 	"github.com/strelov1/freehire/internal/platform/htmltext"
 )
 
-const workers = 8                    // boards crawled at the same time
+const workers = 8                     // boards crawled at the same time
 const boardTimeout = 25 * time.Minute // a stuck board must not block the whole scan
 
 type company struct {
-	Name string `json:"name"`
-	Link string `json:"link"`
+	Name   string `json:"name"`
+	Link   string `json:"link"`
+	Source string `json:"source"`
+	Board  string `json:"board"`
 }
 
 type board struct {
@@ -74,7 +78,10 @@ func main() {
 	boards := map[string]*board{}
 	var order []string
 	for _, c := range companies {
-		source, slug, _, ok := atsboard.Recognize(c.Link)
+		source, slug, ok := c.Source, c.Board, c.Source != ""
+		if !ok {
+			source, slug, _, ok = atsboard.Recognize(c.Link)
+		}
 		if !ok {
 			emit(map[string]string{"kind": "unrecognized", "company": c.Name, "link": c.Link})
 			continue

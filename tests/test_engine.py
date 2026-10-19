@@ -21,6 +21,24 @@ class JobIds(unittest.TestCase):
         for item, link, expected in cases:
             self.assertEqual(engine.job_id(item, link), expected)
 
+    def test_comeet_id(self):
+        self.assertEqual(engine.job_id({"source": "comeet", "board": "groundcover/88.008", "external_id": "AB.123"}),
+                         "comeet/groundcover/AB.123")
+
+    def test_known_boards_for_the_engine(self):
+        self.assertEqual(engine.engine_board("teamtailor", {"host": "careers.paack.co"}),
+                         ("teamtailor", "careers.paack.co"))
+        self.assertEqual(engine.engine_board("comeet", {"company_slug": "groundcover", "company_uid": "88.008"}),
+                         ("comeet", "groundcover/88.008"))
+        self.assertIsNone(engine.engine_board("eightfold", {"host": "apply.careers.microsoft.com"}))
+        self.assertIsNone(engine.engine_board("phenom", {"host": "careers.allianz.com"}))
+        self.assertIsNone(engine.engine_board("dynatrace", {}))
+
+    def test_known_board_without_link_is_not_unrecognized(self):
+        rows = [{"name": "Paack", "careers": "", "website": "", "source": "teamtailor", "board": "careers.paack.co"},
+                {"name": "NoLink", "careers": "", "website": ""}]
+        self.assertEqual(engine.without_board(rows), ["NoLink"])
+
     def test_engine_job_becomes_jobscout_job(self):
         job = engine.to_job({"source": "greenhouse", "board": "adyen", "external_id": "1", "title": "Account  Manager",
                              "url": "https://job-boards.greenhouse.io/adyen/jobs/1?utm_source=freehire.me",

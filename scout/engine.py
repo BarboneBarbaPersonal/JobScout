@@ -7,25 +7,47 @@ engine doesn't recognize are returned, and the old scanner reads those.
 """
 
 import json
+import re
 import subprocess
+import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
 
+from . import util
 from .sources.common import iso, job as make_job
 
 ENGINE_TIMEOUT = 45 * 60  # seconds: the whole crawl must finish well inside the hourly slot
 
 
+# Boards the old scanner found that freehire's engine can read too: (old service, params) ->
+# (freehire source, board). Kept with the old readers (tested 2026-10-19): Allianz (phenom),
+# Microsoft (eightfold) and IBM, where freehire crawls the whole worldwide catalogue (scan time
+# 14 -> 38 min, and different job ids) while our readers ask for Spain only; SAP and
+# Signaturit (successfactors), whose sitemap freehire can't read.
+def engine_board(service, params):
+    if service == "teamtailor":
+        return "teamtailor", params["host"]
+    if service == "comeet":
+        return "comeet", f"{params['company_slug']}/{params['company_uid']}"
+    if service == "recruiterflow":
+        return "recruiterflow", params["company_slug"]
+    if service == "factorial":
+        return "factorial", params["host"]
+    return None
+
+
 def scan(companies, binary):
     """Crawl with the engine. Returns (boards, unrecognized company names).
+    companies: sheet rows; a row may carry "source" and "board" when the board is known.
     boards: [{"company", "source", "board", "ok", "error", "jobs": [JobScout jobs]}]"""
     links = {c["name"]: c["careers"] or c["website"] for c in companies}
-    request = json.dumps([{"name": name, "link": link} for name, link in links.items() if link])
+    request = json.dumps([{"name": c["name"], "link": links[c["name"]], "source": c.get("source", ""),
+                           "board": c.get("board", "")} for c in companies if links[c["name"]] or c.get("source")])
     result = subprocess.run([binary], input=request, capture_output=True, text=True,
                             encoding="utf-8", timeout=ENGINE_TIMEOUT)
     if result.returncode != 0:
         raise RuntimeError(f"engine failed: {result.stderr[-300:]}")
 
-    boards, unrecognized, jobs_by_board = [], [c["name"] for c in companies if not links[c["name"]]], {}
+    boards, unrecognized, jobs_by_board = [], without_board(companies), {}
     for line in result.stdout.splitlines():
         item = json.loads(line)
         if item["kind"] == "unrecognized":
@@ -38,7 +60,32 @@ def scan(companies, binary):
     for item in boards:
         item["ok"] = not item.get("error")
         item["jobs"] = jobs_by_board.get((item["source"], item["board"]), [])
+        if item["source"] == "teamtailor":
+            keep_teamtailor_ids(item)
     return boards, unrecognized
+
+
+def without_board(companies):
+    """Companies the engine can't even try: no link and no known board."""
+    return [c["name"] for c in companies if not (c["careers"] or c["website"] or c.get("source"))]
+
+
+def keep_teamtailor_ids(item):
+    """Old Teamtailor ids end with the job's feed code (a long uuid), freehire's with the job
+    number. The board's feed links number -> code, so the old ids are kept."""
+    try:
+        feed = ET.fromstring(util.get(f"https://{item['board']}/jobs.rss").content)
+    except Exception:
+        return  # keep freehire's ids for this run rather than lose the board
+    codes = {}
+    for entry in feed.iter("item"):
+        number = re.search(r"/jobs/(\d+)", entry.findtext("link") or "")
+        if number:
+            codes[number.group(1)] = (entry.findtext("guid") or "").strip()
+    for job in item["jobs"]:
+        number = job["id"].rsplit("/", 1)[-1]
+        if codes.get(number):
+            job["id"] = f"teamtailor/{item['board']}/{codes[number]}"
 
 
 def to_job(item, company_link=""):
@@ -60,6 +107,9 @@ def job_id(item, company_link=""):
         # board = "<tenant>.wdN.myworkdayjobs.com/<site>"; old id = workday/<tenant>/<site>/<path>
         host, _, site = board.partition("/")
         return f"workday/{host.split('.')[0]}/{site}/{external.lstrip('/')}"
+    if source == "comeet":
+        # board = "<slug>/<company uid>"; old id = comeet/<slug>/<position uid>
+        return f"comeet/{board.split('/')[0]}/{external}"
     if source == "personio":
         # The old id used the board's address as written in the sheet (.de or .com).
         host = urlparse(company_link).netloc
