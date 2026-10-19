@@ -222,6 +222,7 @@
     meta.appendChild(el("span", "place p" + Math.min(Math.max(DATA.places.indexOf(job.place), 0), 3) + (job.place === "Other" ? " p3" : ""), job.place));
     meta.appendChild(document.createTextNode(job.location + " "));
     meta.appendChild(el("span", "tag", job.role === "core" ? "core" : "also"));
+    if (job.work_mode) meta.appendChild(el("span", "tag", job.work_mode)); // remote / hybrid / onsite
     node.appendChild(meta);
 
     // Match % and missing keywords, only after login with a saved CV.

@@ -132,9 +132,14 @@ func crawl(registry map[string]sources.Source, b *board, emit func(any)) {
 	b.Jobs = len(jobs)
 	for _, j := range jobs {
 		geo := location.Parse(j.Location)
-		workMode := j.WorkMode // the platform's own field wins over reading the text
+		// Work mode: the platform's own field first, then the location text, then the
+		// description ("hybrid, 3 days in the office"), as freehire's pipeline does.
+		workMode := j.WorkMode
 		if workMode == "" {
 			workMode = geo.WorkMode
+		}
+		if workMode == "" {
+			workMode = location.WorkModeFromDescription(j.Description)
 		}
 		emit(job{Kind: "job", Company: b.Company, Source: b.Source, Board: b.Board,
 			ExternalID: j.ExternalID, URL: j.URL, Title: j.Title, Location: j.Location,

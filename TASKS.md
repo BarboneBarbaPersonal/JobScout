@@ -11,7 +11,7 @@ append to PROGRESS.md, and open a pull request with what changed and how it was 
 Never push to main or merge."
 
 ## Now
-- [ ] **T1. Remote / hybrid / onsite label on job cards** (was #16) - in PR, waiting for merge
+- [x] **T1. Remote / hybrid / onsite label on job cards** (was #16)
   - Done when: cards show the label when the platform, the location or the description states
     it; test scan compared with the live board (same ids).
   - Decided: no switch of the location filters (identical results today) and no merging of
