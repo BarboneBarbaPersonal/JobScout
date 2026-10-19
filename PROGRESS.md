@@ -34,3 +34,14 @@ verified, what is open or next. Read the last entries to know where things stand
   PROGRESS.md added. Standing prompt in TASKS.md.
 - Open: T1 (work-mode label) is in a PR waiting for merge; T2 waits for Andrea to open the
   board on the "CV insights" laptop.
+
+## 2026-10-19 - T1 work-mode label
+- Cards show remote / hybrid / onsite: from the platform field, then the location text, then
+  the description (freehire's WorkModeFromDescription, added to engine/main.go).
+- Dropped on purpose: location filters on the engine's reading (identical results today) and
+  merging duplicate cards (2 of 46, only near-copies).
+- Repo normalized to Linux line endings (.gitattributes); a CLAUDE.md conflict from that was
+  resolved keeping the TASKS rule.
+- Verified: tests pass; test scan from the branch: 156/156 boards, 47 matches, all 47 with the
+  same ids as the live board; labels on 22 of 47 jobs (13 before).
+- Next: T2 waits for Andrea (open the board on the "CV insights" laptop); then T3 links menu.
