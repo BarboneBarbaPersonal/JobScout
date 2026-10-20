@@ -5,3 +5,4 @@ site/
 sheet-preview/
 .claude/
 engine/bin/
+*.zip
