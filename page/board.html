@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Reload every 30 minutes so a new scan shows up without touching anything -->
-<meta http-equiv="refresh" content="1800">
 <meta name="robots" content="noindex, nofollow">
 <!-- Security policy: only this page's own script (by fingerprint) and the pinned Supabase
      library may run, and the page may only talk to itself, Supabase and GitHub (one-time CV
@@ -841,6 +839,21 @@
   });
   renderBoard();
   startAccount();
+
+  // ---- Show new scans without logging out ----
+  // The page reloads to pick up a new scan, but only when it is older than 30 minutes and,
+  // first, after any login renewal has finished: reloading in the middle of a renewal (e.g.
+  // when the laptop wakes up) used to lose the renewed login and log out every day.
+  var LOADED_AT = Date.now();
+  var RELOAD_AFTER = 30 * 60 * 1000;
+  function reloadWhenSafe() {
+    if (Date.now() - LOADED_AT < RELOAD_AFTER || document.hidden) return;
+    LOADED_AT = Date.now(); // only one reload, even if several triggers fire together
+    var renewed = db ? db.auth.getSession() : Promise.resolve(); // waits for a running renewal
+    renewed.then(function () { location.reload(); }, function () { location.reload(); });
+  }
+  document.addEventListener("visibilitychange", reloadWhenSafe);
+  setInterval(reloadWhenSafe, 60 * 1000);
 </script>
 </body>
 </html>
