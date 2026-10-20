@@ -127,3 +127,21 @@ verified, what is open or next. Read the last entries to know where things stand
   and an outside script are blocked (console shows the policy blocking them); test scan from
   the branch: 156/156 boards, logs show counts only; the 3 jobs missing vs the live board were
   checked and are closed at the companies.
+
+## 2026-10-20 - New companies, wider roles, daily logout fix
+- Sheet: 43 companies added (25 Barcelona, 18 European scale-ups hiring remotely/in Spain),
+  found by a research agent with boards checked live; first scan: 192/192 boards, 15 new
+  matches (Glovo, Amenitiz, Cledara, Enginy, RELEX FDE, TheFork, Legora, Nebius FDE, SUSE).
+  7 have no readable board (BizAway, eDreams, Gartner, Sage, Skyscanner, Fast Track, Cast AI).
+- Sheet preferences (Andrea chose the strong-fit group, from a market analysis of ~6,200
+  recent jobs in Barcelona/Spain/remote EU): added technical program manager, chief of staff,
+  strategy & operations, business operations manager, partner manager, renewal manager;
+  removed "chief" from the exclusions (it blocked chief of staff). Match rate on the market
+  sample 589 -> 648 jobs. Not added (his choice): product manager, account executive,
+  account director.
+- Daily logout (laptop tab left open): the page's blind 30-minute reload could interrupt the
+  login renewal when the laptop woke up, losing the renewed login. Now the page reloads only
+  when older than 30 minutes, visible, and after any renewal has finished.
+- Verified: tests pass; browser test with a simulated renewal in progress: no reload during
+  it, exactly one reload right after it. To confirm in real life: Andrea stays logged in for
+  a few days.
