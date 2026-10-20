@@ -6,6 +6,10 @@
 <!-- Reload every 30 minutes so a new scan shows up without touching anything -->
 <meta http-equiv="refresh" content="1800">
 <meta name="robots" content="noindex, nofollow">
+<!-- Security policy: only this page's own script (by fingerprint) and the pinned Supabase
+     library may run, and the page may only talk to itself, Supabase and GitHub (one-time CV
+     move). Filled in by scout/board.py. -->
+<meta http-equiv="Content-Security-Policy" content="{{CSP}}">
 <title>JobScout</title>
 <style>
   :root {
@@ -110,7 +114,9 @@
 </style>
 <!-- Login and private data (hidden jobs, applications): Supabase. The key below is the
      public "publishable" key; database rules let each logged-in user see only their own rows. -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"
+        integrity="sha384-GFr3yTh5lJznCbZfpTtXnwboFsxqtTQoeTZCRHhE0579KrRmlCzen5AA8ohaB5ug"
+        crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="wrap">
@@ -195,6 +201,8 @@
     var days = Math.floor((Date.now() - new Date(iso)) / 86400000);
     return days <= 0 ? "today" : days + "d ago";
   }
+  // Job and application links come from outside websites: allow only http(s) links.
+  function safeUrl(url) { return /^https?:\/\//i.test(url || "") ? url : ""; }
   function num(value) { return value === null || value === undefined ? "-" : value.toLocaleString("en-US"); }
 
   // ---- "Hide" remembers dismissed jobs in this browser only (per device) ----
@@ -263,7 +271,7 @@
     node.appendChild(top);
 
     var link = el("a", "title", job.title);
-    link.href = job.url; link.target = "_blank"; link.rel = "noopener";
+    if (safeUrl(job.url)) { link.href = safeUrl(job.url); link.target = "_blank"; link.rel = "noopener noreferrer"; }
     node.appendChild(link);
 
     var meta = el("div", "meta");
@@ -696,8 +704,8 @@
     top.appendChild(el("span", "company", app.company));
     top.appendChild(el("span", "tag", app.source === "scan" ? "from board" : app.source));
     node.appendChild(top);
-    var link = el(app.link ? "a" : "span", "title", app.title);
-    if (app.link) { link.href = app.link; link.target = "_blank"; link.rel = "noopener"; }
+    var link = el(safeUrl(app.link) ? "a" : "span", "title", app.title);
+    if (safeUrl(app.link)) { link.href = safeUrl(app.link); link.target = "_blank"; link.rel = "noopener noreferrer"; }
     node.appendChild(link);
     var days = Math.floor((Date.now() - new Date(app.applied_on)) / 86400000);
     node.appendChild(el("div", "meta", (app.location ? app.location + " · " : "") +

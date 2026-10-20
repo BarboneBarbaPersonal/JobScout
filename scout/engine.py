@@ -7,6 +7,7 @@ engine doesn't recognize are returned, and the old scanner reads those.
 """
 
 import json
+import os
 import re
 import subprocess
 import xml.etree.ElementTree as ET
@@ -42,8 +43,11 @@ def scan(companies, binary):
     links = {c["name"]: c["careers"] or c["website"] for c in companies}
     request = json.dumps([{"name": c["name"], "link": links[c["name"]], "source": c.get("source", ""),
                            "board": c.get("board", "")} for c in companies if links[c["name"]] or c.get("source")])
+    # The engine is outside code: give it a bare environment, without SHEET_URL or any key.
+    bare = {name: os.environ[name] for name in ("PATH", "HOME", "TMPDIR", "TMP", "TEMP", "SYSTEMROOT")
+            if name in os.environ}
     result = subprocess.run([binary], input=request, capture_output=True, text=True,
-                            encoding="utf-8", timeout=ENGINE_TIMEOUT)
+                            encoding="utf-8", timeout=ENGINE_TIMEOUT, env=bare)
     if result.returncode != 0:
         raise RuntimeError(f"engine failed: {result.stderr[-300:]}")
 
