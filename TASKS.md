@@ -47,7 +47,8 @@ Never push to main or merge."
   - Decided 2026-10-19: the master CV lives on the board (Supabase); the board's "Fit my CV"
     button sends CV + job ad to the skill.
   - Done when: tested on 3 real jobs, the docs checked for invented facts.
-- [ ] **T8. Skill: interview prep** (was #21)
+- [ ] **T8. Skill: interview prep** (was #21) - in PR; waiting: Andrea installs
+  skills/interview-prep.zip and uses it before a real interview
   - Done when: a Google Doc with company, product, team, the story to tell, 3 questions;
     tested on one real interview or a realistic example.
 - [ ] **T9. Tracker 3: Gmail** (was #8, phase 3)

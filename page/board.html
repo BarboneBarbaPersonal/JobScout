@@ -408,9 +408,8 @@
       "\n\n--- MY CV ---\n" + CV;
   }
 
-  // Copy the prompt, then open Claude in a new tab: paste it there.
-  function askClaude(job, button) {
-    var text = claudePrompt(job);
+  // Copy a prompt, then open Claude in a new tab: paste it there.
+  function copyToClaude(text, button, label) {
     navigator.clipboard.writeText(text).then(function () {
       button.textContent = "Copied: paste in Claude";
       window.open("https://claude.ai/new", "_blank", "noopener");
@@ -424,14 +423,24 @@
       box.select();
       button.textContent = "Copy the text below";
     });
-    setTimeout(function () { button.textContent = "Fit my CV"; }, 4000);
+    setTimeout(function () { button.textContent = label; }, 4000);
+  }
+
+  // The prompt for the interview-prep skill (skills/interview-prep/SKILL.md in the repo).
+  function prepPrompt(app) {
+    return "Use my interview-prep skill: prepare me for this interview and save it as a Google Doc.\n\n" +
+      "APPLICATION: " + app.title + " at " + app.company + (app.location ? " (" + app.location + ")" : "") +
+      (app.link ? "\n" + app.link : "") + "\nStage: " + app.stage + ", applied " + app.applied_on + "\n\n" +
+      "--- NOTES ---\n" + (app.notes || "(no notes yet)") +
+      "\n\n--- JOB AD ---\n" + ((app.job_id && DESCRIPTIONS[app.job_id]) || "(Open the link above: the ad text is not on the board.)") +
+      "\n\n--- MY CV ---\n" + (CV || "(Add your CV under Log in > My CV first.)");
   }
 
   function askButton(job) {
     var button = el("button", "hide ask", "Fit my CV");
     button.type = "button";
     button.title = "Copies this job and your CV for the fit-cv skill, then opens Claude: paste it there. The tailored CV comes back as a Google Doc.";
-    button.addEventListener("click", function () { askClaude(job, button); });
+    button.addEventListener("click", function () { copyToClaude(claudePrompt(job), button, "Fit my CV"); });
     return button;
   }
 
@@ -718,6 +727,12 @@
     notes.addEventListener("blur", function () { saveNotes(app, notes.value); });
 
     var remove = el("button", "hide", "Remove");
+    if (app.stage === "interviewing") {
+      var prep = el("button", "hide ask", "Prep interview");
+      prep.type = "button";
+      prep.title = "Copies this application, your notes and your CV for the interview-prep skill, then opens Claude: paste it there.";
+      prep.addEventListener("click", function () { copyToClaude(prepPrompt(app), prep, "Prep interview"); });
+    }
     remove.type = "button";
     remove.addEventListener("click", function () { removeApp(app); });
 
@@ -741,6 +756,7 @@
 
     var bottom = el("div", "bottom");
     bottom.appendChild(stage);
+    if (prep) bottom.appendChild(prep);
     bottom.appendChild(remove);
     node.appendChild(bottom);
     node.appendChild(notes);

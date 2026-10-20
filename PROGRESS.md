@@ -100,3 +100,15 @@ verified, what is open or next. Read the last entries to know where things stand
   voice AI, retail media). Contact line left as a placeholder in the test docs.
 - Not verified yet: the skill running inside Andrea's Claude app (he installs it).
 - Next: T8 interview prep skill.
+
+## 2026-10-20 - T8 interview-prep skill
+- skills/interview-prep/SKILL.md: Google Doc "<Company> - <Role> - Interview prep" with
+  company and product (sources linked, [CHECK] when unconfirmed), the role in plain words, who
+  you meet (from notes only; no profiling of people), 3 STAR stories from the CV, likely
+  questions with answer outlines, 3 questions to ask, gaps with honest answers.
+- Board: applications in Interviewing get "Prep interview" (copies application, notes, job ad,
+  CV for the skill and opens Claude). "Fit my CV" and "Prep interview" share one copy helper.
+- Verified: tests pass; local page with a pretend database: button only on Interviewing
+  applications; prompt contains notes, job ad and CV. Realistic example Doc created for the
+  Criteo application (web research with links; all story numbers found in the CV).
+- Next: T9 Gmail (needs Andrea: Gmail app password as a GitHub secret).
