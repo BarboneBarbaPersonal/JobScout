@@ -32,7 +32,8 @@ def main():
         companies = sheet.read_companies(source)
     except Exception as error:
         sys.exit(f"Could not read the sheet: {error}")
-    print(f"{len(companies)} companies, roles: {', '.join(prefs.core + prefs.also)}")
+    # Run logs are public (public repo): counts only, never the preferences themselves.
+    print(f"{len(companies)} companies, {len(prefs.core + prefs.also)} role keywords")
 
     started = time.time()
     results, left = scan_with_engine(companies, prefs)  # 1. freehire's engine reads the links it knows

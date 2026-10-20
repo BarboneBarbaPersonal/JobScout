@@ -6,7 +6,10 @@ index.html (the page), matches.json (jobs, read by the CV add-on), runs.json
 (scan history for the stats bar).
 """
 
+import base64
+import hashlib
 import json
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -62,8 +65,29 @@ def build(site, prefs, matches, run, now=None):
     template = (PAGE_DIR / "board.html").read_text(encoding="utf-8")
     # Embedded as JSON; "</" is escaped so job text can never close the <script> tag.
     embedded = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
-    (site / "index.html").write_text(template.replace("{{DATA}}", embedded), encoding="utf-8")
+    page = template.replace("{{CSP}}", security_policy(template)).replace("{{DATA}}", embedded)
+    (site / "index.html").write_text(page, encoding="utf-8")
     return jobs
+
+
+SUPABASE = "pffopwzydbjdblojhcwm.supabase.co"
+
+
+def security_policy(template):
+    """Content-Security-Policy for the page: only the page's own inline script (identified by
+    its SHA-256 fingerprint) and the pinned Supabase library may run; the page may only connect
+    to itself, Supabase (login, data, live sync) and GitHub (one-time CV move)."""
+    script = re.search(r"<script>(.*?)</script>", template, re.S).group(1)
+    digest = base64.b64encode(hashlib.sha256(script.encode("utf-8")).digest()).decode()
+    return "; ".join([
+        "default-src 'none'",
+        f"script-src 'sha256-{digest}' https://cdn.jsdelivr.net",
+        "style-src 'unsafe-inline'",
+        f"connect-src 'self' https://{SUPABASE} wss://{SUPABASE} https://api.github.com",
+        "img-src 'self' data:",
+        "base-uri 'none'",
+        "form-action 'none'",
+    ])
 
 
 def stats(jobs, runs, places, now):

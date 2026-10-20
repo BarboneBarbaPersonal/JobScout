@@ -112,3 +112,18 @@ verified, what is open or next. Read the last entries to know where things stand
   applications; prompt contains notes, job ad and CV. Realistic example Doc created for the
   Criteo application (web research with links; all story numbers found in the CV).
 - Next: T9 Gmail (needs Andrea: Gmail app password as a GitHub secret).
+
+## 2026-10-20 - Security hardening
+- Audit found 6 issues; fixed: only http(s) job/application links are clickable (no
+  "javascript:" links from outside feeds); page Content-Security-Policy (only the page's own
+  script by SHA-256 and the pinned Supabase library; connections only to self, Supabase,
+  GitHub) + SRI fingerprint on the library; no GitHub key left on disk during the scan
+  (persist-credentials: false) and a bare environment for the engine (no SHEET_URL); public run
+  logs no longer print the role keywords; exact versions for actions (commit SHAs) and requests.
+  Open for Andrea: T14 revoke the old jobscout-cv GitHub key after T2.
+- Same fixes (minus the page policy, no login there) in JobScout-Template PR #1.
+- Verified: 22 tests (2 new for the policy); in the browser the board, login library and
+  links work under the policy, a "javascript:" job link is not clickable, injected inline code
+  and an outside script are blocked (console shows the policy blocking them); test scan from
+  the branch: 156/156 boards, logs show counts only; the 3 jobs missing vs the live board were
+  checked and are closed at the companies.

@@ -63,6 +63,10 @@ Never push to main or merge."
   - JobScout-legacy and jobscout-test-friend: each repo > Settings > bottom > Delete this repository.
   - Done when: both links answer "not found".
 
+- [ ] **T14. Revoke the old GitHub key** - waiting: Andrea, right after T2
+  - github.com > Settings > Developer settings > Personal access tokens > Fine-grained tokens >
+    the jobscout-cv token > Delete. It is no longer used once the CV has moved to Supabase.
+
 ## Later
 - [ ] **T11. Review on 2026-11-19: automate the skills?** (was #22) - waiting for the date
   - If T7/T8 were used weekly: plan one scheduled agent (drafts for new high-fit jobs,
