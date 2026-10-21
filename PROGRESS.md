@@ -145,3 +145,10 @@ verified, what is open or next. Read the last entries to know where things stand
 - Verified: tests pass; browser test with a simulated renewal in progress: no reload during
   it, exactly one reload right after it. To confirm in real life: Andrea stays logged in for
   a few days.
+
+## 2026-10-21 - Skills installed, housekeeping
+- fit-cv and interview-prep uploaded to Andrea's Claude app (Settings > Skills), Google Drive
+  connector confirmed on. Logout fix (#33) and template security (#1) merged.
+- Notion Job Scout page: project path corrected to .projects\JobScout, status updated.
+- Open for Andrea: paste the CV under My CV (T2), test "I applied" once, delete the old
+  GitHub key(s) and the 2 old repos (T13, T14). Then use the tracker 1-2 weeks before T9/T10.
