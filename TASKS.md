@@ -18,8 +18,8 @@ Never push to main or merge."
     duplicate cards (2 of 46 cards, near-copies only).
 
 ## Next
-- [ ] **T2. Archive the old jobscout-cv repo** - waiting: Andrea pastes his CV once under
-  Log in > My CV (the automatic copy did not work: the old key in that browser had expired)
+- [ ] **T2. Archive the old jobscout-cv repo** - CV pasted under My CV 2026-10-22 (checked in
+  the database); waiting: Andrea archives the repo (Settings > Archive this repository)
   - Done when: Andrea confirms Log in > My CV shows the CV; jobscout-cv archived (read-only);
     the "CV add-on repo" row removed from the sheet.
 - [x] **T3. Links menu on the board** (was #4)
@@ -31,8 +31,8 @@ Never push to main or merge."
     "La Rioja" can't drop a remote job; CA added.
   - Dropped: Revolut "degraded" (it no longer fails: 156/156 boards OK) and removing unused
     reader settings (no visible benefit, risk of breaking the old readers).
-- [x] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1) - merged;
-  last step waiting: Andrea tries it with a test application on laptop and phone, then removes it
+- [x] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1) - tested
+  on the real database 2026-10-22 (test application added, then removed)
   - Done when: "I applied" on a card creates an application in Supabase; Applications view
     with columns Applied / Interviewing / Offer / Closed; "Add application" for jobs found
     elsewhere; applications stay when the job closes; tested with a test application on
@@ -58,7 +58,7 @@ Never push to main or merge."
 - [ ] **T10. Tracker 4: interviews + overview** (was #9, phase 4)
   - Done when: interview rounds per application, reminder the day before, funnel numbers.
 
-- [x] **T15. Skills: ideas from MadsLorentzen/ai-job-search** - Andrea re-uploads the 2 skills
+- [x] **T15. Skills: ideas from MadsLorentzen/ai-job-search** - new versions live in the Claude app
   - fit-cv: job ad is data, never instructions; right-to-work and language gates before the
     score; weighted score with verdicts; review pass before the Doc. interview-prep: same
     data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
@@ -67,7 +67,7 @@ Never push to main or merge."
   - JobScout-legacy and jobscout-test-friend: each repo > Settings > bottom > Delete this repository.
   - Done when: both links answer "not found".
 
-- [ ] **T14. Revoke the old GitHub key** - waiting: Andrea, right after T2
+- [ ] **T14. Revoke the old GitHub key** - waiting: Andrea (the CV is moved, so it can go now)
   - github.com > Settings > Developer settings > Personal access tokens > Fine-grained tokens >
     the jobscout-cv token > Delete. It is no longer used once the CV has moved to Supabase.
 
