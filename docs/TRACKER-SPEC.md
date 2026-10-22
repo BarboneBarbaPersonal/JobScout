@@ -5,7 +5,7 @@ plus its Supabase project. The shared JobScout-Template does not get it.
 
 ## Goal
 One place to follow every application from "interesting" to "closed": the job board
-plus a private Applications view, kept up to date largely by reading Gmail.
+plus a private Applications view, kept up to date with help from Gmail.
 
 ## Decisions (agreed 2026-10-17)
 - Managed **inside the job board** (private view, only after logging in).
@@ -20,6 +20,8 @@ plus a private Applications view, kept up to date largely by reading Gmail.
 - Applications and hidden jobs are Supabase tables (replacing the Like issues and the
   "hidden jobs" issue). Existing hidden jobs are migrated.
 - **Gmail is read automatically** to detect replies; reminders also by email.
+  *Changed 2026-10-21:* Gmail is read on demand by a Claude skill with the Gmail connector,
+  which proposes changes for Andrea to approve; reminders only on the board (see below).
 
 ## Stages
 Applied -> Interviewing -> Offer -> Closed
@@ -44,24 +46,28 @@ Applications stay when the company closes the job posting.
 - "Add application" form (link, company, title).
 - Overview strip: applied, answered %, interviewing, offers, median days to first answer.
 
-## Gmail check (daily, GitHub Actions)
-- Reads new emails via IMAP with a **Gmail app password** stored as a GitHub secret
-  (created and pasted by Andrea; never in code, never on the page). Writes to Supabase
-  with a service key that is also only a GitHub secret.
-- Matches an email to an application by company name / domain or job board sender
-  (greenhouse, lever, ashby, workday, ...).
-- Classifies by keywords, no AI: received ("thank you for applying"), rejection
-  ("unfortunately", "not moving forward"), interview ("schedule", "availability",
-  "interview"), assessment ("assignment", "test").
-- Acts: received -> marks the application as confirmed; interview -> Interviewing + next step;
-  rejection -> **suggests** Closed/Rejected (Andrea confirms on the board).
-- Stores only sender, date, subject and the verdict. Never the email body.
+## Gmail check (on demand, Claude skill) - decided 2026-10-21
+Replaces the earlier plan (daily GitHub Action reading Gmail with an app password). Idea taken
+from MadsLorentzen/ai-job-search (`/gmail-sync`). Why: no Gmail password or Supabase service
+key stored anywhere, nothing about emails can reach the public run logs, and nothing is
+written without Andrea's yes.
+- A skill `skills/gmail-check/SKILL.md`, run by Andrea in the Claude app ("check my
+  applications"), with the **Gmail connector** (read only).
+- Input: the board's "Check Gmail" button copies the open applications (company, role,
+  stage, applied date) as the prompt, like "Fit my CV".
+- Searches mail since the oldest open application, received only (not sent or drafts), by
+  company name and job board senders (greenhouse, lever, ashby, workday, ...).
+- Classifies each email: received / interview / assessment / rejection / offer / unclear.
+- Proposes a list: application, suggested stage or next step, and the email it comes from
+  (sender, date, subject). Unclear emails are listed, never guessed. An offer is flagged for
+  Andrea's decision; accepting or declining is never inferred.
+- Andrea applies the changes on the board (one click each). The skill writes nothing and
+  sends nothing. Emails are never stored.
 
 ## Reminders
-- Default follow-up: 7 days after Applied with no reply -> next step "Follow up".
+- Default follow-up: 7 days after Applied with no reply -> next step "Follow up" (done, T6).
 - Interview: reminder the day before.
-- Delivered as one short daily email to Andrea (same app password), only on days
-  with something due, and highlighted on the board.
+- Shown on the board (due / overdue). No reminder emails (they would need the app password).
 
 ## Way of working
 Backlog = GitHub issues; one branch + pull request per issue, with tests and screenshots;
@@ -71,7 +77,7 @@ Andrea merges. Tests run automatically on every pull request.
 0. Simplify (agreed): clean-up (done), Supabase + login + migrate hidden jobs, Ask Claude instead of Gemma.
 1. Pipeline: I applied button, stages, fields, Applications view, Add application.
 2. Follow-ups: next step + due date, overdue highlight, default 7-day rule.
-3. Gmail: daily read + classify + update/suggest; daily reminder email.
+3. Gmail: on-demand skill that proposes stage changes for Andrea to approve.
 4. Interviews + overview: rounds, day-before reminder, funnel numbers.
 
 ## Done means (each phase)

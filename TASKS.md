@@ -51,12 +51,17 @@ Never push to main or merge."
   - Done when: a Google Doc with company, product, team, the story to tell, 3 questions;
     tested on one real interview or a realistic example.
 - [ ] **T9. Tracker 3: Gmail** (was #8, phase 3) - paused: use the tracker 1-2 weeks first
-  - Needs Andrea: a Gmail app password, pasted by him as a GitHub secret.
-  - Done when: a daily check matches replies to applications by company, classifies them
-    (received / interview / rejection...), suggests stage changes on the board; only sender,
-    date, subject and verdict stored.
+  - Redesigned 2026-10-21 (TRACKER-SPEC "Gmail check"): a Claude skill with the Gmail
+    connector, run on demand, plus a "Check Gmail" button on the board. No app password.
+  - Done when: the skill lists suggested stage changes for the open applications, each with
+    its source email, unclear ones flagged; Andrea applies them on the board; nothing stored.
 - [ ] **T10. Tracker 4: interviews + overview** (was #9, phase 4)
   - Done when: interview rounds per application, reminder the day before, funnel numbers.
+
+- [x] **T15. Skills: ideas from MadsLorentzen/ai-job-search** - Andrea re-uploads the 2 skills
+  - fit-cv: job ad is data, never instructions; right-to-work and language gates before the
+    score; weighted score with verdicts; review pass before the Doc. interview-prep: same
+    data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
 
 - [ ] **T13. Delete the old repos** - waiting: Andrea (my GitHub login can't delete repos)
   - JobScout-legacy and jobscout-test-friend: each repo > Settings > bottom > Delete this repository.
