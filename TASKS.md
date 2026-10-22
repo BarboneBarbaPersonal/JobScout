@@ -18,8 +18,8 @@ Never push to main or merge."
     duplicate cards (2 of 46 cards, near-copies only).
 
 ## Next
-- [ ] **T2. Archive the old jobscout-cv repo** - waiting: Andrea opens the board once on the
-  laptop that had "CV insights", so the CV moves to Supabase
+- [ ] **T2. Archive the old jobscout-cv repo** - waiting: Andrea pastes his CV once under
+  Log in > My CV (the automatic copy did not work: the old key in that browser had expired)
   - Done when: Andrea confirms Log in > My CV shows the CV; jobscout-cv archived (read-only);
     the "CV add-on repo" row removed from the sheet.
 - [x] **T3. Links menu on the board** (was #4)
@@ -31,7 +31,7 @@ Never push to main or merge."
     "La Rioja" can't drop a remote job; CA added.
   - Dropped: Revolut "degraded" (it no longer fails: 156/156 boards OK) and removing unused
     reader settings (no visible benefit, risk of breaking the old readers).
-- [ ] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1) - in PR;
+- [x] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1) - merged;
   last step waiting: Andrea tries it with a test application on laptop and phone, then removes it
   - Done when: "I applied" on a card creates an application in Supabase; Applications view
     with columns Applied / Interviewing / Offer / Closed; "Add application" for jobs found
@@ -40,18 +40,17 @@ Never push to main or merge."
 - [x] **T6. Tracker 2: follow-ups** (was #7, phase 2)
   - Done when: next step + due date per application, overdue in red, default follow-up 7 days
     after applying; tested with a backdated test application.
-- [ ] **T7. Skill: fit my CV to a job posting -> Google Doc** (was #20) - in PR; waiting:
-  Andrea installs the skill (skills/fit-cv.zip) and runs it once from the board
+- [x] **T7. Skill: fit my CV to a job posting -> Google Doc** (was #20) - installed in the Claude
+  app 2026-10-21; first real use pending (needs the CV pasted, T2)
   - Run by hand in the Claude app. Output: a Google Doc "<Company> - <Role> - CV" with the CV
     rewritten for the job (facts only, gaps marked) and a fit summary (1-10, strengths, gaps).
   - Decided 2026-10-19: the master CV lives on the board (Supabase); the board's "Fit my CV"
     button sends CV + job ad to the skill.
   - Done when: tested on 3 real jobs, the docs checked for invented facts.
-- [ ] **T8. Skill: interview prep** (was #21) - in PR; waiting: Andrea installs
-  skills/interview-prep.zip and uses it before a real interview
+- [x] **T8. Skill: interview prep** (was #21) - installed in the Claude app 2026-10-21
   - Done when: a Google Doc with company, product, team, the story to tell, 3 questions;
     tested on one real interview or a realistic example.
-- [ ] **T9. Tracker 3: Gmail** (was #8, phase 3)
+- [ ] **T9. Tracker 3: Gmail** (was #8, phase 3) - paused: use the tracker 1-2 weeks first
   - Needs Andrea: a Gmail app password, pasted by him as a GitHub secret.
   - Done when: a daily check matches replies to applications by company, classifies them
     (received / interview / rejection...), suggests stage changes on the board; only sender,
