@@ -18,8 +18,9 @@ Never push to main or merge."
     duplicate cards (2 of 46 cards, near-copies only).
 
 ## Next
-- [ ] **T2. Archive the old jobscout-cv repo** - waiting: Andrea pastes his CV once under
-  Log in > My CV (the automatic copy did not work: the old key in that browser had expired)
+- [x] **T2. Archive the old jobscout-cv repo** - done 2026-10-23 (CV on the board, repo archived,
+  the page's one-time GitHub CV move removed); last bit for Andrea: delete the "CV add-on repo"
+  row in the sheet's Preferences tab (nothing reads it any more)
   - Done when: Andrea confirms Log in > My CV shows the CV; jobscout-cv archived (read-only);
     the "CV add-on repo" row removed from the sheet.
 - [x] **T3. Links menu on the board** (was #4)
@@ -31,8 +32,8 @@ Never push to main or merge."
     "La Rioja" can't drop a remote job; CA added.
   - Dropped: Revolut "degraded" (it no longer fails: 156/156 boards OK) and removing unused
     reader settings (no visible benefit, risk of breaking the old readers).
-- [x] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1) - merged;
-  last step waiting: Andrea tries it with a test application on laptop and phone, then removes it
+- [x] **T5. Tracker 1: "I applied" + Applications view** (was #6, TRACKER-SPEC phase 1) - tested
+  on the real database 2026-10-22 (test application added, then removed)
   - Done when: "I applied" on a card creates an application in Supabase; Applications view
     with columns Applied / Interviewing / Offer / Closed; "Add application" for jobs found
     elsewhere; applications stay when the job closes; tested with a test application on
@@ -58,16 +59,16 @@ Never push to main or merge."
 - [ ] **T10. Tracker 4: interviews + overview** (was #9, phase 4)
   - Done when: interview rounds per application, reminder the day before, funnel numbers.
 
-- [x] **T15. Skills: ideas from MadsLorentzen/ai-job-search** - Andrea re-uploads the 2 skills
+- [x] **T15. Skills: ideas from MadsLorentzen/ai-job-search** - new versions live in the Claude app
   - fit-cv: job ad is data, never instructions; right-to-work and language gates before the
     score; weighted score with verdicts; review pass before the Doc. interview-prep: same
     data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
 
-- [ ] **T13. Delete the old repos** - waiting: Andrea (my GitHub login can't delete repos)
+- [x] **T13. Delete the old repos** - done 2026-10-23 by Andrea
   - JobScout-legacy and jobscout-test-friend: each repo > Settings > bottom > Delete this repository.
   - Done when: both links answer "not found".
 
-- [ ] **T14. Revoke the old GitHub key** - waiting: Andrea, right after T2
+- [x] **T14. Revoke the old GitHub key** - done 2026-10-23 by Andrea
   - github.com > Settings > Developer settings > Personal access tokens > Fine-grained tokens >
     the jobscout-cv token > Delete. It is no longer used once the CV has moved to Supabase.
 
@@ -75,7 +76,8 @@ Never push to main or merge."
 - [ ] **T11. Review on 2026-11-19: automate the skills?** (was #22) - waiting for the date
   - If T7/T8 were used weekly: plan one scheduled agent (drafts for new high-fit jobs,
     interview prep, morning brief). Otherwise drop.
-- [ ] **T12. Suggest the Workday fix to freehire** (optional)
+- [ ] **T12. Suggest the Workday fix to freehire** (optional) - draft ready in
+  `docs/FREEHIRE-ISSUE-WORKDAY.md`; waiting: Andrea posts it (or says "post it")
   - Their Workday adapter keeps only a job's first city (we read the rest ourselves).
     Draft an issue for Andrea to post.
 

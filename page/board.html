@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <!-- Security policy: only this page's own script (by fingerprint) and the pinned Supabase
-     library may run, and the page may only talk to itself, Supabase and GitHub (one-time CV
-     move). Filled in by scout/board.py. -->
+     library may run, and the page may only talk to itself and Supabase. Filled in by scout/board.py. -->
 <meta http-equiv="Content-Security-Policy" content="{{CSP}}">
 <title>JobScout</title>
 <style>
@@ -455,7 +454,6 @@
     db.from("profile").select("cv_text").maybeSingle().then(function (result) {
       CV = (result.data && result.data.cv_text) || "";
       document.getElementById("cv-text").value = CV;
-      if (!CV) migrateFromGitHub();
       renderBoard();
     });
     fetch("matches.json").then(function (r) { return r.json(); }).then(function (jobs) {
@@ -472,33 +470,6 @@
         status.textContent = result.error ? "Could not save the CV: " + result.error.message : "CV saved.";
         renderBoard();
       });
-  }
-
-  // One-time move from the old setup (a GitHub key saved in this browser, private repo
-  // jobscout-cv): copy the CV and the old hidden-jobs list, then forget the key.
-  function migrateFromGitHub() {
-    var token = "";
-    try { token = localStorage.getItem("jobscout-cv-token") || ""; } catch (e) {}
-    if (!token) return;
-    var repo = "https://api.github.com/repos/BarboneBarbaPersonal/jobscout-cv";
-    var headers = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github.raw+json" };
-    var cvRequest = fetch(repo + "/contents/cv/master.md", { headers: headers })
-      .then(function (r) { return r.ok ? r.text() : ""; });
-    var issuesRequest = fetch(repo + "/issues?state=all&per_page=100", { headers: { "Authorization": "Bearer " + token } })
-      .then(function (r) { return r.ok ? r.json() : []; });
-    Promise.all([cvRequest, issuesRequest]).then(function (all) {
-      if (all[0]) { document.getElementById("cv-text").value = all[0]; saveCv(); }
-      all[1].forEach(function (issue) {
-        if (issue.title !== "JobScout hidden jobs") return;
-        (issue.body || "").split("\n").slice(1).forEach(function (line) {
-          var id = line.trim();
-          if (id && hidden.indexOf(id) === -1) hidden.push(id);
-        });
-      });
-      saveHidden();
-      syncHidden();
-      if (all[0]) { try { localStorage.removeItem("jobscout-cv-token"); } catch (e) {} }
-    }).catch(function () {});
   }
 
   // ---- Account and private data (Supabase) ----

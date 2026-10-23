@@ -27,6 +27,12 @@ class SecurityPolicy(unittest.TestCase):
         self.assertIn("default-src 'none'", policy)
         self.assertNotIn("unsafe-eval", policy)
 
+    def test_page_talks_only_to_itself_and_supabase(self):
+        # The one-time CV move from GitHub is over (jobscout-cv archived, key revoked).
+        policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', self.page).group(1)
+        self.assertNotIn("github", policy)
+        self.assertNotIn("api.github.com", self.page)
+
     def test_library_has_a_fingerprint(self):
         self.assertRegex(self.page, r'supabase\.min\.js"\s+integrity="sha384-[A-Za-z0-9+/=]+"')
 

@@ -76,14 +76,14 @@ SUPABASE = "pffopwzydbjdblojhcwm.supabase.co"
 def security_policy(template):
     """Content-Security-Policy for the page: only the page's own inline script (identified by
     its SHA-256 fingerprint) and the pinned Supabase library may run; the page may only connect
-    to itself, Supabase (login, data, live sync) and GitHub (one-time CV move)."""
+    to itself and Supabase (login, data, live sync)."""
     script = re.search(r"<script>(.*?)</script>", template, re.S).group(1)
     digest = base64.b64encode(hashlib.sha256(script.encode("utf-8")).digest()).decode()
     return "; ".join([
         "default-src 'none'",
         f"script-src 'sha256-{digest}' https://cdn.jsdelivr.net",
         "style-src 'unsafe-inline'",
-        f"connect-src 'self' https://{SUPABASE} wss://{SUPABASE} https://api.github.com",
+        f"connect-src 'self' https://{SUPABASE} wss://{SUPABASE}",
         "img-src 'self' data:",
         "base-uri 'none'",
         "form-action 'none'",
