@@ -18,8 +18,9 @@ Never push to main or merge."
     duplicate cards (2 of 46 cards, near-copies only).
 
 ## Next
-- [ ] **T2. Archive the old jobscout-cv repo** - CV pasted under My CV 2026-10-22 (checked in
-  the database); waiting: Andrea archives the repo (Settings > Archive this repository)
+- [x] **T2. Archive the old jobscout-cv repo** - done 2026-10-23 (CV on the board, repo archived,
+  the page's one-time GitHub CV move removed); last bit for Andrea: delete the "CV add-on repo"
+  row in the sheet's Preferences tab (nothing reads it any more)
   - Done when: Andrea confirms Log in > My CV shows the CV; jobscout-cv archived (read-only);
     the "CV add-on repo" row removed from the sheet.
 - [x] **T3. Links menu on the board** (was #4)
@@ -63,11 +64,11 @@ Never push to main or merge."
     score; weighted score with verdicts; review pass before the Doc. interview-prep: same
     data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
 
-- [ ] **T13. Delete the old repos** - waiting: Andrea (my GitHub login can't delete repos)
+- [x] **T13. Delete the old repos** - done 2026-10-23 by Andrea
   - JobScout-legacy and jobscout-test-friend: each repo > Settings > bottom > Delete this repository.
   - Done when: both links answer "not found".
 
-- [ ] **T14. Revoke the old GitHub key** - waiting: Andrea (the CV is moved, so it can go now)
+- [x] **T14. Revoke the old GitHub key** - done 2026-10-23 by Andrea
   - github.com > Settings > Developer settings > Personal access tokens > Fine-grained tokens >
     the jobscout-cv token > Delete. It is no longer used once the CV has moved to Supabase.
 
@@ -75,7 +76,8 @@ Never push to main or merge."
 - [ ] **T11. Review on 2026-11-19: automate the skills?** (was #22) - waiting for the date
   - If T7/T8 were used weekly: plan one scheduled agent (drafts for new high-fit jobs,
     interview prep, morning brief). Otherwise drop.
-- [ ] **T12. Suggest the Workday fix to freehire** (optional)
+- [ ] **T12. Suggest the Workday fix to freehire** (optional) - draft ready in
+  `docs/FREEHIRE-ISSUE-WORKDAY.md`; waiting: Andrea posts it (or says "post it")
   - Their Workday adapter keeps only a job's first city (we read the rest ourselves).
     Draft an issue for Andrea to post.
 

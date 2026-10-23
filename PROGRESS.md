@@ -177,3 +177,15 @@ verified, what is open or next. Read the last entries to know where things stand
 - fit-cv and interview-prep replaced in the Claude app (now v2; old versions kept in the
   skill's history); fit-cv contents checked: gates, data rule and review pass present.
 - Open for Andrea: archive jobscout-cv (T2), delete the old keys (T14) and old repos (T13).
+
+## 2026-10-23 - T2, T13, T14 closed; T12 draft
+- Andrea archived jobscout-cv, deleted the old keys and the 2 old repos (checked: archived,
+  both repos "not found").
+- Page: removed the one-time CV/hidden-jobs move from the jobscout-cv repo and GitHub from the
+  page's allowed connections (test written first, failed, now passes).
+- T12: freehire main still ignores Workday's additionalLocations; issue draft with a live
+  example (SUSE, 1 of 5 cities kept) in docs/FREEHIRE-ISSUE-WORKDAY.md.
+- Verified: 21 tests pass; local page with the live jobs: 81 cards, no console errors,
+  Supabase reachable, api.github.com blocked by the policy.
+- Open for Andrea: delete the "CV add-on repo" sheet row (my edit was blocked); post the T12
+  issue. Then: use the tracker until ~2026-11-05 before T9/T10; T11 review on 2026-11-19.
