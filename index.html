@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!-- Security policy: only this page's own script (by fingerprint) and the pinned Supabase
+     library may run, and the page may only talk to itself and Supabase. Filled in by scout/board.py. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wU+Ue7FU2ANP9z60eQzY0oXmkv4sLtx6k3+OSe1MHUw=' https://cdn.jsdelivr.net; style-src 'unsafe-inline'; connect-src 'self' https://pffopwzydbjdblojhcwm.supabase.co wss://pffopwzydbjdblojhcwm.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>JobScout</title>
+<style>
+  :root {
+    --bg: #f6f4ef; --panel: #ece8df; --card: #ffffff; --text: #1d1b18; --muted: #6b665d;
+    --line: #ddd7cb; --accent: #b5341a; --p0: #b5341a; --p1: #2f6f9f; --p2: #7a5c3a; --p3: #6b665d;
+    --fit0: #e9e5dc; --fit1: #f3dfb3; --fit2: #cfe8c6; --ok: #2e7d32; --warn: #b26a00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --panel: #1f1d1a; --card: #282622; --text: #eeeae2; --muted: #a39d92;
+      --line: #3a3732; --accent: #e0714f; --p0: #e0714f; --p1: #6aaee0; --p2: #c9a27a; --p3: #a39d92;
+      --fit0: #34312c; --fit1: #574a2c; --fit2: #2f4a2b; --ok: #7bc47f; --warn: #e0a64f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 1300px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 20px 0 8px; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+  h1 { margin: 0; font-size: 22px; }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--muted); font-size: 13px; }
+
+  /* Stats bar */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 8px 0 12px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+  .stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .stat .value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat .detail { font-size: 12px; color: var(--muted); }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; margin-bottom: 12px; font-size: 13px; }
+  .group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .group > span { color: var(--muted); margin-right: 4px; }
+  .chip { font: inherit; font-size: 13px; color: var(--text); background: var(--card); border: 1px solid var(--line);
+          border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .toggle { margin-left: auto; color: var(--muted); }
+
+  main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-bottom: 32px; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } .toggle { margin-left: 0; } }
+  .column { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  h2 { margin: 0; font-size: 16px; display: flex; gap: 8px; align-items: center; }
+  .count { font-size: 12px; background: var(--card); border: 1px solid var(--line);
+           border-radius: 999px; padding: 1px 8px; color: var(--muted); }
+  .note { margin: 2px 0 10px; font-size: 12px; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .top, .bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .company { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .fit { font-size: 11px; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .fit0 { background: var(--fit0); } .fit1 { background: var(--fit1); } .fit2 { background: var(--fit2); }
+  .title { display: block; margin: 4px 0; color: var(--text); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+  .title:hover { color: var(--accent); text-decoration: underline; }
+  .meta { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .place { font-size: 11px; font-weight: 700; margin-right: 4px; }
+  .p0 { color: var(--p0); } .p1 { color: var(--p1); } .p2 { color: var(--p2); } .p3 { color: var(--p3); }
+  .tag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+  .bottom { margin-top: 6px; font-size: 12px; color: var(--muted); }
+  .hide { font: inherit; font-size: 12px; color: var(--muted); background: none;
+          border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
+  .hide:hover { color: var(--text); }
+
+  .private-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .private-row input { flex: 1; min-width: 180px; font: inherit; padding: 4px 8px; border: 1px solid var(--line);
+                       border-radius: 6px; background: var(--bg); color: var(--text); }
+  .private-status { color: var(--muted); margin-top: 6px !important; }
+  .draft { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .draft .match { font-weight: 700; color: var(--text); }
+  .card.hidden { opacity: .45; }
+  .empty { color: var(--muted); font-size: 13px; }
+  /* Account (log in with an email link) */
+  .account-toggle { margin-left: auto; }
+  .account-box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; }
+  .account-box p { margin: 0 0 8px; }
+  .account-box textarea { width: 100%; min-height: 140px; font: 12px/1.4 ui-monospace, monospace; padding: 6px 8px;
+                          border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
+  .cv-area { margin: 8px 0; }
+  .links { line-height: 1.8; }
+  [hidden] { display: none !important; } /* "hidden" must win over layout styles like flex */
+  .links a { color: var(--accent); white-space: nowrap; }
+  .ask { margin-left: auto; color: var(--accent); border-color: var(--accent); white-space: nowrap; }
+  .prompt-box { width: 100%; height: 120px; margin-top: 6px; font: 11px/1.4 ui-monospace, monospace; }
+  /* My applications */
+  .apps-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding-bottom: 32px; }
+  @media (max-width: 860px) { .apps-grid { grid-template-columns: 1fr; } }
+  .app-form { margin-bottom: 12px; }
+  .app-form input, .app-form select { font: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--line);
+                                      border-radius: 6px; background: var(--bg); color: var(--text); min-width: 140px; flex: 1; }
+  .stage { font: inherit; font-size: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--line);
+           border-radius: 4px; padding: 1px 4px; }
+  .notes { width: 100%; min-height: 44px; margin-top: 6px; font: inherit; font-size: 12px; padding: 4px 6px;
+           border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
+  .history { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .next { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .next input { font: inherit; font-size: 12px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px;
+                background: var(--bg); color: var(--text); min-width: 0; }
+  .next input[type=text] { flex: 1 1 100%; } /* the step on its own line, the date below */
+  .card.overdue { border-color: var(--warn); }
+  .due { font-size: 11px; font-weight: 700; color: var(--warn); }
+  .applied-tag { color: var(--ok); border-color: var(--ok); }
+</style>
+<!-- Login and private data (hidden jobs, applications): Supabase. The key below is the
+     public "publishable" key; database rules let each logged-in user see only their own rows. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"
+        integrity="sha384-GFr3yTh5lJznCbZfpTtXnwboFsxqtTQoeTZCRHhE0579KrRmlCzen5AA8ohaB5ug"
+        crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="page-title">Job<span>Scout</span></h1>
+    <span class="sub" id="updated"></span>
+    <button type="button" class="chip account-toggle" id="account-toggle">Log in</button>
+    <button type="button" class="chip" id="apps-toggle" aria-pressed="false" hidden>My applications</button>
+  </header>
+  <!-- Log in once per device with a link sent by email; hidden jobs then sync on all devices -->
+  <section class="account-box" id="account-box" hidden>
+    <p id="account-text"></p>
+    <div class="private-row" id="account-form">
+      <input type="email" id="account-email" placeholder="you@example.com" autocomplete="email">
+      <button type="button" class="chip" id="account-send">Send login link</button>
+    </div>
+    <div class="cv-area" id="cv-area" hidden>
+      <p>My CV (plain text). Used for the match % on each job and for Fit my CV. Only you can see it.</p>
+      <textarea id="cv-text" spellcheck="false"></textarea>
+      <button type="button" class="chip" id="cv-save">Save CV</button>
+    </div>
+    <!-- My links: only after login. The sheet itself is linked from the Notion page, never here,
+         because this page is public. -->
+    <p class="links" id="account-links" hidden>
+      <b>My links:</b>
+      <a href="https://github.com/BarboneBarbaPersonal/JobScout/blob/main/TASKS.md" target="_blank" rel="noopener">Task list</a> ·
+      <a href="https://github.com/BarboneBarbaPersonal/JobScout/actions/workflows/scan.yml" target="_blank" rel="noopener">Scan runs</a> ·
+      <a href="https://github.com/BarboneBarbaPersonal/JobScout/pulls" target="_blank" rel="noopener">Changes to approve</a> ·
+      <a href="https://supabase.com/dashboard/project/pffopwzydbjdblojhcwm" target="_blank" rel="noopener">Database</a> ·
+      <a href="https://app.notion.com/p/3eaa4ae1560781149128c256247ec482" target="_blank" rel="noopener">All my links (Notion)</a>
+    </p>
+    <button type="button" class="chip" id="account-logout" hidden>Log out</button>
+    <p class="private-status" id="account-status"></p>
+  </section>
+  <!-- My applications (after login): replaces the board while open -->
+  <section id="apps" hidden>
+    <div class="private-row app-form">
+      <input id="app-company" placeholder="Company">
+      <input id="app-title" placeholder="Role">
+      <input id="app-location" placeholder="Location">
+      <input id="app-link" placeholder="Link to the job (optional)">
+      <select id="app-source">
+        <option value="linkedin">LinkedIn</option><option value="referral">Referral</option>
+        <option value="recruiter">Recruiter</option><option value="other">Other</option>
+      </select>
+      <button type="button" class="chip" id="app-add">Add application</button>
+    </div>
+    <p class="private-status" id="apps-status"></p>
+    <div class="apps-grid" id="apps-board"></div>
+  </section>
+  <section class="stats" id="stats"></section>
+  <section class="filters">
+    <div class="group" id="place-filter"><span>Location</span></div>
+    <div class="group" id="role-filter"><span>Role</span></div>
+    <label class="toggle"><input type="checkbox" id="show-hidden"> show hidden</label>
+  </section>
+  <main id="board"></main>
+</div>
+<script type="application/json" id="data">{"jobs": [{"id": "greenhouse/sentinellabs/8039862003", "title": "Sr Staff Technical Success Executive", "url": "https://www.sentinelone.com/jobs/?gh_jid=8039862003", "location": "Spain", "posted_at": "2026-10-22T06:51:37Z", "work_mode": "", "company": "SentinelOne", "found_at": "2026-10-21T08:43:55Z", "place": "Spain", "role": "core", "fit": 4}, {"id": "greenhouse/cloudflare/8043305", "title": "Forward Deployed Engineer, Professional Services", "url": "https://boards.greenhouse.io/cloudflare/jobs/8043305?gh_jid=8043305", "location": "Distributed", "posted_at": "2026-10-22T09:38:13Z", "work_mode": "remote", "company": "Cloudflare", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "greenhouse/cloudflare/8043339", "title": "Forward Deployed Engineer, Professional Services", "url": "https://boards.greenhouse.io/cloudflare/jobs/8043339?gh_jid=8043339", "location": "Distributed", "posted_at": "2026-10-21T18:43:01Z", "work_mode": "remote", "company": "Cloudflare", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "greenhouse/cloudflare/8200786", "title": "Principal Customer Engineer, Majors", "url": "https://boards.greenhouse.io/cloudflare/jobs/8200786?gh_jid=8200786", "location": "Distributed", "posted_at": "2026-10-21T18:43:01Z", "work_mode": "remote", "company": "Cloudflare", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "greenhouse/cloudflare/7967144", "title": "Principal Customer Engineer, Majors", "url": "https://boards.greenhouse.io/cloudflare/jobs/7967144?gh_jid=7967144", "location": "Distributed", "posted_at": "2026-10-21T18:43:01Z", "work_mode": "remote", "company": "Cloudflare", "found_at": "2026-10-01T16:14:21Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "greenhouse/cloudflare/8185549", "title": "Principal Customer Engineer, Start Up AI", "url": "https://boards.greenhouse.io/cloudflare/jobs/8185549?gh_jid=8185549", "location": "Distributed", "posted_at": "2026-10-21T18:43:01Z", "work_mode": "remote", "company": "Cloudflare", "found_at": "2026-10-19T12:54:08Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "smartrecruiters/RedPoints1/744000156336358", "title": "Service Implementation Specialist", "url": "https://jobs.smartrecruiters.com/RedPoints1/744000156336358-service-implementation-specialist", "location": "Barcelona, CT, es", "posted_at": "2026-10-19T14:12:36Z", "work_mode": "hybrid", "company": "Red Points", "found_at": "2026-10-19T14:50:17Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "greenhouse/adyen/8156029", "title": "Account Manager", "url": "https://job-boards.greenhouse.io/adyen/jobs/8156029", "location": "Madrid", "posted_at": "2026-10-15T13:17:07Z", "work_mode": "", "company": "Adyen", "found_at": "2026-10-14T17:09:16Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "greenhouse/sumup/8520357002", "title": "Team Lead Account Manager - English", "url": "https://sumup.com/careers/positions/8520357002?gh_jid=8520357002", "location": "Barcelona, Barcelona, Spain", "posted_at": "2026-10-14T07:09:03Z", "work_mode": "", "company": "SumUp", "found_at": "2026-10-05T15:25:45Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "ashby/perk/6836964a-d670-4f6e-913d-aa75d47455f5", "title": "Junior Account Manager - Italian Speaking", "url": "https://jobs.ashbyhq.com/perk/6836964a-d670-4f6e-913d-aa75d47455f5", "location": "Barcelona", "posted_at": "2026-10-20T08:23:20Z", "work_mode": "hybrid", "company": "Perk (ex-TravelPerk)", "found_at": "2026-10-09T09:59:20Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "ashby/docplanner/eb5c468d-75ae-4bd4-a0a7-7d9896d404b7", "title": "Global Strategy Analyst - Customer Success (Remote Friendly)", "url": "https://jobs.ashbyhq.com/docplanner/eb5c468d-75ae-4bd4-a0a7-7d9896d404b7", "location": "Barcelona", "posted_at": "2026-10-22T15:13:43Z", "work_mode": "hybrid", "company": "Docplanner (Doctoralia)", "found_at": "2026-10-01T16:14:21Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "ashby/docplanner/7b7335ad-48bd-4d5f-9bfa-d759a04f7664", "title": "Global Project Manager - Customer Success PMS (Clinics/Enterprises)", "url": "https://jobs.ashbyhq.com/docplanner/7b7335ad-48bd-4d5f-9bfa-d759a04f7664", "location": "Spain", "posted_at": "2026-09-30T11:21:51Z", "work_mode": "remote", "company": "Docplanner (Doctoralia)", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "ashby/preply/23794582-4a0f-4daa-8803-47962b360337", "title": "Senior Strategy & Operations Manager", "url": "https://jobs.ashbyhq.com/preply/23794582-4a0f-4daa-8803-47962b360337", "location": "Barcelona", "posted_at": "2026-10-13T09:48:45Z", "work_mode": "hybrid", "company": "Preply", "found_at": "2026-10-20T18:39:57Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "greenhouse/mewssystems/4901125101", "title": "Customer Success Manager - Spanish Speaking", "url": "https://www.mews.com/en/careers/jobs/4901125101?gh_jid=4901125101", "location": "Spain", "posted_at": "2026-10-09T13:08:55Z", "work_mode": "hybrid", "company": "Mews", "found_at": "2026-10-09T13:10:11Z", "place": "Spain", "role": "core", "fit": 4}, {"id": "greenhouse/celonis/7995509003", "title": "Associate Applied (AI) Value Engineer (APAC) - Orbit Program", "url": "https://job-boards.greenhouse.io/celonis/jobs/7995509003?gh_jid=7995509003", "location": "Madrid, Spain", "posted_at": "2026-09-30T12:39:15Z", "work_mode": "hybrid", "company": "Celonis", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "greenhouse/celonis/7979056003", "title": "Associate Applied (AI) Value Engineer (UK) - Orbit Program", "url": "https://job-boards.greenhouse.io/celonis/jobs/7979056003?gh_jid=7979056003", "location": "Madrid, Spain", "posted_at": "2026-09-30T12:39:15Z", "work_mode": "hybrid", "company": "Celonis", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "greenhouse/celonis/7989831003", "title": "Associate Competitive Value Engineer", "url": "https://job-boards.greenhouse.io/celonis/jobs/7989831003?gh_jid=7989831003", "location": "Madrid, Spain", "posted_at": "2026-09-30T12:39:15Z", "work_mode": "hybrid", "company": "Celonis", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "greenhouse/gitlab/8911335002", "title": "Senior Engagement Manager - EMEA", "url": "https://job-boards.greenhouse.io/gitlab/jobs/8911335002", "location": "Remote Ireland; Remote, Germany; Remote, Spain; Remote, United Kingdom", "posted_at": "2026-10-23T14:22:57Z", "work_mode": "remote", "company": "GitLab", "found_at": "2026-10-23T15:12:30Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "greenhouse/mongodb/8230143", "title": "Engagement Manager (Services Sales)", "url": "https://www.mongodb.com/careers/job/?gh_jid=8230143", "location": "Madrid", "posted_at": "2026-10-23T15:31:54Z", "work_mode": "", "company": "MongoDB", "found_at": "2026-10-01T16:14:21Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "greenhouse/jetbrains/4791653101", "title": "Senior Technical Program Manager (IDE Department)", "url": "https://job-boards.eu.greenhouse.io/jetbrains/jobs/4791653101", "location": "Amsterdam, Netherlands; Belgrade, Serbia; Berlin, Germany; Limassol, Cyprus; Madrid, Spain; Munich, Germany; Paphos, Cyprus; Prague, Czech Republic; Warsaw, Poland; Yerevan, Armenia", "posted_at": "2026-10-16T06:38:32Z", "work_mode": "remote", "company": "JetBrains", "found_at": "2026-10-20T18:39:57Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "greenhouse/jetbrains/4814057101", "title": "Staff Forward Deployed Engineer – AI-Native Software Development", "url": "https://job-boards.eu.greenhouse.io/jetbrains/jobs/4814057101", "location": "Amsterdam, Netherlands; Berlin, Germany; London, United Kingdom; Madrid, Spain; Munich, Germany; Prague, Czech Republic; Warsaw, Poland", "posted_at": "2026-10-15T11:11:50Z", "work_mode": "", "company": "JetBrains", "found_at": "2026-10-15T15:02:32Z", "place": "Spain", "role": "core", "fit": 4}, {"id": "factorial/careers.factorial.com/230876", "title": "Partner Account Manager & Business Development - Italian Market", "url": "https://careers.factorial.com/job_posting/partner-account-manager-business-development-italian-market-230876", "location": "Barcelona, CT, Spain", "posted_at": null, "work_mode": "", "company": "Factorial", "found_at": "2026-10-19T10:09:42Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "factorial/careers.factorial.com/219963", "title": "CX Account Manager Small Accounts Spanish Market", "url": "https://careers.factorial.com/job_posting/cx-account-manager-small-accounts-spanish-market-219963", "location": "Barcelona, CT, Spain", "posted_at": null, "work_mode": "", "company": "Factorial", "found_at": "2026-10-19T10:09:42Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "factorial/careers.factorial.com/225237", "title": "Onboarding Specialist Team Lead Italian Market", "url": "https://careers.factorial.com/job_posting/onboarding-specialist-team-lead-italian-market-225237", "location": "Barcelona, CT, Spain", "posted_at": null, "work_mode": "", "company": "Factorial", "found_at": "2026-10-19T10:09:42Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "factorial/careers.factorial.com/67819", "title": "Senior Account Manager UK and International Markets (English Speaker)", "url": "https://careers.factorial.com/job_posting/senior-account-manager-uk-and-international-markets-english-speaker-67819", "location": "Barcelona, CT, Spain", "posted_at": null, "work_mode": "", "company": "Factorial", "found_at": "2026-10-19T10:09:42Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "factorial/careers.factorial.com/266551", "title": "CX Account Manager Enterprise Spanish Market", "url": "https://careers.factorial.com/job_posting/cx-account-manager-enterprise-spanish-market-266551", "location": "Barcelona, CT, Spain", "posted_at": null, "work_mode": "", "company": "Factorial", "found_at": "2026-10-19T10:09:42Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "factorial/careers.factorial.com/61376", "title": "CX Account Manager Spanish Market", "url": "https://careers.factorial.com/job_posting/cx-account-manager-spanish-market-61376", "location": "Barcelona, CT, Spain", "posted_at": null, "work_mode": "", "company": "Factorial", "found_at": "2026-10-19T10:09:42Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "greenhouse/automatticcareers/6610835", "title": "Partner Manager, Automattic for Agencies", "url": "https://job-boards.greenhouse.io/automatticcareers/jobs/6610835", "location": "Remote", "posted_at": "2026-10-07T16:08:15Z", "work_mode": "remote", "company": "Automattic", "found_at": "2026-10-20T18:39:57Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "ashby/elevenlabs/78c564eb-ee87-46d9-b2fd-4322a223a547", "title": "Account Manager - Southern Europe", "url": "https://jobs.ashbyhq.com/elevenlabs/78c564eb-ee87-46d9-b2fd-4322a223a547", "location": "Spain", "posted_at": "2026-10-15T10:29:45Z", "work_mode": "remote", "company": "ElevenLabs", "found_at": "2026-10-15T15:02:32Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "workday/criteo/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186", "title": "Customer Success Manager", "url": "https://criteo.wd3.myworkdayjobs.com/Criteo_Career_Site/job/Barcelona/Customer-Success-Manager--6-months--FTC-_r21186", "location": "Barcelona", "posted_at": "2026-10-15T00:00:00Z", "work_mode": "hybrid", "company": "Criteo", "found_at": "2026-10-06T16:16:22Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "greenhouse/hiddenlayer/5272725007", "title": "Channel Account Manager", "url": "https://job-boards.greenhouse.io/hiddenlayer/jobs/5272725007", "location": "Remote", "posted_at": "2026-10-22T19:08:16Z", "work_mode": "remote", "company": "HiddenLayer", "found_at": "2026-10-22T20:15:29Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "ashby/amenitiz/2db9697d-359c-4252-9a95-e3df3f547d6d", "title": "Customer Success Team Lead (Long Tail)", "url": "https://jobs.ashbyhq.com/amenitiz/2db9697d-359c-4252-9a95-e3df3f547d6d", "location": "Barcelona", "posted_at": "2026-10-02T12:18:46Z", "work_mode": "onsite", "company": "Amenitiz", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "workable/cledara/4381D13AE9", "title": "Customer Success Manager", "url": "https://apply.workable.com/j/4381D13AE9", "location": "Barcelona, Spain", "posted_at": "2026-09-29T00:00:00Z", "work_mode": "hybrid", "company": "Cledara", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "greenhouse/enginy/4976925101", "title": "Account Manager - Italian Market", "url": "https://job-boards.eu.greenhouse.io/enginy/jobs/4976925101", "location": "Barcelona", "posted_at": "2026-10-07T11:41:00Z", "work_mode": "remote", "company": "Enginy", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "greenhouse/enginy/5015215101", "title": "Customer Success Manager, Italy", "url": "https://job-boards.eu.greenhouse.io/enginy/jobs/5015215101", "location": "Barcelona", "posted_at": "2026-10-23T16:09:44Z", "work_mode": "remote", "company": "Enginy", "found_at": "2026-10-23T19:20:19Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "greenhouse/enginy/5015221101", "title": "Onboarding Specialist, Italy", "url": "https://job-boards.eu.greenhouse.io/enginy/jobs/5015221101", "location": "Barcelona", "posted_at": "2026-10-23T16:27:13Z", "work_mode": "remote", "company": "Enginy", "found_at": "2026-10-23T19:20:19Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "greenhouse/relex/7901313003", "title": "Forward Deployed Engineer | Merchandising", "url": "https://www.relexsolutions.com/careers/jobs/?gh_jid=7901313003", "location": "Barcelona, Spain; London, United Kingdom; Milan, Italy", "posted_at": "2026-10-16T10:51:33Z", "work_mode": "", "company": "RELEX Solutions", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "greenhouse/thefork/8124430", "title": "Chief of Staff to Chief Operating Officer (COO)", "url": "https://job-boards.greenhouse.io/thefork/jobs/8124430", "location": "Barcelona", "posted_at": "2026-10-13T10:54:42Z", "work_mode": "remote", "company": "TheFork", "found_at": "2026-10-20T18:39:57Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "greenhouse/thefork/8111856", "title": "Sales Account Manager", "url": "https://job-boards.greenhouse.io/thefork/jobs/8111856", "location": "Barcelona, Madrid", "posted_at": "2026-10-22T14:24:39Z", "work_mode": "", "company": "TheFork", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "ashby/legora/0b6767f7-799e-41d4-9eb7-dc4eab9ef9f8", "title": "Engagement Manager SMB", "url": "https://jobs.ashbyhq.com/legora/0b6767f7-799e-41d4-9eb7-dc4eab9ef9f8", "location": "Madrid", "posted_at": "2026-10-09T12:47:06Z", "work_mode": "onsite", "company": "Legora", "found_at": "2026-10-20T10:26:58Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "ashby/mollie/f383de79-f6d7-4167-8fcf-7bf68913fc80", "title": "Partner Manager Digital Agencies - Iberia", "url": "https://jobs.ashbyhq.com/mollie/f383de79-f6d7-4167-8fcf-7bf68913fc80", "location": "Madrid/Barcelona", "posted_at": "2026-10-14T12:37:04Z", "work_mode": "hybrid", "company": "Mollie", "found_at": "2026-10-20T18:39:57Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "greenhouse/nebius/4976988101", "title": "Forward Deployed Engineer, Physical AI Infrastructure", "url": "https://careers.nebius.com/?gh_jid=4976988101", "location": "Remote - Europe", "posted_at": "2026-10-13T12:45:22Z", "work_mode": "remote", "company": "Nebius", "found_at": "2026-10-20T10:26:58Z", "place": "Remote", "role": "core", "fit": 6}, {"id": "workday/suse/Jobsatsuse/job/Dusseldorf-Germany/Premium-Support-Engineer_71007818", "title": "Premium Support Engineer", "url": "https://suse.wd3.myworkdayjobs.com/Jobsatsuse/job/Dusseldorf-Germany/Premium-Support-Engineer_71007818", "location": "Dusseldorf, Germany; Czech Republic, EMEA; Bulgaria, EMEA; Austria; Spain, EMEA", "posted_at": "2026-09-30T00:00:00Z", "work_mode": "", "company": "SUSE", "found_at": "2026-10-20T10:26:58Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "smartrecruiters/DeliveryHero/744000157184869", "title": "Account Manager Regions Spain", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000157184869-account-manager-regions-spain", "location": "Barcelona, es", "posted_at": "2026-10-22T16:18:16Z", "work_mode": "remote", "company": "Glovo", "found_at": "2026-10-22T20:15:29Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "smartrecruiters/DeliveryHero/744000157149280", "title": "Head of Brands Ads Product Strategy & Operations HQ", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000157149280-head-of-brands-ads-product-strategy-operations-hq", "location": "Barcelona, es", "posted_at": "2026-10-22T14:18:14Z", "work_mode": "remote", "company": "Glovo", "found_at": "2026-10-22T15:28:57Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "smartrecruiters/DeliveryHero/744000156420999", "title": "Key Account Manager Spain", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000156420999-key-account-manager-spain", "location": "Madrid, MD, es", "posted_at": "2026-10-19T20:45:01Z", "work_mode": "hybrid", "company": "Glovo", "found_at": "2026-10-21T00:05:37Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "smartrecruiters/DeliveryHero/744000156041559", "title": "Strategic Account Manager - Global Partnerships", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000156041559-strategic-account-manager-global-partnerships", "location": "Barcelona, es", "posted_at": "2026-10-16T16:15:23Z", "work_mode": "hybrid", "company": "Glovo", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "smartrecruiters/DeliveryHero/744000154965349", "title": "Account Manager - Barcelona - Catalan Speaker (They/She/He)", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000154965349-account-manager-barcelona-catalan-speaker-they-she-he-", "location": "Barcelona, es", "posted_at": "2026-10-12T09:19:26Z", "work_mode": "hybrid", "company": "Glovo", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "smartrecruiters/DeliveryHero/744000154950087", "title": "Account Manager Regions Spain", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000154950087-account-manager-regions-spain", "location": "Madrid, es", "posted_at": "2026-10-12T08:22:10Z", "work_mode": "hybrid", "company": "Glovo", "found_at": "2026-10-20T10:26:58Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "smartrecruiters/DeliveryHero/744000154943439", "title": "Sr Account Manager Groceries Spain", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000154943439-sr-account-manager-groceries-spain", "location": "Madrid, es", "posted_at": "2026-10-12T07:54:24Z", "work_mode": "hybrid", "company": "Glovo", "found_at": "2026-10-20T10:26:58Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "smartrecruiters/DeliveryHero/744000154937649", "title": "Account Manager Regions Spain (They/She/He)", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000154937649-account-manager-regions-spain-they-she-he-", "location": "Barcelona, es", "posted_at": "2026-10-12T07:23:23Z", "work_mode": "hybrid", "company": "Glovo", "found_at": "2026-10-20T10:26:58Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "smartrecruiters/DeliveryHero/744000152153599", "title": "Account Manager - Madrid (They/She/He)", "url": "https://jobs.smartrecruiters.com/DeliveryHero/744000152153599-account-manager-madrid-they-she-he-", "location": "Madrid, MD, es", "posted_at": "2026-09-28T11:56:59Z", "work_mode": "hybrid", "company": "Glovo", "found_at": "2026-10-20T10:26:58Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "workday/salesforce/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110", "title": "D360 Forward Deployed Engineer", "url": "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Spain---Madrid/D360-Forward-Deployed-Engineer_JR361110", "location": "Spain - Madrid", "posted_at": "2026-10-05T00:00:00Z", "work_mode": "", "company": "Salesforce", "found_at": "2026-10-21T00:05:37Z", "place": "Spain", "role": "core", "fit": 4}, {"id": "workday/cisco/Cisco_Careers/job/Zurich-Switzerland/Senior-Customer-Success-Architect_2024498-1", "title": "Senior Customer Success Architect", "url": "https://cisco.wd5.myworkdayjobs.com/Cisco_Careers/job/Zurich-Switzerland/Senior-Customer-Success-Architect_2024498-1", "location": "Zurich, Switzerland; Brussels, Belgium; Sofia, Bulgaria; Madrid, Spain; Bratislava, Slovakia; London, United Kingdom; Tel Aviv-Yafo, Israel; Athens, Greece; Stockholm, Sweden; Berlin, Germany; Bucharest, Romania; Oslo, Norway; Budapest, Hungary; Rome, Italy; Krakow, Poland; Dublin, Ireland; Oeiras, Portugal; Copenhagen, Denmark; Amsterdam, Netherlands; Paris, France", "posted_at": "2026-10-01T00:00:00Z", "work_mode": "remote", "company": "Splunk (Cisco)", "found_at": "2026-10-17T12:35:11Z", "place": "Spain", "role": "core", "fit": 4}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Office---Spain---Madrid/Senior-Technical-Support-Engineer_JR-023075", "title": "Senior Technical Support Engineer", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Office---Spain---Madrid/Senior-Technical-Support-Engineer_JR-023075", "location": "Office - Spain - Madrid", "posted_at": "2026-10-22T00:00:00Z", "work_mode": "", "company": "Chronosphere", "found_at": "2026-10-23T04:56:50Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services--Cortex-XSIAM_JR-008267-1", "title": "Senior Technical Support Engineer - Focused Services, Cortex XSIAM", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Remote---Spain/Senior-Technical-Support-Engineer---Focused-Services--Cortex-XSIAM_JR-008267-1", "location": "Remote - Spain", "posted_at": "2026-10-08T00:00:00Z", "work_mode": "remote", "company": "Chronosphere", "found_at": "2026-10-17T12:35:11Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359", "title": "Major Identity Account Manager", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Major-Identity-Account-Manager_JR-022359", "location": "Madrid, Spain", "posted_at": "2026-09-25T00:00:00Z", "work_mode": "remote", "company": "Chronosphere", "found_at": "2026-10-17T12:35:11Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "workday/paloaltonetworks/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer_JR-017945", "title": "Senior Technical Support Engineer", "url": "https://paloaltonetworks.wd5.myworkdayjobs.com/panwexternalcareers/job/Madrid-Spain/Senior-Technical-Support-Engineer_JR-017945", "location": "Madrid, Spain", "posted_at": "2026-09-25T00:00:00Z", "work_mode": "", "company": "Chronosphere", "found_at": "2026-10-17T12:35:11Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "dynatrace/1411881700", "title": "Senior Customer Success Engineer, Spanish and Italian speaking", "url": "https://www.dynatrace.com/careers/jobs/1411881700/", "location": "Barcelona, Spain", "posted_at": "2026-10-23T21:01:26Z", "company": "Dynatrace", "found_at": "2026-10-11T22:08:39Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "revolut/f95a2dda-30a6-4fef-af87-db97199df832", "title": "Graduate Programme 2027: Strategy & Operations Manager", "url": "https://www.revolut.com/careers/position/graduate-programme-2027-strategy-operations-manager-f95a2dda-30a6-4fef-af87-db97199df832/", "location": "Barcelona, Spain; Dubai, United Arab Emirates; Krakow, Poland; Lisbon, Portugal; London, United Kingdom; Madrid, Spain; Poland - Remote, Poland; Porto - Remote, Portugal; Portugal - Remote, Portugal; Spain - Remote, Spain; UAE - Remote, United Arab Emirates; UK - Remote, United Kingdom", "posted_at": null, "company": "Revolut", "found_at": "2026-10-20T18:39:57Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "revolut/76ac942e-7717-4bbf-912d-2adf91b23b0d", "title": "Strategy & Operations Manager", "url": "https://www.revolut.com/careers/position/strategy-operations-manager-76ac942e-7717-4bbf-912d-2adf91b23b0d/", "location": "Bangalore, India; Barcelona, Spain; Brazil - Remote, Brazil; Chennai, India; Dubai, United Arab Emirates; Gurgaon, India; India - Remote, India; Indore, India; Krakow, Poland; Lisbon, Portugal; Lithuania - Remote, Lithuania; Madrid, Spain; Mumbai, India; Poland - Remote, Poland; Porto - Remote, Portugal; Portugal - Remote, Portugal; Sao Paulo, Brazil; Silesia, Poland; Spain - Remote, Spain; UAE - Remote, United Arab Emirates; Vilnius, Lithuania", "posted_at": null, "company": "Revolut", "found_at": "2026-10-20T18:39:57Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "revolut/b3bfe84e-b0c7-4904-8373-40dcd07fdd81", "title": "Strategy & Operations Manager (Credit)", "url": "https://www.revolut.com/careers/position/strategy-operations-manager-credit-b3bfe84e-b0c7-4904-8373-40dcd07fdd81/", "location": "Brazil - Remote, Brazil; Krakow, Poland; Lithuania - Remote, Lithuania; Madrid, Spain; Poland - Remote, Poland; Porto - Remote, Portugal; Portugal - Remote, Portugal; Romania - Remote, Romania; Spain - Remote, Spain; Vilnius, Lithuania", "posted_at": null, "company": "Revolut", "found_at": "2026-10-20T18:39:57Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "revolut/1f673184-3fe0-4a7b-9593-d7ecbe0fcc09", "title": "Strategy & Operations Manager (Crypto)", "url": "https://www.revolut.com/careers/position/strategy-operations-manager-crypto-1f673184-3fe0-4a7b-9593-d7ecbe0fcc09/", "location": "Bangalore, India; Barcelona, Spain; Chennai, India; Dubai, United Arab Emirates; Gurgaon, India; India - Remote, India; Indore, India; Krakow, Poland; Lisbon, Portugal; Lithuania - Remote, Lithuania; Madrid, Spain; Mumbai, India; Poland - Remote, Poland; Porto - Remote, Portugal; Portugal - Remote, Portugal; Spain - Remote, Spain; UAE - Remote, United Arab Emirates; Vilnius, Lithuania", "posted_at": null, "company": "Revolut", "found_at": "2026-10-20T18:39:57Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "deel/5287e76d-d8e2-4fe9-89ae-47c5e0a391f6", "title": "Payroll Implementation Manager | Spain", "url": "https://www.deel.com/careers/job/5287e76d-d8e2-4fe9-89ae-47c5e0a391f6/", "location": "Spain", "posted_at": "2026-10-02T16:16:30Z", "company": "Deel", "found_at": "2026-10-11T22:08:39Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "deel/b47e505f-5549-4f62-8435-2268d956f0d2", "title": "Implementation Consultant, Enterprise | EMEA", "url": "https://www.deel.com/careers/job/b47e505f-5549-4f62-8435-2268d956f0d2/", "location": "Spain; Portugal; Italy; Ireland", "posted_at": "2026-10-22T09:16:12Z", "company": "Deel", "found_at": "2026-10-22T10:21:27Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "phenom/careers.allianz.com/104729", "title": "IT Account Manager - Ireland (m/f/d)", "url": "https://careers.allianz.com/global/en/job/104729", "location": "BARCELONA, Barcelona, Spain, 08005", "posted_at": "2026-10-07T15:55:52Z", "company": "Allianz Technology", "found_at": "2026-10-11T22:08:39Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "phenom/careers.allianz.com/108315", "title": "Forward Deployed Engineer(m/f/d)", "url": "https://careers.allianz.com/global/en/job/108315", "location": "BARCELONA, Barcelona, Spain, 08014", "posted_at": "2026-10-16T08:39:00Z", "company": "Allianz Technology", "found_at": "2026-10-16T12:24:48Z", "place": "Barcelona", "role": "core", "fit": 8}, {"id": "phenom/careers.allianz.com/104603", "title": "AI Engagement Manager (m/f/d)_3095", "url": "https://careers.allianz.com/global/en/job/104603", "location": "BARCELONA, Barcelona, Spain, 08005", "posted_at": "2026-10-01T09:51:30Z", "company": "Allianz Technology", "found_at": "2026-10-11T22:08:39Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "phenom/careers.allianz.com/108705", "title": "BBVA Allianz - Especialista de Customer Experience (Transformación Pymes)", "url": "https://careers.allianz.com/global/en/job/108705", "location": "MADRID, Madrid, Spain, 28043", "posted_at": "2026-10-23T08:57:25Z", "company": "Allianz Technology", "found_at": "2026-10-23T10:15:28Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "phenom/careers.allianz.com/106916", "title": "AI Engagement Manager (m/f/d)", "url": "https://careers.allianz.com/global/en/job/106916", "location": "BARCELONA, Barcelona, Spain, 08014", "posted_at": "2026-09-25T11:52:25Z", "company": "Allianz Technology", "found_at": "2026-10-14T19:16:56Z", "place": "Barcelona", "role": "also", "fit": 7}, {"id": "phenom/careers.allianz.com/108703", "title": "BBVA Allianz - Asesor/a de Customer Experience", "url": "https://careers.allianz.com/global/en/job/108703", "location": "MADRID, Madrid, Spain, 28043", "posted_at": "2026-10-23T08:38:00Z", "company": "Allianz Technology", "found_at": "2026-10-23T10:15:28Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "eightfold/microsoft.com/1970393557041817", "title": "Technical Program Manager - Strategic Customer Engagement", "url": "https://apply.careers.microsoft.com/careers/job/1970393557041817", "location": "United Kingdom, Multiple Locations, Multiple Locations; Netherlands, Noord-Holland, Amsterdam; Spain, Madrid, Madrid", "posted_at": "2026-10-20T15:28:10Z", "company": "Microsoft", "found_at": "2026-10-20T18:39:57Z", "place": "Spain", "role": "also", "fit": 3}, {"id": "bendingspoons/695e19e0f8029dd400ffeb26", "title": "Graduate sales & account manager", "url": "https://jobs.bendingspoons.com/positions/695e19e0f8029dd400ffeb26", "location": "Milan (Italy); London (UK); Madrid (Spain); Warsaw (Poland); Remote", "posted_at": null, "company": "Bending Spoons", "found_at": "2026-10-14T19:20:02Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "bendingspoons/69b7df034e1fefaea1496bad", "title": "Sales & account manager", "url": "https://jobs.bendingspoons.com/positions/69b7df034e1fefaea1496bad", "location": "Milan (Italy); London (UK); Madrid (Spain); Warsaw (Poland); Remote", "posted_at": null, "company": "Bending Spoons", "found_at": "2026-10-14T19:20:02Z", "place": "Remote", "role": "also", "fit": 5}, {"id": "bendingspoons/6aa04102e88fde69b03aa98e", "title": "Senior sales & account manager", "url": "https://jobs.bendingspoons.com/positions/6aa04102e88fde69b03aa98e", "location": "Milan (Italy); London (UK); Madrid (Spain); Warsaw (Poland); Remote", "posted_at": null, "company": "Bending Spoons", "found_at": "2026-10-14T19:20:02Z", "place": "Remote", "role": "also", "fit": 5}], "stats": {"updated": "2026-10-24T18:18:29.675641+00:00", "last_scan": "2026-10-24T18:18:29Z", "last_status": "ok", "scans_24h": 7, "scanned": 24599, "boards": 192, "boards_ok": 192, "new_postings_last": 14, "new_postings_24h": 726, "new_matches_24h": 2, "total": 75, "places": {"Barcelona": 34, "Remote": 14, "Spain": 27, "Other": 0}, "core": 14}, "places": ["Barcelona", "Remote", "Spain"], "page_title": "Andrea's job board", "new_for_hours": 48, "max_age_days": 30}</script>
+<script>
+  // All page data (jobs + stats) is embedded above by scout/board.py.
+  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var stats = DATA.stats;
+  var filters = { place: "All", role: "All" };
+  var showHidden = false;
+
+  // ---- small helpers ----
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+  function ago(iso) {
+    if (!iso) return "never";
+    var minutes = Math.round((Date.now() - new Date(iso)) / 60000);
+    if (minutes < 60) return minutes + " min ago";
+    if (minutes < 48 * 60) return Math.round(minutes / 60) + " h ago";
+    return Math.round(minutes / 1440) + " days ago";
+  }
+  function dayAge(iso) {
+    var days = Math.floor((Date.now() - new Date(iso)) / 86400000);
+    return days <= 0 ? "today" : days + "d ago";
+  }
+  // Job and application links come from outside websites: allow only http(s) links.
+  function safeUrl(url) { return /^https?:\/\//i.test(url || "") ? url : ""; }
+  function num(value) { return value === null || value === undefined ? "-" : value.toLocaleString("en-US"); }
+
+  // ---- "Hide" remembers dismissed jobs in this browser only (per device) ----
+  var KEY = "jobscout-hidden";
+  var hidden = [];
+  try { hidden = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { hidden = []; }
+  function saveHidden() {
+    try { localStorage.setItem(KEY, JSON.stringify(hidden)); } catch (e) {}
+  }
+
+  // ---- stats bar ----
+  function renderStats() {
+    document.getElementById("updated").textContent =
+      "Page built " + ago(stats.updated) + " · scans every hour · jobs older than " + DATA.max_age_days + " days are removed";
+    var healthy = stats.boards && stats.boards_ok === stats.boards;
+    var items = [
+      ["Last scan", ago(stats.last_scan), (stats.scans_24h || 0) + (stats.scans_24h === 1 ? " scan" : " scans") + " in last 24 h", healthy ? "var(--ok)" : "var(--warn)"],
+      ["Jobs scanned", num(stats.scanned), num(stats.boards_ok) + " / " + num(stats.boards) + " company boards OK"],
+      ["New postings", num(stats.new_postings_24h), num(stats.new_postings_last) + " in last scan · all titles, 24 h"],
+      ["Matches on board", num(stats.total), num(stats.new_matches_24h) + " new in last 24 h"],
+      [DATA.places[0], num(stats.places[DATA.places[0]]), DATA.places.slice(1).map(function (p) { return p + " " + num(stats.places[p]); }).join(" · ")],
+      ["Core roles", num(stats.core), "Also interested " + num(stats.total - stats.core)]
+    ];
+    var box = document.getElementById("stats");
+    items.forEach(function (item) {
+      var stat = el("div", "stat");
+      var label = el("div", "label");
+      if (item[3]) { var dot = el("span", "dot"); dot.style.background = item[3]; label.appendChild(dot); }
+      label.appendChild(document.createTextNode(item[0]));
+      stat.appendChild(label);
+      stat.appendChild(el("div", "value", item[1]));
+      stat.appendChild(el("div", "detail", item[2]));
+      box.appendChild(stat);
+    });
+  }
+
+  // ---- filter chips ----
+  function renderChips(boxId, key, options) {
+    var box = document.getElementById(boxId);
+    options.forEach(function (option) {
+      var chip = el("button", "chip", option[1]);
+      chip.type = "button";
+      chip.dataset.value = option[0];
+      chip.setAttribute("aria-pressed", String(filters[key] === option[0]));
+      chip.addEventListener("click", function () {
+        filters[key] = option[0];
+        box.querySelectorAll(".chip").forEach(function (c) {
+          c.setAttribute("aria-pressed", String(c.dataset.value === filters[key]));
+        });
+        renderBoard();
+      });
+      box.appendChild(chip);
+    });
+  }
+
+  // ---- job cards and columns ----
+  function card(job) {
+    var isHidden = hidden.indexOf(job.id) !== -1;
+    var node = el("article", "card" + (isHidden ? " hidden" : ""));
+    var top = el("div", "top");
+    top.appendChild(el("span", "company", job.company));
+    var maxFit = DATA.places.length * 2 + 2;
+    var fit = el("span", "fit fit" + Math.min(Math.floor(job.fit / maxFit * 3), 2), "fit " + job.fit);
+    fit.title = "Fit score " + job.fit + "/" + maxFit + " (location x2 + role)";
+    top.appendChild(fit);
+    node.appendChild(top);
+
+    var link = el("a", "title", job.title);
+    if (safeUrl(job.url)) { link.href = safeUrl(job.url); link.target = "_blank"; link.rel = "noopener noreferrer"; }
+    node.appendChild(link);
+
+    var meta = el("div", "meta");
+    meta.appendChild(el("span", "place p" + Math.min(Math.max(DATA.places.indexOf(job.place), 0), 3) + (job.place === "Other" ? " p3" : ""), job.place));
+    meta.appendChild(document.createTextNode(job.location + " "));
+    meta.appendChild(el("span", "tag", job.role === "core" ? "core" : "also"));
+    if (job.work_mode) meta.appendChild(el("span", "tag", job.work_mode)); // remote / hybrid / onsite
+    node.appendChild(meta);
+
+    // Match % and missing keywords, only after login with a saved CV.
+    var draft = draftLine(job);
+    if (draft) node.appendChild(draft);
+
+    var bottom = el("div", "bottom");
+    var when = (job.posted_at ? "posted " + dayAge(job.posted_at) + " · " : "") + "found " + dayAge(job.found_at);
+    bottom.appendChild(el("span", "", when));
+    if (USER && CV) bottom.appendChild(askButton(job));
+    if (USER) bottom.appendChild(appliedButton(job));
+    var button = el("button", "hide", isHidden ? "Unhide" : "Hide");
+    button.type = "button";
+    button.addEventListener("click", function () {
+      var index = hidden.indexOf(job.id);
+      if (index === -1) { hidden.push(job.id); } else { hidden.splice(index, 1); }
+      saveHidden();
+      if (USER) {
+        saveHiddenToDatabase(job.id, index === -1);
+      } else {
+        // Not logged in: the hide lives only in this browser and can be wiped. Say so.
+        toggleAccountBox(true);
+        document.getElementById("account-status").textContent =
+          "Hidden on this browser only. Log in to keep hidden jobs on all your devices.";
+      }
+      renderBoard();
+    });
+    bottom.appendChild(button);
+    node.appendChild(bottom);
+    return node;
+  }
+
+  function column(title, note, jobs) {
+    var section = el("section", "column");
+    var heading = el("h2", "", title + " ");
+    heading.appendChild(el("span", "count", String(jobs.length)));
+    section.appendChild(heading);
+    section.appendChild(el("p", "note", note));
+    if (!jobs.length) section.appendChild(el("p", "empty", "Nothing here."));
+    jobs.forEach(function (job) { section.appendChild(card(job)); });
+    return section;
+  }
+
+  function renderBoard() {
+    var newCutoff = Date.now() - DATA.new_for_hours * 3600000;
+    // Apply the filters (and hide dismissed jobs unless "show hidden" is ticked).
+    var jobs = DATA.jobs.filter(function (job) {
+      if (filters.place !== "All" && job.place !== filters.place) return false;
+      if (filters.role !== "All" && job.role !== filters.role) return false;
+      if (!showHidden && hidden.indexOf(job.id) !== -1) return false;
+      return true;
+    });
+    // Best fit first; ties go to the most recently found.
+    jobs.sort(function (a, b) { return b.fit - a.fit || (b.found_at > a.found_at ? 1 : -1); });
+
+    var fresh = jobs.filter(function (job) { return new Date(job.found_at) >= newCutoff; });
+    var best = jobs.slice(0, 10);
+    var used = {};
+    fresh.concat(best).forEach(function (job) { used[job.id] = true; });
+    var older = jobs.filter(function (job) { return !used[job.id]; });
+
+    var board = document.getElementById("board");
+    board.textContent = "";
+    board.appendChild(column("New", "First seen in the last " + DATA.new_for_hours + " hours", fresh));
+    board.appendChild(column("Best fit", "Top 10: " + DATA.places.join(" > ") + ", core roles first", best));
+    board.appendChild(column("Older", "Everything else still open", older));
+  }
+
+  // =====================================================================
+  // CV help (after login): instant keyword match on each card, and
+  // "Fit my CV", which copies a ready prompt (job + CV) for the Claude app's fit-cv skill.
+  // The CV text lives in the private database (table "profile").
+  // =====================================================================
+  var CV = "";
+  var DESCRIPTIONS = {}; // job id -> description, from matches.json (public job ads)
+
+  // Terms that matter in Customer Success / TAM job ads. A job's match % is the share
+  // of the terms its description uses that the CV also mentions.
+  var VOCABULARY = ["customer success", "customer journey", "onboarding", "adoption", "renewal", "renewals",
+    "expansion", "upsell", "cross-sell", "churn", "retention", "nrr", "grr", "arr", "health score",
+    "success plan", "qbr", "ebr", "business review", "executive sponsor", "stakeholder management",
+    "escalation", "escalations", "value realization", "roi", "kpi", "okr", "nps", "csat",
+    "customer advocacy", "playbook", "playbooks", "enablement", "workshops", "account planning",
+    "forecasting", "negotiation", "digital customer success", "enterprise", "mid-market", "smb",
+    "strategic accounts", "portfolio", "trusted advisor", "technical account manager", "implementation",
+    "integration", "integrations", "migration", "api", "apis", "sql", "python", "javascript",
+    "kubernetes", "docker", "aws", "azure", "gcp", "cloud", "saas", "observability", "monitoring",
+    "security", "devops", "ci/cd", "terraform", "jenkins", "gitlab", "github", "linux", "networking",
+    "analytics", "dashboards", "troubleshooting", "technical demos", "poc", "proof of concept",
+    "solution design", "architecture", "professional services", "sla", "incident management", "itil",
+    "service delivery", "ai", "llm", "llms", "generative ai", "machine learning", "prompt engineering",
+    "agents", "ai agents", "automation", "salesforce", "gainsight", "totango", "churnzero", "hubspot",
+    "zendesk", "jira", "confluence", "tableau", "power bi", "looker", "excel", "slack",
+    "cross-functional", "change management", "project management", "communication",
+    "spanish", "italian", "english", "portuguese", "french", "german"];
+
+  function termRegex(term) {
+    return new RegExp("(?<![\\w-])" + term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w-])", "gi");
+  }
+
+  // Match for one job: share of the job's important terms that the CV mentions.
+  function draft(job) {
+    var text = DESCRIPTIONS[job.id];
+    if (!CV || !text) return null;
+    var found = [];
+    VOCABULARY.forEach(function (term) {
+      var hits = (text.match(termRegex(term)) || []).length;
+      if (hits) found.push({ term: term, count: hits, inCv: termRegex(term).test(CV) });
+    });
+    if (!found.length) return null;
+    found.sort(function (a, b) { return b.count - a.count; });
+    var present = found.filter(function (f) { return f.inCv; }).length;
+    return { match: Math.round(100 * present / found.length),
+             missing: found.filter(function (f) { return !f.inCv; }).slice(0, 4) };
+  }
+
+  function draftLine(job) {
+    var d = draft(job);
+    if (!d) return null;
+    var line = el("div", "draft");
+    line.appendChild(el("span", "match", d.match + "% match"));
+    if (d.missing.length) {
+      line.appendChild(document.createTextNode(" · missing: " +
+        d.missing.map(function (m) { return m.term; }).join(", ")));
+    }
+    return line;
+  }
+
+  // The prompt for the Claude app: it starts the fit-cv skill (skills/fit-cv/SKILL.md in the
+  // repo), which tailors the CV to this job and saves it as a Google Doc.
+  function claudePrompt(job) {
+    return "Use my fit-cv skill: tailor my CV to the job below, facts only, and save it as a Google Doc.\n\n" +
+      "JOB: " + job.title + " at " + job.company + " (" + job.location + ")\n" + job.url + "\n\n" +
+      "--- JOB AD ---\n" + (DESCRIPTIONS[job.id] || "(Open the link above: the ad text was not available.)") +
+      "\n\n--- MY CV ---\n" + CV;
+  }
+
+  // Copy a prompt, then open Claude in a new tab: paste it there.
+  function copyToClaude(text, button, label) {
+    navigator.clipboard.writeText(text).then(function () {
+      button.textContent = "Copied: paste in Claude";
+      window.open("https://claude.ai/new", "_blank", "noopener");
+    }, function () {
+      // Copying is blocked on some phones: show the prompt, selected, to copy by hand.
+      var card = button.closest(".card");
+      var box = card.querySelector(".prompt-box") || card.appendChild(el("textarea", "prompt-box"));
+      box.value = text;
+      box.readOnly = true;
+      box.focus();
+      box.select();
+      button.textContent = "Copy the text below";
+    });
+    setTimeout(function () { button.textContent = label; }, 4000);
+  }
+
+  // The prompt for the interview-prep skill (skills/interview-prep/SKILL.md in the repo).
+  function prepPrompt(app) {
+    return "Use my interview-prep skill: prepare me for this interview and save it as a Google Doc.\n\n" +
+      "APPLICATION: " + app.title + " at " + app.company + (app.location ? " (" + app.location + ")" : "") +
+      (app.link ? "\n" + app.link : "") + "\nStage: " + app.stage + ", applied " + app.applied_on + "\n\n" +
+      "--- NOTES ---\n" + (app.notes || "(no notes yet)") +
+      "\n\n--- JOB AD ---\n" + ((app.job_id && DESCRIPTIONS[app.job_id]) || "(Open the link above: the ad text is not on the board.)") +
+      "\n\n--- MY CV ---\n" + (CV || "(Add your CV under Log in > My CV first.)");
+  }
+
+  function askButton(job) {
+    var button = el("button", "hide ask", "Fit my CV");
+    button.type = "button";
+    button.title = "Copies this job and your CV for the fit-cv skill, then opens Claude: paste it there. The tailored CV comes back as a Google Doc.";
+    button.addEventListener("click", function () { copyToClaude(claudePrompt(job), button, "Fit my CV"); });
+    return button;
+  }
+
+  // The CV and the job descriptions, loaded after login.
+  function loadCv() {
+    db.from("profile").select("cv_text").maybeSingle().then(function (result) {
+      CV = (result.data && result.data.cv_text) || "";
+      document.getElementById("cv-text").value = CV;
+      renderBoard();
+    });
+    fetch("matches.json").then(function (r) { return r.json(); }).then(function (jobs) {
+      jobs.forEach(function (job) { if (job.description) DESCRIPTIONS[job.id] = job.description; });
+      renderBoard();
+    }).catch(function () {});
+  }
+
+  function saveCv() {
+    var status = document.getElementById("account-status");
+    CV = document.getElementById("cv-text").value;
+    db.from("profile").upsert({ cv_text: CV, updated_at: new Date().toISOString() }, { onConflict: "user_id" })
+      .then(function (result) {
+        status.textContent = result.error ? "Could not save the CV: " + result.error.message : "CV saved.";
+        renderBoard();
+      });
+  }
+
+  // ---- Account and private data (Supabase) ----
+  var SUPABASE_URL = "https://pffopwzydbjdblojhcwm.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_qs5yz6gDAqx3WGJ2qzy_mw_NtOgQzKS";
+  var db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  var USER = null;
+
+  function toggleAccountBox(show) {
+    var box = document.getElementById("account-box");
+    box.hidden = show === undefined ? !box.hidden : !show;
+  }
+
+  function showAccount() {
+    document.getElementById("account-toggle").textContent = USER ? "Logged in" : "Log in";
+    document.getElementById("account-form").hidden = !!USER;
+    document.getElementById("account-logout").hidden = !USER;
+    document.getElementById("account-links").hidden = !USER;
+    document.getElementById("apps-toggle").hidden = !USER;
+    var due = APPS.filter(isDue).length;
+    document.getElementById("apps-toggle").textContent =
+      "My applications (" + APPS.length + (due ? " \u00b7 " + due + " due" : "") + ")";
+    document.getElementById("cv-area").hidden = !USER;
+    document.getElementById("account-text").textContent = USER
+      ? "Logged in as " + USER.email + ". Hidden jobs sync on all your devices."
+      : "Log in to keep hidden jobs (and later your applications) in sync on all your devices. " +
+        "Type your email and open the link we send you on this device.";
+  }
+
+  // Save one hide or unhide in the database.
+  function saveHiddenToDatabase(jobId, isHidden) {
+    var request = isHidden
+      ? db.from("hidden_jobs").upsert({ job_id: jobId }, { onConflict: "user_id,job_id" })
+      : db.from("hidden_jobs").delete().eq("job_id", jobId);
+    request.then(function (result) {
+      if (result.error) document.getElementById("account-status").textContent = "Could not save: " + result.error.message;
+    });
+  }
+
+  // Database list + this browser's list, so nothing hidden on any device is lost.
+  function syncHidden() {
+    if (!USER) return;
+    db.from("hidden_jobs").select("job_id").then(function (result) {
+      if (result.error) { document.getElementById("account-status").textContent = "Could not load: " + result.error.message; return; }
+      var remote = result.data.map(function (row) { return row.job_id; });
+      var missing = hidden.filter(function (id) { return remote.indexOf(id) === -1; });
+      hidden = remote.concat(missing);
+      saveHidden();
+      if (missing.length) {
+        db.from("hidden_jobs").upsert(missing.map(function (id) { return { job_id: id }; }),
+                                      { onConflict: "user_id,job_id" }).then(function () {});
+      }
+      renderBoard();
+    });
+  }
+
+  function startAccount() {
+    showAccount();
+    if (!db) { document.getElementById("account-toggle").hidden = true; return; }
+    // Hides and unhides made on another device arrive here while the page is open.
+    db.channel("hidden-jobs").on("postgres_changes", { event: "*", schema: "public", table: "hidden_jobs" },
+      function (change) {
+        var id = (change.new && change.new.job_id) || (change.old && change.old.job_id);
+        var index = hidden.indexOf(id);
+        if (change.eventType === "DELETE" && index !== -1) hidden.splice(index, 1);
+        if (change.eventType === "INSERT" && index === -1) hidden.push(id);
+        saveHidden();
+        renderBoard();
+      }).subscribe();
+    db.channel("applications").on("postgres_changes", { event: "*", schema: "public", table: "applications" },
+      function () { if (USER) loadApps(); }).subscribe();
+    // Coming back to the page (e.g. switching apps on the phone) also refreshes the list.
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) syncHidden(); });
+    db.auth.onAuthStateChange(function (event, session) {
+      USER = session ? session.user : null;
+      showAccount();
+      syncHidden();
+      if (USER) { loadCv(); loadApps(); }
+    });
+  }
+
+  // =====================================================================
+  // Applications (after login): a job is tracked only once I actually apply.
+  // One row per application in the private table "applications" (supabase/schema.sql).
+  // =====================================================================
+  var APPS = [];
+  var showingApps = false;
+  var STAGES = [["applied", "Applied"], ["interviewing", "Interviewing"], ["offer", "Offer"], ["closed", "Closed"]];
+  var CLOSED_REASONS = ["rejected", "withdrawn", "no answer", "accepted"];
+
+  function today() { return new Date().toISOString().slice(0, 10); }
+
+  function appStatus(text) { document.getElementById("apps-status").textContent = text; }
+
+  function loadApps() {
+    db.from("applications").select("*").order("applied_on", { ascending: false }).then(function (result) {
+      if (result.error) { appStatus("Could not load applications: " + result.error.message); return; }
+      APPS = result.data;
+      showAccount();
+      renderApps();
+      renderBoard();
+    });
+  }
+
+  function applicationFor(job) {
+    for (var i = 0; i < APPS.length; i++) if (APPS[i].job_id === job.id) return APPS[i];
+    return null;
+  }
+
+  // Save a new application, then show it everywhere.
+  var FOLLOW_UP_DAYS = 7; // agreed default: chase a reply one week after applying
+
+  function addDays(isoDate, days) {
+    var date = new Date(isoDate + "T00:00:00Z");
+    date.setUTCDate(date.getUTCDate() + days);
+    return date.toISOString().slice(0, 10);
+  }
+
+  // An application needs attention when its next step's date is today or earlier.
+  function isDue(app) { return app.stage !== "closed" && app.next_due && app.next_due <= today(); }
+
+  function createApplication(row) {
+    row.timeline = [{ date: today(), text: "Applied" }];
+    row.next_step = "Follow up if no reply";
+    row.next_due = addDays(today(), FOLLOW_UP_DAYS);
+    return db.from("applications").insert(row).select().then(function (result) {
+      if (result.error) { appStatus("Could not save: " + result.error.message); return; }
+      APPS = result.data.concat(APPS);
+      showAccount();
+      renderApps();
+      renderBoard();
+    });
+  }
+
+  // On a job card: "I applied", or a tag once the application exists.
+  function appliedButton(job) {
+    if (applicationFor(job)) return el("span", "tag applied-tag", "applied");
+    var button = el("button", "hide", "I applied");
+    button.type = "button";
+    button.title = "Start tracking this application (only once you have actually applied)";
+    button.addEventListener("click", function () {
+      button.disabled = true;
+      createApplication({ job_id: job.id, link: job.url, company: job.company, title: job.title,
+                          location: job.location, source: "scan" });
+    });
+    return button;
+  }
+
+  // Stage dropdown value: "applied", ..., or "closed:rejected" etc.
+  function stageValue(app) { return app.stage === "closed" ? "closed:" + (app.closed_reason || "") : app.stage; }
+
+  function setStage(app, value) {
+    var parts = value.split(":");
+    var label = parts[0] === "closed" ? "Closed (" + parts[1] + ")" : value.charAt(0).toUpperCase() + value.slice(1);
+    var change = { stage: parts[0], closed_reason: parts[1] || null, updated_at: new Date().toISOString(),
+                   next_step: parts[0] === "closed" ? null : app.next_step,
+                   next_due: parts[0] === "closed" ? null : app.next_due,
+                   timeline: (app.timeline || []).concat([{ date: today(), text: label }]) };
+    db.from("applications").update(change).eq("id", app.id).then(function (result) {
+      if (result.error) { appStatus("Could not move it: " + result.error.message); return; }
+      Object.assign(app, change);
+      renderApps();
+    });
+  }
+
+  function saveNext(app, step, dueDate) {
+    var change = { next_step: step || null, next_due: dueDate || null, updated_at: new Date().toISOString() };
+    if (change.next_step === (app.next_step || null) && change.next_due === (app.next_due || null)) return;
+    db.from("applications").update(change).eq("id", app.id).then(function (result) {
+      if (result.error) { appStatus("Could not save the next step: " + result.error.message); return; }
+      Object.assign(app, change);
+      showAccount();
+      renderApps();
+    });
+  }
+
+  function saveNotes(app, text) {
+    if (text === (app.notes || "")) return;
+    db.from("applications").update({ notes: text, updated_at: new Date().toISOString() }).eq("id", app.id)
+      .then(function (result) {
+        if (result.error) { appStatus("Could not save the notes: " + result.error.message); return; }
+        app.notes = text;
+        appStatus("Notes saved.");
+      });
+  }
+
+  function removeApp(app) {
+    if (!confirm("Remove the application to " + app.company + " - " + app.title + "?")) return;
+    db.from("applications").delete().eq("id", app.id).then(function (result) {
+      if (result.error) { appStatus("Could not remove it: " + result.error.message); return; }
+      APPS = APPS.filter(function (other) { return other.id !== app.id; });
+      showAccount();
+      renderApps();
+      renderBoard();
+    });
+  }
+
+  function appCard(app) {
+    var node = el("article", "card" + (isDue(app) ? " overdue" : ""));
+    var top = el("div", "top");
+    top.appendChild(el("span", "company", app.company));
+    top.appendChild(el("span", "tag", app.source === "scan" ? "from board" : app.source));
+    node.appendChild(top);
+    var link = el(safeUrl(app.link) ? "a" : "span", "title", app.title);
+    if (safeUrl(app.link)) { link.href = safeUrl(app.link); link.target = "_blank"; link.rel = "noopener noreferrer"; }
+    node.appendChild(link);
+    var days = Math.floor((Date.now() - new Date(app.applied_on)) / 86400000);
+    node.appendChild(el("div", "meta", (app.location ? app.location + " · " : "") +
+                        "applied " + app.applied_on + " (" + days + " days ago)"));
+
+    var stage = document.createElement("select");
+    stage.className = "stage";
+    STAGES.forEach(function (s) {
+      if (s[0] === "closed") {
+        CLOSED_REASONS.forEach(function (reason) {
+          var option = el("option", "", "Closed: " + reason);
+          option.value = "closed:" + reason;
+          stage.appendChild(option);
+        });
+      } else {
+        var option = el("option", "", s[1]);
+        option.value = s[0];
+        stage.appendChild(option);
+      }
+    });
+    stage.value = stageValue(app);
+    stage.addEventListener("change", function () { setStage(app, stage.value); });
+
+    var notes = el("textarea", "notes");
+    notes.placeholder = "Notes (who you talked to, what was said...)";
+    notes.value = app.notes || "";
+    notes.addEventListener("blur", function () { saveNotes(app, notes.value); });
+
+    var remove = el("button", "hide", "Remove");
+    if (app.stage === "interviewing") {
+      var prep = el("button", "hide ask", "Prep interview");
+      prep.type = "button";
+      prep.title = "Copies this application, your notes and your CV for the interview-prep skill, then opens Claude: paste it there.";
+      prep.addEventListener("click", function () { copyToClaude(prepPrompt(app), prep, "Prep interview"); });
+    }
+    remove.type = "button";
+    remove.addEventListener("click", function () { removeApp(app); });
+
+    if (app.stage !== "closed") {
+      var next = el("div", "next");
+      var step = el("input");
+      step.type = "text";
+      step.placeholder = "Next step";
+      step.value = app.next_step || "";
+      var dueDate = el("input");
+      dueDate.type = "date";
+      dueDate.value = app.next_due || "";
+      [step, dueDate].forEach(function (input) {
+        input.addEventListener("change", function () { saveNext(app, step.value.trim(), dueDate.value); });
+      });
+      next.appendChild(step);
+      next.appendChild(dueDate);
+      if (isDue(app)) node.appendChild(el("div", "due", app.next_due === today() ? "Due today" : "Overdue since " + app.next_due));
+      node.appendChild(next);
+    }
+
+    var bottom = el("div", "bottom");
+    bottom.appendChild(stage);
+    if (prep) bottom.appendChild(prep);
+    bottom.appendChild(remove);
+    node.appendChild(bottom);
+    node.appendChild(notes);
+    if ((app.timeline || []).length) {
+      node.appendChild(el("div", "history", app.timeline.map(function (t) { return t.date + " " + t.text; }).join(" · ")));
+    }
+    return node;
+  }
+
+  function renderApps() {
+    var box = document.getElementById("apps-board");
+    box.textContent = "";
+    STAGES.forEach(function (s) {
+      var apps = APPS.filter(function (app) { return app.stage === s[0]; });
+      apps.sort(function (a, b) { return (a.next_due || "9999") < (b.next_due || "9999") ? -1 : 1; });
+      var section = el("section", "column");
+      var heading = el("h2", "", s[1] + " ");
+      heading.appendChild(el("span", "count", String(apps.length)));
+      section.appendChild(heading);
+      if (!apps.length) section.appendChild(el("p", "empty", "Nothing here."));
+      apps.forEach(function (app) { section.appendChild(appCard(app)); });
+      box.appendChild(section);
+    });
+  }
+
+  // Switch between the job board and my applications.
+  function toggleApps() {
+    showingApps = !showingApps;
+    ["stats", "board"].forEach(function (id) { document.getElementById(id).hidden = showingApps; });
+    document.querySelector(".filters").hidden = showingApps;
+    document.getElementById("apps").hidden = !showingApps;
+    document.getElementById("apps-toggle").setAttribute("aria-pressed", String(showingApps));
+  }
+
+  document.getElementById("apps-toggle").addEventListener("click", toggleApps);
+  document.getElementById("app-add").addEventListener("click", function () {
+    var fields = {};
+    ["link", "company", "title", "location", "source"].forEach(function (name) {
+      fields[name] = document.getElementById("app-" + name).value.trim();
+    });
+    if (!fields.company || !fields.title) { appStatus("Company and role are needed."); return; }
+    createApplication(fields).then(function () {
+      ["link", "company", "title", "location"].forEach(function (name) { document.getElementById("app-" + name).value = ""; });
+    });
+  });
+
+  document.getElementById("account-toggle").addEventListener("click", function () { toggleAccountBox(); });
+  document.getElementById("account-send").addEventListener("click", function () {
+    var email = document.getElementById("account-email").value.trim();
+    var status = document.getElementById("account-status");
+    if (!email) { status.textContent = "Type your email first."; return; }
+    status.textContent = "Sending...";
+    db.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + location.pathname } })
+      .then(function (result) {
+        status.textContent = result.error ? "Could not send: " + result.error.message
+          : "Check your inbox and open the link on this device.";
+      });
+  });
+  document.getElementById("account-logout").addEventListener("click", function () {
+    db.auth.signOut().then(function () { location.reload(); });
+  });
+
+  document.getElementById("cv-save").addEventListener("click", saveCv);
+
+  renderStats();
+  // The page title and the Location chips come from the user's Preferences.
+  document.title = DATA.page_title;
+  document.getElementById("page-title").textContent = DATA.page_title;
+  renderChips("place-filter", "place", [["All", "All"]].concat(DATA.places.map(function (p) { return [p, p]; })));
+  renderChips("role-filter", "role", [["All", "All"], ["core", "Core"], ["also", "Also interested"]]);
+  document.getElementById("show-hidden").addEventListener("change", function (e) {
+    showHidden = e.target.checked;
+    renderBoard();
+  });
+  renderBoard();
+  startAccount();
+
+  // ---- Show new scans without logging out ----
+  // The page reloads to pick up a new scan, but only when it is older than 30 minutes and,
+  // first, after any login renewal has finished: reloading in the middle of a renewal (e.g.
+  // when the laptop wakes up) used to lose the renewed login and log out every day.
+  var LOADED_AT = Date.now();
+  var RELOAD_AFTER = 30 * 60 * 1000;
+  function reloadWhenSafe() {
+    if (Date.now() - LOADED_AT < RELOAD_AFTER || document.hidden) return;
+    LOADED_AT = Date.now(); // only one reload, even if several triggers fire together
+    var renewed = db ? db.auth.getSession() : Promise.resolve(); // waits for a running renewal
+    renewed.then(function () { location.reload(); }, function () { location.reload(); });
+  }
+  document.addEventListener("visibilitychange", reloadWhenSafe);
+  setInterval(reloadWhenSafe, 60 * 1000);
+</script>
+</body>
+</html>
