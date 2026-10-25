@@ -13,7 +13,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
 
-from . import util
+from . import salary, util
 from .sources.common import iso, job as make_job
 
 ENGINE_TIMEOUT = 45 * 60  # seconds: the whole crawl must finish well inside the hourly slot
@@ -97,6 +97,8 @@ def to_job(item, company_link=""):
     job = make_job(job_id(item, company_link), item["title"], item["url"].split("?utm_source")[0],
                    item["location"], iso(item.get("posted_at")), item.get("description") or "")
     job["work_mode"] = item.get("work_mode") or ""
+    job["salary"] = salary.label(item.get("salary_min"), item.get("salary_max"),
+                                 item.get("salary_currency"), item.get("salary_period"))
     if item["source"] == "workday":
         # freehire keeps only a Workday job's first city; the job page lists all of them.
         host, _, site = item["board"].partition("/")

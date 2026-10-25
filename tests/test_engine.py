@@ -48,6 +48,13 @@ class JobIds(unittest.TestCase):
                          ("greenhouse/adyen/1", "Account Manager", "https://job-boards.greenhouse.io/adyen/jobs/1",
                           "2026-10-01T10:00:00Z", "hybrid"))
 
+    def test_platform_salary_reaches_the_job(self):
+        job = engine.to_job({"source": "ashby", "board": "perk", "external_id": "1", "title": "CSM",
+                             "url": "https://jobs.ashbyhq.com/perk/1", "location": "Barcelona",
+                             "salary_min": 45000, "salary_max": 60000, "salary_currency": "EUR",
+                             "salary_period": "year"})
+        self.assertEqual(job["salary"], "€45k–60k")
+
 
 if __name__ == "__main__":
     unittest.main()
