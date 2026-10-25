@@ -64,6 +64,13 @@ Never push to main or merge."
     score; weighted score with verdicts; review pass before the Doc. interview-prep: same
     data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
 
+- [x] **T16. Salary on the job card** - Andrea re-uploads fit-cv after merge
+  - Card: the salary the employer states (platform field via freehire, else a range in the ad:
+    pay word nearby, a currency, a yearly amount; other currencies like CAD/MXN skipped).
+  - fit-cv: quotes stated pay, or gives a `[CHECK]` estimate with 2-3 sources.
+  - Decided: no automatic estimate on every card (no reliable free data; Glassdoor and
+    Levels.fyi can't be read automatically; a wrong number anchors negotiations).
+
 - [x] **T13. Delete the old repos** - done 2026-10-23 by Andrea
   - JobScout-legacy and jobscout-test-friend: each repo > Settings > bottom > Delete this repository.
   - Done when: both links answer "not found".
