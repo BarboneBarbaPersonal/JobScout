@@ -189,3 +189,18 @@ verified, what is open or next. Read the last entries to know where things stand
   Supabase reachable, api.github.com blocked by the policy.
 - Open for Andrea: delete the "CV add-on repo" sheet row (my edit was blocked); post the T12
   issue. Then: use the tracker until ~2026-11-05 before T9/T10; T11 review on 2026-11-19.
+
+## 2026-10-25 - T16 salary on the job card
+- scout/salary.py: the stated salary only. First the platform's own field (engine/main.go now
+  passes freehire's SalaryMin/Max/Currency/Period), else a range in the ad text (needs a pay
+  word nearby, a currency, 15k-1M a year; skips other currencies like CAD, MXN, R$).
+- Card: the salary in green under the job title, with a note to check the ad for which
+  country it applies to. fit-cv: new "Salary check" step (stated pay quoted, otherwise a
+  `[CHECK]` estimate with 2-3 sources).
+- Verified: tests written first (11 cases from real ads, 9 that are not pay); 26 tests pass;
+  `go vet` of the runner against freehire at the pinned commit; 2,957 public Greenhouse ads:
+  1,104 salaries read, 20 random ones checked by hand, the skipped ones are other currencies;
+  live board: 8 of 73 jobs show a salary (Mews, Cledara, Factorial, Cloudflare...); local page
+  in light and dark, no console errors. One bug found and fixed on the way (a line break
+  before "€" was read as "R$"-style prefix; test added).
+- Open for Andrea: merge; re-upload fit-cv (I can do it).

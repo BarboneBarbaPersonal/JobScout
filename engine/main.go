@@ -63,6 +63,11 @@ type job struct {
 	Cities      []string   `json:"cities"`
 	Countries   []string   `json:"countries"`
 	Regions     []string   `json:"regions"`
+	// Salary only when the platform states it in its own field (Ashby, Lever, Recruitee...).
+	SalaryMin      *int   `json:"salary_min,omitempty"`
+	SalaryMax      *int   `json:"salary_max,omitempty"`
+	SalaryCurrency string `json:"salary_currency,omitempty"`
+	SalaryPeriod   string `json:"salary_period,omitempty"`
 }
 
 func main() {
@@ -144,6 +149,8 @@ func crawl(registry map[string]sources.Source, b *board, emit func(any)) {
 		emit(job{Kind: "job", Company: b.Company, Source: b.Source, Board: b.Board,
 			ExternalID: j.ExternalID, URL: j.URL, Title: j.Title, Location: j.Location,
 			PostedAt: j.PostedAt, Description: htmltext.ToText(j.Description), WorkMode: workMode,
-			Cities: geo.Cities, Countries: geo.Countries, Regions: geo.Regions})
+			Cities: geo.Cities, Countries: geo.Countries, Regions: geo.Regions,
+			SalaryMin: j.SalaryMin, SalaryMax: j.SalaryMax, SalaryCurrency: j.SalaryCurrency,
+			SalaryPeriod: j.SalaryPeriod})
 	}
 }

@@ -13,6 +13,8 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from . import salary
+
 NEW_FOR_HOURS = 48  # a job counts as "New" for this long after we first saw it
 KEEP_RUNS = 500     # scans remembered for the stats bar
 PAGE_DIR = Path(__file__).resolve().parent.parent / "page"
@@ -41,6 +43,8 @@ def build(site, prefs, matches, run, now=None):
     for job in matches:
         job = {key: value for key, value in job.items() if not key.startswith("_")}
         job["found_at"] = old[job["id"]]["found_at"] if job["id"] in old else stamp
+        # Salary: the platform's own field if it has one, else a range stated in the ad.
+        job["salary"] = job.get("salary") or salary.from_text(job.get("description"))
         # Jobs without a posting date leave the board this many days after we found them.
         if job.get("posted_at") is None and now - parse_time(job["found_at"]) > timedelta(days=prefs.max_age_days):
             continue

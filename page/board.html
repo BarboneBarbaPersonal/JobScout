@@ -62,6 +62,7 @@
   .title { display: block; margin: 4px 0; color: var(--text); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
   .title:hover { color: var(--accent); text-decoration: underline; }
   .meta { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .pay { font-size: 13px; font-weight: 700; color: var(--ok); margin-bottom: 2px; }
   .place { font-size: 11px; font-weight: 700; margin-right: 4px; }
   .p0 { color: var(--p0); } .p1 { color: var(--p1); } .p2 { color: var(--p2); } .p3 { color: var(--p3); }
   .tag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
@@ -270,6 +271,13 @@
     var link = el("a", "title", job.title);
     if (safeUrl(job.url)) { link.href = safeUrl(job.url); link.target = "_blank"; link.rel = "noopener noreferrer"; }
     node.appendChild(link);
+
+    // Salary, only when the employer states it (platform field or the ad text).
+    if (job.salary) {
+      var pay = el("div", "pay", job.salary);
+      pay.title = "Stated by the employer. Some ads list several ranges by country: check the ad.";
+      node.appendChild(pay);
+    }
 
     var meta = el("div", "meta");
     meta.appendChild(el("span", "place p" + Math.min(Math.max(DATA.places.indexOf(job.place), 0), 3) + (job.place === "Other" ? " p3" : ""), job.place));

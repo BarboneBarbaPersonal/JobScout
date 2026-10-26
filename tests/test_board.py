@@ -12,6 +12,20 @@ from scout.prefs import Preferences
 from tests.test_rules import SETTINGS
 
 
+class SalaryOnCards(unittest.TestCase):
+    def test_platform_salary_first_then_the_ad(self):
+        site = tempfile.mkdtemp()
+        jobs = [{"id": "a/b/1", "title": "CSM", "url": "", "location": "Barcelona", "posted_at": None,
+                 "description": "Salary: €40,000 - €50,000", "salary": "€45k–60k"},
+                {"id": "a/b/2", "title": "CSM", "url": "", "location": "Barcelona", "posted_at": None,
+                 "description": "Salary: €40,000 - €50,000"},
+                {"id": "a/b/3", "title": "CSM", "url": "", "location": "Barcelona", "posted_at": None,
+                 "description": "Great team"}]
+        saved = board.build(site, Preferences(SETTINGS), jobs, {"status": "ok", "boards": 1, "boards_ok": 1,
+                                                                "scanned": 3, "new_postings": 0})
+        self.assertEqual([job["salary"] for job in saved], ["€45k–60k", "€40k–50k", ""])
+
+
 class SecurityPolicy(unittest.TestCase):
     def setUp(self):
         site = tempfile.mkdtemp()
