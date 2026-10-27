@@ -136,3 +136,51 @@ def htmllinks(params, hints):
         location = join(location, params.get("location"))
         jobs.append(job("htmllinks/" + re.sub(r"^https?://", "", href), title, href, location))
     return jobs
+
+
+def wpjobmanager(params, hints):
+    """WordPress sites with the WP Job Manager plugin: an RSS feed of all open jobs."""
+    url = params["url"].rstrip("/")
+    root = ET.fromstring(util.get(f"{url}/?feed=job_feed&posts_per_page=500").content)
+    jobs = []
+    for item in root.iter("item"):
+        location = next((el.text or "" for el in item.iter() if el.tag.endswith("}location")), "")
+        content = next((el.text or "" for el in item.iter() if el.tag.endswith("}encoded")), "")
+        post = re.search(r"p=(\d+)", item.findtext("guid") or "")
+        jobs.append(job(f"wpjobmanager/{url.split('//')[-1]}/{post.group(1) if post else item.findtext('link')}",
+                        item.findtext("title"), item.findtext("link"), location,
+                        iso(item.findtext("pubDate")), util.html_to_text(content)))
+    return jobs
+
+
+def jazzhr(params, hints):
+    """JazzHR careers pages (".../apply/<code>/<title>"): title and place are in the list."""
+    url = params["url"].rstrip("/")
+    page = util.get(url).text
+    jobs = []
+    pattern = (r'<li class="list-group-item">.*?href="([^"]*/apply/([A-Za-z0-9]+)/[^"]*)">\s*(.*?)\s*</a>'
+               r'(.*?)</ul>')
+    for link, code, title, rest in re.findall(pattern, page, re.S):
+        place = re.search(r"fa-map-marker'></i>([^<]*)<", rest)
+        jobs.append(job(f"jazzhr/{url.split('//')[-1]}/{code}", util.html_to_text(title), link,
+                        place.group(1).strip() if place else ""))
+    return jobs
+
+
+def sesame(params, hints):
+    """Sesame HR's own recruiting pages: a public list of vacancies per company."""
+    company = params["company"]
+    api = f"https://back-eu1.sesametime.com/api/v3/companies/{company}/public-vacancies"
+    jobs, page, last = [], 1, 1
+    while page <= last:
+        data = util.get(f"{api}?page={page}").json()
+        last = (data.get("meta") or {}).get("lastPage") or 1
+        for v in data.get("data") or []:
+            places = [v.get("addressCity") or ""]  # the country field is not reliable ("Ciudad de Mexico", ES)
+            modality = (v.get("modality") or "").lower()
+            places += ["Remote"] if "remote" in modality else ["Hybrid"] if "hybrid" in modality else []
+            jobs.append(job(f"sesame/{company}/{v['id']}", v.get("name"),
+                            f"https://app.sesametime.com/jobs/{company}/{v['id']}", "; ".join(p for p in places if p),
+                            iso(v.get("openedAt")), util.html_to_text(v.get("description") or "")))
+        page += 1
+    return jobs

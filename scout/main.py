@@ -20,6 +20,9 @@ from .sources import DETAILS, READERS
 CACHE = Path(os.environ.get("JOBSCOUT_CACHE", "cache"))  # kept between runs by GitHub's cache
 RECHECK_NOT_FOUND_DAYS = 7  # companies without a board: look again after this many days
 WORKERS = 8                 # boards read at the same time
+# Thursday's deep scan: no age limit (older jobs are kept, marked "deep", until the next deep
+# scan while still open) and companies without a board are looked for again at once.
+DEEP = os.environ.get("JOBSCOUT_DEEP") == "1"
 
 
 def main():
@@ -51,6 +54,9 @@ def main():
         matches += found
         if not ok:
             failed.append((name, error))
+    if not DEEP:  # keep last Thursday's older finds while they are still open
+        matches += carry_deep(board.read_json(site / "deep.json", []), all_ids,
+                              {job["id"] for job in matches}, prefs)
     seen_before = set(read_cache("seen.json", []))
     new_postings = len(all_ids - seen_before) if seen_before else 0
     write_cache("seen.json", sorted(all_ids))
@@ -59,6 +65,8 @@ def main():
            "boards_ok": board_count - len(failed), "scanned": scanned, "new_postings": new_postings}
     jobs = board.build(site, prefs, matches, run)
     summary(companies, board_count, len(boards), jobs, failed, not_found, scanned, time.time() - started)
+    if DEEP:
+        deep_report(results, jobs)
 
 
 def scan_with_engine(companies, prefs):
@@ -80,7 +88,8 @@ def scan_with_engine(companies, prefs):
             retry.update([item["company"]] + (item.get("also") or []))
             continue
         jobs = item["jobs"]
-        matches = [dict(job, company=item["company"]) for job in jobs if keep(job, prefs, all_cities)]
+        matches = [dict(job, company=item["company"]) for job in jobs
+                   if keep(job, prefs, all_cities, deep=DEEP)]
         results.append((item["company"], True, {"count": len(jobs), "ids": [j["id"] for j in jobs]},
                         matches, ""))
     return results, [c for c in companies if c["name"] in retry]
@@ -116,9 +125,10 @@ def engine_reads_known_boards(boards, prefs):
     return results
 
 
-def keep(job, prefs, more_cities=None):
+def keep(job, prefs, more_cities=None, deep=False):
     """The rules every job must pass: wanted title, wanted place, not too old.
-    more_cities(job) may fill in the full city list before the place is judged."""
+    more_cities(job) may fill in the full city list before the place is judged.
+    deep: a too-old job is kept anyway and marked job["deep"] = True."""
     if not prefs.title_ok(job["title"]):
         return False
     if not prefs.location_ok(job["title"], job["location"]) and more_cities:
@@ -126,7 +136,18 @@ def keep(job, prefs, more_cities=None):
     if not prefs.location_ok(job["title"], job["location"]):
         return False
     cutoff = datetime.now(timezone.utc) - timedelta(days=prefs.max_age_days)
-    return not (job["posted_at"] and board.parse_time(job["posted_at"]) < cutoff)
+    if job["posted_at"] and board.parse_time(job["posted_at"]) < cutoff:
+        if not deep:
+            return False
+        job["deep"] = True
+    return True
+
+
+def carry_deep(previous, open_ids, current_ids, prefs):
+    """Jobs the last deep scan kept that are still open and still wanted, for the hourly scan."""
+    return [job for job in previous
+            if job["id"] in open_ids and job["id"] not in current_ids
+            and prefs.title_ok(job["title"]) and prefs.location_ok(job["title"], job["location"])]
 
 
 def find_boards(companies):
@@ -141,8 +162,8 @@ def find_boards(companies):
         if not found:
             key = f"{company['name']}|{company['careers']}|{company['website']}"
             cached = cache.get(key)
-            fresh = cached and (cached["board"] or now - datetime.fromisoformat(cached["checked"])
-                                < timedelta(days=RECHECK_NOT_FOUND_DAYS))
+            fresh = cached and (cached["board"] or not DEEP and now - datetime.fromisoformat(
+                cached["checked"]) < timedelta(days=RECHECK_NOT_FOUND_DAYS))
             if fresh:
                 found = cached["board"]
             else:
@@ -193,7 +214,7 @@ def scan_board(item, prefs, hints):
                 job = DETAILS[service](job, params)
             except Exception:
                 pass  # keep the list data; the description is a nice-to-have
-        if keep(job, prefs):
+        if keep(job, prefs, deep=DEEP):
             job["company"] = company
             matches.append(job)
     return company, True, {"count": len(jobs), "ids": [job["id"] for job in jobs]}, matches, ""
@@ -213,6 +234,29 @@ def summary(companies, board_count, old_boards, jobs, failed, not_found, scanned
         lines.append(f"\n### Companies without a job board found ({len(not_found)})")
         lines.append("Add the link of the page that lists their jobs in the Companies tab, column C.")
         lines += [f"- {name}" for name in not_found]
+    text = "\n".join(lines)
+    print(text)
+    if os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as file:
+            file.write(text + "\n")
+
+
+def deep_report(results, jobs):
+    """Deep scan only: per company, so nothing goes unnoticed (company names and counts only)."""
+    per_company = {}
+    for job in jobs:
+        per_company[job["company"]] = per_company.get(job["company"], 0) + 1
+    empty = sorted(name for name, ok, open_jobs, _, _ in results if ok and not open_jobs["count"])
+    no_match = sorted(name for name, ok, open_jobs, _, _ in results
+                      if ok and open_jobs["count"] and not per_company.get(name))
+    lines = ["\n## Deep scan (no age limit)",
+             f"- {sum(1 for job in jobs if job.get('deep'))} jobs older than the age limit kept apart "
+             f"until next Thursday",
+             f"- {len(per_company)} companies with jobs for you, {len(no_match)} with open jobs but none "
+             f"for you, {len(empty)} with no open jobs at all"]
+    if empty:
+        lines.append(f"\n### Boards with no open jobs at all ({len(empty)}): check the link if this lasts")
+        lines += [f"- {name}" for name in empty]
     text = "\n".join(lines)
     print(text)
     if os.environ.get("GITHUB_STEP_SUMMARY"):

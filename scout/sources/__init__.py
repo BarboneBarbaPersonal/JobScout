@@ -30,6 +30,9 @@ READERS = {
     "factorial": feeds.factorial,
     "hibob": feeds.hibob,
     "htmllinks": feeds.htmllinks,
+    "wpjobmanager": feeds.wpjobmanager,
+    "jazzhr": feeds.jazzhr,
+    "sesame": feeds.sesame,
     "phenom": enterprise.phenom,
     "successfactors": enterprise.successfactors,
     "eightfold": enterprise.eightfold,
@@ -39,6 +42,7 @@ READERS = {
     "deel": enterprise.deel,
     "revolut": enterprise.revolut,
     "bendingspoons": enterprise.bendingspoons,
+    "sage": enterprise.sage,
 }
 
 DETAILS = {

@@ -51,6 +51,13 @@ KNOWN = [
                                  "text_location": "true"}),
     (r"jobs\.sap\.com", "successfactors", {"host": "jobs.sap.com"}),
     (r"bendingspoons\.com", "bendingspoons", {}),
+    (r"edreamsodigeo(?:careers)?\.com", "wpjobmanager", {"url": "https://www.edreamsodigeocareers.com"}),
+    (r"bizaway\.com", "jazzhr", {"url": "https://jobs.bizaway.com"}),
+    (r"(?:^|\.)sage\.com/", "sage", {}),
+    (r"sesamehr\.com|sesametime\.com", "sesame", {"company": "Sesame"}),
+    (r"(?:^|\.)remote\.com/", "htmllinks", {"url": "https://remote.com/openings",
+                                           "link": r"apply\.remote\.com/jobs/[0-9a-f-]{36}",
+                                           "location": "Remote"}),
 ]
 
 
