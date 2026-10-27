@@ -61,6 +61,14 @@ class LocationRules(unittest.TestCase):
         self.assertFalse(self.prefs.location_ok("CSM", "Remote, US"))
         self.assertFalse(self.prefs.location_ok("CSM, UK", "Remote"))
 
+    def test_remote_in_other_countries_and_us_states(self):
+        # Real locations from the boards (2026-10-27) that passed as "remote, open to Europe".
+        for location in ["Remote - Thailand", "MY-Malaysia-Remote; Remote", "Indonesia; Remote",
+                         "AU-Perth-WW; Remote", "Remote - Pennsylvania", "Remote - Illinois",
+                         "New Jersey - Lyndhurst; Remote", "Wisconsin - Madison; Remote"]:
+            with self.subTest(location=location):
+                self.assertFalse(self.prefs.location_ok("Sales Engineer", location))
+
     def test_us_state_codes_only_in_capitals(self):
         # "la" / "pa" are also ordinary words; only "CA", "TX"... in capitals mean a US state.
         self.assertTrue(self.prefs.location_ok("CSM", "Remote (la oficina es opcional)"))

@@ -204,3 +204,19 @@ verified, what is open or next. Read the last entries to know where things stand
   in light and dark, no console errors. One bug found and fixed on the way (a line break
   before "€" was read as "R$"-style prefix; test added).
 - Open for Andrea: merge; re-upload fit-cv (I can do it).
+
+## 2026-10-27 - T17 wider roles, 50 companies, remote outside Europe
+- Why jobs were missing (read 130 Greenhouse/Ashby/Lever boards directly, 1,409 jobs in
+  Andrea's places): titles not covered (implementation/deployment/partner engineer,
+  professional services, value consultant...), pre-sales excluded on purpose, languages he
+  does not speak (as intended), and the 30-day age limit (e.g. Sierra SE Spain, OneTrust SE
+  Madrid, dLocal AM EMEA are older).
+- Sheet: 20 role words added, pre-sales no longer excluded (Andrea's choice); 50 companies
+  added (22 with Barcelona roles, 28 rest of Spain), each board checked live.
+- Full scan: 267 companies, 242/242 boards answered, 28,378 open jobs, 133 matches (was 79);
+  9 of the 50 new companies have matches today. 22 companies still have no board (same list
+  as before, none of the new ones).
+- Fix (this PR): remote jobs naming Thailand, Malaysia, Indonesia, Perth or a US state passed
+  as open to Europe; test written first (8 real locations, failed), now 27 tests pass. On the
+  board sample it removes 52 jobs, all outside Europe; 0 of the 79 previous live jobs lost;
+  on today's board it removes 2 (Zscaler Thailand, Databricks Pennsylvania).

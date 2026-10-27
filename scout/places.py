@@ -73,6 +73,7 @@ PLACES = [
     "united arab emirates", "emirates", "apac", "asia", "india", "japan", "singapore", "australia",
     "new zealand", "philippines", "korea", "china", "hong kong", "taiwan", "israel", "uae", "dubai",
     "saudi arabia", "turkey", "south africa", "nigeria", "kenya", "egypt",
+    "thailand", "malaysia", "indonesia", "vietnam", "perth", "brisbane", "auckland",
     # Europe (countries)
     "united kingdom", "gbr", "england", "london", "ireland", "germany", "deutschland",
     "france", "poland", "bulgaria", "romania", "denmark", "finland", "sweden", "norway",
@@ -80,6 +81,12 @@ PLACES = [
     "czechia", "hungary", "greece", "estonia", "lithuania", "latvia", "croatia", "serbia",
     "ukraine", "slovakia", "slovenia", "luxembourg", "spain", "españa", "espana",
     # US states, cities and abbreviations
+    "alabama", "alaska", "arizona", "arkansas", "connecticut", "delaware", "hawaii", "idaho",
+    "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana", "maine", "maryland",
+    "michigan", "mississippi", "missouri", "montana", "nebraska", "nevada", "new hampshire",
+    "new jersey", "new mexico", "north carolina", "north dakota", "ohio", "oklahoma", "oregon",
+    "pennsylvania", "rhode island", "south carolina", "south dakota", "tennessee", "utah",
+    "vermont", "virginia", "wisconsin", "wyoming",
     "california", "new york", "texas", "washington", "massachusetts", "colorado", "florida",
     "charlotte", "san diego", "austin", "orlando", "milwaukee", "chicago", "denver", "philadelphia",
     "los angeles", "nyc", "seattle", "nashville", "houston", "cincinnati", "minnesota", "detroit",
