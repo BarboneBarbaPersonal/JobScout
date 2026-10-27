@@ -64,6 +64,15 @@ Never push to main or merge."
     score; weighted score with verdicts; review pass before the Doc. interview-prep: same
     data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
 
+- [x] **T17. Wider roles, 50 more companies, remote outside Europe** - 2026-10-27
+  - Sheet: pre-sales back in (solutions engineer/architect, sales engineer, solution consultant)
+    plus implementation/deployment/integration/partner engineer, professional services, value
+    consultant, account partner, client portfolio, customer onboarding/relations; 50 companies
+    added (Barcelona + Spain, boards verified). Andrea chose to include pre-sales.
+  - Fix: remote jobs naming Thailand, Malaysia, Indonesia, Perth or a US state no longer pass
+    as "remote, open to Europe" (all US states and missing Asian countries added).
+  - Open for Andrea: max job age is 30 days; many good roles stay open 45-90 days.
+
 - [x] **T16. Salary on the job card** - Andrea re-uploads fit-cv after merge
   - Card: the salary the employer states (platform field via freehire, else a range in the ad:
     pay word nearby, a currency, a yearly amount; other currencies like CAD/MXN skipped).
