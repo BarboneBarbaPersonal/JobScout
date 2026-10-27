@@ -215,7 +215,8 @@
   // ---- stats bar ----
   function renderStats() {
     document.getElementById("updated").textContent =
-      "Page built " + ago(stats.updated) + " · scans every hour · jobs older than " + DATA.max_age_days + " days are removed";
+      "Page built " + ago(stats.updated) + " · scans every hour · jobs older than " + DATA.max_age_days +
+      " days only in the Thursday deep scan";
     var healthy = stats.boards && stats.boards_ok === stats.boards;
     var items = [
       ["Last scan", ago(stats.last_scan), (stats.scans_24h || 0) + (stats.scans_24h === 1 ? " scan" : " scans") + " in last 24 h", healthy ? "var(--ok)" : "var(--warn)"],
