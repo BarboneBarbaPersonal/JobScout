@@ -220,3 +220,19 @@ verified, what is open or next. Read the last entries to know where things stand
   as open to Europe; test written first (8 real locations, failed), now 27 tests pass. On the
   board sample it removes 52 jobs, all outside Europe; 0 of the 79 previous live jobs lost;
   on today's board it removes 2 (Zscaler Thailand, Databricks Pennsylvania).
+
+## 2026-10-27 - T18 deep scan and companies without a board
+- Deep scan (Thursday 06:00 UTC, or "Run workflow" with deep ticked): no age limit, boards of
+  companies without one looked for again, per-company report. Older jobs are marked "deep",
+  saved in deep.json and carried by the hourly scans while the board still lists them and
+  they still pass the title/place rules; the page shows them in a 4th "Deep scan" column.
+- 22 companies without a board: research agent checked each live. 10 fixed by a sheet link,
+  5 by new readers (eDreams 68 jobs, BizAway 38, Sage 234, Sesame 8, Remote.com 48), 8 left
+  (4 have no board at all, 4 have 0 jobs in Spain).
+- Verified: tests written first (4 deep-scan tests failed, then pass; 31 tests); each new
+  reader run live (ids unique, places parsed; Sesame's country field is wrong for Mexico jobs,
+  so only the city is used); deep test scan from the branch: 256/256 boards, 222 jobs (133
+  before), 87 in the Deep scan column (e.g. Red Points CSM Barcelona, posted 76 days ago),
+  without a board 22 -> 8; page checked on desktop and phone, no console errors.
+- Found by the deep report: SAP 0 jobs (careers site rebuilt; separate task), Qonto moved to
+  Ashby (link fixed), Buffer/Confluent/Adevinta boards empty today.

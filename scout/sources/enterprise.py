@@ -246,3 +246,15 @@ def bendingspoons(params, hints):
                         f"https://jobs.bendingspoons.com/positions/{p['id']}", "; ".join(places),
                         description=description))
     return jobs
+
+
+def sage(params, hints):
+    """Sage's careers search: one public list with every job and its offices."""
+    data = util.get("https://www.sage.com/api/sagedotcom/CareerSearch/GetCareerSearchData").json()
+    jobs = []
+    for r in (data.get("vacancies") or {}).get("Records") or []:
+        offices = [o.strip() for o in (r.get("OfficeLocation") or "").split(";") if o.strip()] or [""]
+        jobs.append(job(f"sage/{r['Id']}", r.get("Name"), r.get("Url"),
+                        "; ".join(join(office, r.get("Country")) for office in offices),
+                        iso(r.get("ActiveDate")), util.html_to_text(r.get("Description") or "")))
+    return jobs

@@ -3,7 +3,7 @@
 The board is exactly this scan's matches (closed jobs disappear at once); a job
 we already knew keeps the date we first found it. Files written to `site/`:
 index.html (the page), matches.json (jobs, read by the CV add-on), runs.json
-(scan history for the stats bar).
+(scan history for the stats bar), deep.json (older jobs from Thursday's deep scan).
 """
 
 import base64
@@ -66,6 +66,8 @@ def build(site, prefs, matches, run, now=None):
 
     (site / "matches.json").write_text(json.dumps(jobs, indent=1, ensure_ascii=False), encoding="utf-8")
     (site / "runs.json").write_text(json.dumps(runs, indent=1), encoding="utf-8")
+    deep = [job for job in jobs if job.get("deep")]  # kept by the hourly scans until next Thursday
+    (site / "deep.json").write_text(json.dumps(deep, indent=1, ensure_ascii=False), encoding="utf-8")
     template = (PAGE_DIR / "board.html").read_text(encoding="utf-8")
     # Embedded as JSON; "</" is escaped so job text can never close the <script> tag.
     embedded = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")

@@ -48,7 +48,8 @@
   .toggle { margin-left: auto; color: var(--muted); }
 
   main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-bottom: 32px; }
-  @media (max-width: 860px) { main { grid-template-columns: 1fr; } .toggle { margin-left: 0; } }
+  main.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 860px) { main, main.four { grid-template-columns: 1fr; } .toggle { margin-left: 0; } }
   .column { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
   h2 { margin: 0; font-size: 16px; display: flex; gap: 8px; align-items: center; }
   .count { font-size: 12px; background: var(--card); border: 1px solid var(--line);
@@ -214,7 +215,8 @@
   // ---- stats bar ----
   function renderStats() {
     document.getElementById("updated").textContent =
-      "Page built " + ago(stats.updated) + " · scans every hour · jobs older than " + DATA.max_age_days + " days are removed";
+      "Page built " + ago(stats.updated) + " · scans every hour · jobs older than " + DATA.max_age_days +
+      " days only in the Thursday deep scan";
     var healthy = stats.boards && stats.boards_ok === stats.boards;
     var items = [
       ["Last scan", ago(stats.last_scan), (stats.scans_24h || 0) + (stats.scans_24h === 1 ? " scan" : " scans") + " in last 24 h", healthy ? "var(--ok)" : "var(--warn)"],
@@ -339,6 +341,9 @@
     // Best fit first; ties go to the most recently found.
     jobs.sort(function (a, b) { return b.fit - a.fit || (b.found_at > a.found_at ? 1 : -1); });
 
+    // Jobs older than the age limit, found by Thursday's deep scan, get their own column.
+    var deep = jobs.filter(function (job) { return job.deep; });
+    jobs = jobs.filter(function (job) { return !job.deep; });
     var fresh = jobs.filter(function (job) { return new Date(job.found_at) >= newCutoff; });
     var best = jobs.slice(0, 10);
     var used = {};
@@ -347,9 +352,14 @@
 
     var board = document.getElementById("board");
     board.textContent = "";
+    board.classList.toggle("four", deep.length > 0);
     board.appendChild(column("New", "First seen in the last " + DATA.new_for_hours + " hours", fresh));
     board.appendChild(column("Best fit", "Top 10: " + DATA.places.join(" > ") + ", core roles first", best));
     board.appendChild(column("Older", "Everything else still open", older));
+    if (deep.length) {
+      board.appendChild(column("Deep scan", "Posted over " + DATA.max_age_days +
+        " days ago but still open (found on Thursday)", deep));
+    }
   }
 
   // =====================================================================

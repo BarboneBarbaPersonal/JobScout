@@ -64,6 +64,18 @@ Never push to main or merge."
     score; weighted score with verdicts; review pass before the Doc. interview-prep: same
     data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
 
+- [x] **T18. Thursday deep scan + the 22 companies without a board** - 2026-10-27
+  - Deep scan Thursdays 06:00 UTC (also "Run workflow" > deep): no age limit, companies without
+    a board looked for again at once, per-company report in the run summary. Jobs older than
+    the limit go to a "Deep scan" column, kept by the hourly scans while still open.
+  - New readers: eDreams (WP Job Manager feed), BizAway (JazzHR), Sage, Sesame, Remote.com;
+    sheet links for HubSpot, Neo, Cast AI, Skyscanner, Gartner, Alice, Onyx, Fast Track,
+    Catchpoint (now LogicMonitor), Qonto (moved to Ashby). Companies without a board 22 -> 8.
+  - Not readable (no job board exists): Pandora FMS, Devo, Clarity AI, Cobee. Not worth a
+    reader (0 jobs in Spain): Better Stack, JetHR, Genially, Toggl.
+  - Open: SAP returns 0 jobs (new careers site; separate task). Buffer, Confluent and
+    Adevinta boards are empty today.
+
 - [x] **T17. Wider roles, 50 more companies, remote outside Europe** - 2026-10-27
   - Sheet: pre-sales back in (solutions engineer/architect, sales engineer, solution consultant)
     plus implementation/deployment/integration/partner engineer, professional services, value

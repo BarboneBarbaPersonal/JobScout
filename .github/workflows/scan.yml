@@ -4,7 +4,13 @@ name: Scan
 on:
   schedule:
     - cron: "13 * * * *" # every hour at :13 (GitHub may start it a little later)
+    - cron: "0 6 * * 4"  # deep scan: Thursday 06:00 UTC (7:00 in Barcelona in winter, 8:00 in summer)
   workflow_dispatch: # the "Run workflow" button
+    inputs:
+      deep:
+        description: "Deep scan (no age limit, look for missing boards again)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write # to publish the page on the gh-pages branch
@@ -66,6 +72,7 @@ jobs:
         env:
           SHEET_URL: ${{ secrets.SHEET_URL }}
           JOBSCOUT_ENGINE: ./jobscout-engine
+          JOBSCOUT_DEEP: ${{ (github.event.schedule == '0 6 * * 4' || inputs.deep) && '1' || '' }}
         run: python -m scout.main site
 
       # Only main publishes. A test run from another branch keeps the page as a download.
@@ -83,6 +90,6 @@ jobs:
           git init -q -b gh-pages
           git config user.name "JobScout"
           git config user.email "jobscout@users.noreply.github.com"
-          git add index.html matches.json runs.json
+          git add index.html matches.json runs.json deep.json
           git commit -q -m "Scan $(date -u +%Y-%m-%dT%H:%MZ)"
           git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" gh-pages
