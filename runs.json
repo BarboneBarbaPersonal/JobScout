@@ -1,0 +1,1362 @@
+[
+ {
+  "time": "2026-10-05T15:25:46.087441+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 128,
+  "scanned": 19282,
+  "new_postings": 0,
+  "new_matches": 32
+ },
+ {
+  "time": "2026-10-05T22:01:59.178125+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 126,
+  "scanned": 19304,
+  "new_postings": 237,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-06T02:16:07.733303+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 128,
+  "scanned": 19309,
+  "new_postings": 55,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-06T09:24:50.992643+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 127,
+  "scanned": 18941,
+  "new_postings": 117,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-06T16:16:24.500103+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 123,
+  "scanned": 18793,
+  "new_postings": 263,
+  "new_matches": 2
+ },
+ {
+  "time": "2026-10-06T21:14:00.647213+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 125,
+  "scanned": 18851,
+  "new_postings": 193,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-07T00:42:15.102190+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 126,
+  "scanned": 18862,
+  "new_postings": 67,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-07T06:28:46.675534+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 125,
+  "scanned": 18853,
+  "new_postings": 53,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-07T13:53:27.013642+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 125,
+  "scanned": 18821,
+  "new_postings": 158,
+  "new_matches": 1
+ },
+ {
+  "time": "2026-10-07T19:58:09.908206+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 121,
+  "scanned": 18851,
+  "new_postings": 228,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-08T00:10:27.611158+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 124,
+  "scanned": 18876,
+  "new_postings": 80,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-08T05:56:39.857282+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 126,
+  "scanned": 18906,
+  "new_postings": 51,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-08T13:21:27.393421+00:00",
+  "status": "degraded",
+  "boards": 129,
+  "boards_ok": 123,
+  "scanned": 18921,
+  "new_postings": 186,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-08T17:59:23.806739+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19252,
+  "new_postings": 0,
+  "new_matches": 28
+ },
+ {
+  "time": "2026-10-08T18:06:44.631389+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 126,
+  "scanned": 19227,
+  "new_postings": 0,
+  "new_matches": 28
+ },
+ {
+  "time": "2026-10-08T19:26:04.780485+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19249,
+  "new_postings": 61,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-08T23:57:38.495653+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19252,
+  "new_postings": 95,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-09T06:02:15.556110+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 126,
+  "scanned": 19210,
+  "new_postings": 52,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-09T09:59:21.230873+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19228,
+  "new_postings": 70,
+  "new_matches": 1
+ },
+ {
+  "time": "2026-10-09T13:10:12.897218+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 126,
+  "scanned": 19146,
+  "new_postings": 68,
+  "new_matches": 1
+ },
+ {
+  "time": "2026-10-09T13:56:53.189194+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19225,
+  "new_postings": 20,
+  "new_matches": 1
+ },
+ {
+  "time": "2026-10-09T18:48:13.644515+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 125,
+  "scanned": 18880,
+  "new_postings": 183,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-09T23:13:22.527035+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 126,
+  "scanned": 19190,
+  "new_postings": 72,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-10T02:20:11.613086+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19223,
+  "new_postings": 12,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-10T08:58:16.357288+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19213,
+  "new_postings": 9,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-10T15:19:25.401705+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19214,
+  "new_postings": 5,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-10T19:30:50.694017+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 126,
+  "scanned": 19195,
+  "new_postings": 7,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-10T22:55:53.899050+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19216,
+  "new_postings": 1,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-11T01:50:20.699369+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19219,
+  "new_postings": 3,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-11T08:44:35.091408+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19205,
+  "new_postings": 8,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-11T15:37:17.210500+00:00",
+  "status": "ok",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19205,
+  "new_postings": 8,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-11T19:43:11.648181+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 126,
+  "scanned": 19171,
+  "new_postings": 5,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-11T19:56:11.530324+00:00",
+  "status": "degraded",
+  "boards": 127,
+  "boards_ok": 127,
+  "scanned": 19192,
+  "new_postings": 0,
+  "new_matches": 30,
+  "rebuild": true
+ },
+ {
+  "time": "2026-10-11T22:08:40.370179+00:00",
+  "status": "degraded",
+  "boards": 152,
+  "boards_ok": 150,
+  "scanned": 21181,
+  "new_postings": 2018,
+  "new_matches": 17
+ },
+ {
+  "time": "2026-10-11T23:10:49.581519+00:00",
+  "status": "degraded",
+  "boards": 152,
+  "boards_ok": 151,
+  "scanned": 21199,
+  "new_postings": 1,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-12T02:20:51.727018+00:00",
+  "status": "degraded",
+  "boards": 152,
+  "boards_ok": 151,
+  "scanned": 21192,
+  "new_postings": 9,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-12T09:44:43.100049+00:00",
+  "status": "degraded",
+  "boards": 152,
+  "boards_ok": 151,
+  "scanned": 21143,
+  "new_postings": 183,
+  "new_matches": 9
+ },
+ {
+  "time": "2026-10-12T19:48:13.993082+00:00",
+  "status": "degraded",
+  "boards": 152,
+  "boards_ok": 151,
+  "scanned": 21207,
+  "new_postings": 327,
+  "new_matches": 1
+ },
+ {
+  "time": "2026-10-13T02:00:27.051402+00:00",
+  "status": "degraded",
+  "boards": 152,
+  "boards_ok": 150,
+  "scanned": 21194,
+  "new_postings": 80,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-13T09:21:33.282606+00:00",
+  "status": "degraded",
+  "boards": 152,
+  "boards_ok": 150,
+  "scanned": 21194,
+  "new_postings": 135,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-13T17:08:43.283655+00:00",
+  "status": "degraded",
+  "boards": 151,
+  "boards_ok": 150,
+  "scanned": 21153,
+  "new_postings": 264,
+  "new_matches": 1
+ },
+ {
+  "time": "2026-10-13T21:50:29.939697+00:00",
+  "status": "degraded",
+  "boards": 151,
+  "boards_ok": 149,
+  "scanned": 21131,
+  "new_postings": 145,
+  "new_matches": 1
+ },
+ {
+  "time": "2026-10-14T01:12:13.127147+00:00",
+  "status": "degraded",
+  "boards": 151,
+  "boards_ok": 148,
+  "scanned": 21109,
+  "new_postings": 42,
+  "new_matches": 0
+ },
+ {
+  "time": "2026-10-14T06:07:43.668843+00:00",
+  "status": "degraded",
+  "boards": 151,
+  "boards_ok": 150,
+  "scanned": 21127,
+  "new_postings": 48,
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 148,
+  "boards_ok": 148,
+  "scanned": 19543,
+  "new_postings": 0,
+  "time": "2026-10-14T12:05:31Z",
+  "new_matches": 3
+ },
+ {
+  "status": "ok",
+  "boards": 148,
+  "boards_ok": 148,
+  "scanned": 19562,
+  "new_postings": 203,
+  "time": "2026-10-14T17:09:16Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 155,
+  "boards_ok": 155,
+  "scanned": 20201,
+  "new_postings": 719,
+  "time": "2026-10-14T19:16:56Z",
+  "new_matches": 3
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20256,
+  "new_postings": 60,
+  "time": "2026-10-14T19:20:02Z",
+  "new_matches": 4
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20256,
+  "new_postings": 0,
+  "time": "2026-10-14T19:23:51Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20252,
+  "new_postings": 58,
+  "time": "2026-10-14T20:44:01Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20252,
+  "new_postings": 60,
+  "time": "2026-10-14T23:56:45Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20269,
+  "new_postings": 66,
+  "time": "2026-10-15T04:35:06Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20274,
+  "new_postings": 123,
+  "time": "2026-10-15T09:54:04Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20287,
+  "new_postings": 162,
+  "time": "2026-10-15T15:02:32Z",
+  "new_matches": 3
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20324,
+  "new_postings": 185,
+  "time": "2026-10-15T19:09:07Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20354,
+  "new_postings": 103,
+  "time": "2026-10-15T22:15:49Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20351,
+  "new_postings": 36,
+  "time": "2026-10-16T01:20:40Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20306,
+  "new_postings": 66,
+  "time": "2026-10-16T07:09:07Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20299,
+  "new_postings": 125,
+  "time": "2026-10-16T12:24:48Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20334,
+  "new_postings": 208,
+  "time": "2026-10-16T17:26:20Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20351,
+  "new_postings": 112,
+  "time": "2026-10-16T21:06:28Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20365,
+  "new_postings": 52,
+  "time": "2026-10-16T23:36:10Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 156,
+  "boards_ok": 153,
+  "scanned": 18718,
+  "new_postings": 29,
+  "time": "2026-10-17T04:22:09Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 156,
+  "boards_ok": 149,
+  "scanned": 15012,
+  "new_postings": 25,
+  "time": "2026-10-17T09:19:15Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20303,
+  "new_postings": 5296,
+  "time": "2026-10-17T12:35:11Z",
+  "new_matches": 6
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20304,
+  "new_postings": 3,
+  "time": "2026-10-17T13:44:08Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20308,
+  "new_postings": 9,
+  "time": "2026-10-17T17:09:00Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20310,
+  "new_postings": 4,
+  "time": "2026-10-17T19:23:35Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20310,
+  "new_postings": 4,
+  "time": "2026-10-17T22:17:37Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20310,
+  "new_postings": 8,
+  "time": "2026-10-18T01:02:28Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20317,
+  "new_postings": 14,
+  "time": "2026-10-18T05:53:40Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20316,
+  "new_postings": 20,
+  "time": "2026-10-18T11:00:32Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20317,
+  "new_postings": 6,
+  "time": "2026-10-18T14:35:44Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20321,
+  "new_postings": 29,
+  "time": "2026-10-18T18:06:34Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20323,
+  "new_postings": 12,
+  "time": "2026-10-18T20:38:53Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 156,
+  "boards_ok": 155,
+  "scanned": 18725,
+  "new_postings": 14,
+  "time": "2026-10-18T23:10:21Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 156,
+  "boards_ok": 155,
+  "scanned": 18731,
+  "new_postings": 10,
+  "time": "2026-10-19T01:15:08Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 156,
+  "boards_ok": 155,
+  "scanned": 18718,
+  "new_postings": 57,
+  "time": "2026-10-19T06:17:14Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 156,
+  "boards_ok": 155,
+  "scanned": 18706,
+  "new_postings": 41,
+  "time": "2026-10-19T08:09:58Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20655,
+  "new_postings": 1744,
+  "time": "2026-10-19T10:09:42Z",
+  "new_matches": 9
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20652,
+  "new_postings": 67,
+  "time": "2026-10-19T12:54:08Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20616,
+  "new_postings": 75,
+  "time": "2026-10-19T14:50:17Z",
+  "new_matches": 1
+ },
+ {
+  "status": "degraded",
+  "boards": 156,
+  "boards_ok": 155,
+  "scanned": 20622,
+  "new_postings": 36,
+  "time": "2026-10-19T15:06:07Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20649,
+  "new_postings": 256,
+  "time": "2026-10-19T20:49:07Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20642,
+  "new_postings": 84,
+  "time": "2026-10-20T00:31:34Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20636,
+  "new_postings": 48,
+  "time": "2026-10-20T06:13:38Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 156,
+  "boards_ok": 156,
+  "scanned": 20604,
+  "new_postings": 31,
+  "time": "2026-10-20T08:24:52Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24467,
+  "new_postings": 3928,
+  "time": "2026-10-20T10:26:58Z",
+  "new_matches": 15
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24480,
+  "new_postings": 47,
+  "time": "2026-10-20T11:43:44Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24468,
+  "new_postings": 198,
+  "time": "2026-10-20T17:10:09Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24502,
+  "new_postings": 88,
+  "time": "2026-10-20T18:39:57Z",
+  "new_matches": 13
+ },
+ {
+  "status": "degraded",
+  "boards": 192,
+  "boards_ok": 191,
+  "scanned": 22891,
+  "new_postings": 62,
+  "time": "2026-10-20T20:51:16Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24508,
+  "new_postings": 1732,
+  "time": "2026-10-21T00:05:37Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24533,
+  "new_postings": 78,
+  "time": "2026-10-21T04:49:19Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24537,
+  "new_postings": 101,
+  "time": "2026-10-21T08:43:55Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24553,
+  "new_postings": 77,
+  "time": "2026-10-21T10:18:56Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 192,
+  "boards_ok": 190,
+  "scanned": 24550,
+  "new_postings": 219,
+  "time": "2026-10-21T15:28:39Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24587,
+  "new_postings": 208,
+  "time": "2026-10-21T19:35:02Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24585,
+  "new_postings": 108,
+  "time": "2026-10-21T23:28:25Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24598,
+  "new_postings": 71,
+  "time": "2026-10-22T04:52:54Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24584,
+  "new_postings": 156,
+  "time": "2026-10-22T10:21:27Z",
+  "new_matches": 2
+ },
+ {
+  "status": "degraded",
+  "boards": 192,
+  "boards_ok": 189,
+  "scanned": 24460,
+  "new_postings": 204,
+  "time": "2026-10-22T15:28:57Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24610,
+  "new_postings": 343,
+  "time": "2026-10-22T20:15:29Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24619,
+  "new_postings": 92,
+  "time": "2026-10-22T23:34:42Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24623,
+  "new_postings": 60,
+  "time": "2026-10-23T04:56:50Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24591,
+  "new_postings": 130,
+  "time": "2026-10-23T10:15:28Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24572,
+  "new_postings": 156,
+  "time": "2026-10-23T15:12:30Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24616,
+  "new_postings": 209,
+  "time": "2026-10-23T19:20:19Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24624,
+  "new_postings": 97,
+  "time": "2026-10-23T22:20:51Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24604,
+  "new_postings": 28,
+  "time": "2026-10-24T00:54:22Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24608,
+  "new_postings": 24,
+  "time": "2026-10-24T05:58:16Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24267,
+  "new_postings": 8,
+  "time": "2026-10-24T11:06:30Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24599,
+  "new_postings": 346,
+  "time": "2026-10-24T14:41:45Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24599,
+  "new_postings": 14,
+  "time": "2026-10-24T18:18:29Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24597,
+  "new_postings": 3,
+  "time": "2026-10-24T20:54:13Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24592,
+  "new_postings": 4,
+  "time": "2026-10-24T23:22:44Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24589,
+  "new_postings": 10,
+  "time": "2026-10-25T01:21:56Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24591,
+  "new_postings": 20,
+  "time": "2026-10-25T06:16:19Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24576,
+  "new_postings": 14,
+  "time": "2026-10-25T11:32:42Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24572,
+  "new_postings": 17,
+  "time": "2026-10-25T16:23:22Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24571,
+  "new_postings": 12,
+  "time": "2026-10-25T19:15:55Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24564,
+  "new_postings": 2,
+  "time": "2026-10-25T21:58:29Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24556,
+  "new_postings": 13,
+  "time": "2026-10-26T00:31:55Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24515,
+  "new_postings": 42,
+  "time": "2026-10-26T06:18:08Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24468,
+  "new_postings": 187,
+  "time": "2026-10-26T12:25:49Z",
+  "new_matches": 3
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24450,
+  "new_postings": 19,
+  "time": "2026-10-26T13:05:28Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24428,
+  "new_postings": 245,
+  "time": "2026-10-26T19:29:06Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24438,
+  "new_postings": 141,
+  "time": "2026-10-27T00:00:15Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 192,
+  "boards_ok": 192,
+  "scanned": 24412,
+  "new_postings": 52,
+  "time": "2026-10-27T05:12:15Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 242,
+  "boards_ok": 242,
+  "scanned": 28378,
+  "new_postings": 4032,
+  "time": "2026-10-27T08:52:15Z",
+  "new_matches": 57
+ },
+ {
+  "status": "ok",
+  "boards": 251,
+  "boards_ok": 251,
+  "scanned": 29421,
+  "new_postings": 1147,
+  "time": "2026-10-27T10:50:10Z",
+  "new_matches": 4
+ },
+ {
+  "status": "ok",
+  "boards": 251,
+  "boards_ok": 251,
+  "scanned": 29396,
+  "new_postings": 260,
+  "time": "2026-10-27T16:53:19Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29802,
+  "new_postings": 531,
+  "time": "2026-10-27T18:41:19Z",
+  "new_matches": 88
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29861,
+  "new_postings": 184,
+  "time": "2026-10-27T21:39:02Z",
+  "new_matches": 4
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29916,
+  "new_postings": 154,
+  "time": "2026-10-28T01:38:44Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29931,
+  "new_postings": 157,
+  "time": "2026-10-28T08:41:36Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29890,
+  "new_postings": 360,
+  "time": "2026-10-28T16:23:28Z",
+  "new_matches": 4
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29924,
+  "new_postings": 248,
+  "time": "2026-10-28T21:23:15Z",
+  "new_matches": 2
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29912,
+  "new_postings": 88,
+  "time": "2026-10-29T01:09:52Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 256,
+  "boards_ok": 255,
+  "scanned": 29916,
+  "new_postings": 114,
+  "time": "2026-10-29T07:24:12Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29868,
+  "new_postings": 242,
+  "time": "2026-10-29T12:22:04Z",
+  "new_matches": 7
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29863,
+  "new_postings": 130,
+  "time": "2026-10-29T14:33:44Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29726,
+  "new_postings": 345,
+  "time": "2026-10-29T20:33:10Z",
+  "new_matches": 3
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29726,
+  "new_postings": 125,
+  "time": "2026-10-30T01:16:28Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29608,
+  "new_postings": 126,
+  "time": "2026-10-30T07:22:30Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29612,
+  "new_postings": 272,
+  "time": "2026-10-30T14:46:01Z",
+  "new_matches": 3
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29677,
+  "new_postings": 311,
+  "time": "2026-10-30T19:38:17Z",
+  "new_matches": 3
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29695,
+  "new_postings": 127,
+  "time": "2026-10-30T23:59:45Z",
+  "new_matches": 1
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29651,
+  "new_postings": 49,
+  "time": "2026-10-31T05:52:03Z",
+  "new_matches": 0
+ },
+ {
+  "status": "ok",
+  "boards": 256,
+  "boards_ok": 256,
+  "scanned": 29656,
+  "new_postings": 46,
+  "time": "2026-10-31T12:34:41Z",
+  "new_matches": 0
+ },
+ {
+  "status": "degraded",
+  "boards": 256,
+  "boards_ok": 255,
+  "scanned": 29630,
+  "new_postings": 21,
+  "time": "2026-10-31T18:01:46Z",
+  "new_matches": 0
+ }
+]
