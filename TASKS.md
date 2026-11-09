@@ -71,6 +71,9 @@ Never push to main or merge."
   - New readers: eDreams (WP Job Manager feed), BizAway (JazzHR), Sage, Sesame, Remote.com;
     sheet links for HubSpot, Neo, Cast AI, Skyscanner, Gartner, Alice, Onyx, Fast Track,
     Catchpoint (now LogicMonitor), Qonto (moved to Ashby). Companies without a board 22 -> 8.
+- [x] **T19. Companies like LaunchDarkly + "Remote-NAMER" is not Europe** - 2026-11-09
+  - 28 dev-platform companies added to the sheet (rows 269-296); Aircall and Parloa links fixed.
+  - "NAMER" / "NORAM" (North America) remote jobs no longer pass as open to Europe.
   - Not readable (no job board exists): Pandora FMS, Devo, Clarity AI, Cobee. Not worth a
     reader (0 jobs in Spain): Better Stack, JetHR, Genially, Toggl.
   - Open: SAP returns 0 jobs (new careers site; separate task). Buffer, Confluent and

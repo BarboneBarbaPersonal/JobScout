@@ -67,7 +67,7 @@ PLACE_CODES = ["US", "UK", "CA", "AR", "MI", "PA", "NC", "LA", "TX", "OH", "NY",
 
 PLACES = [
     # Americas
-    "united states", "usa", "u.s", "canada", "north america", "americas", "amer", "latam",
+    "united states", "usa", "u.s", "canada", "north america", "americas", "amer", "namer", "noram", "latam",
     "mexico", "brazil", "colombia", "argentina", "chile", "peru", "costa rica", "ontario", "toronto",
     # Middle East, Asia, Pacific, Africa
     "united arab emirates", "emirates", "apac", "asia", "india", "japan", "singapore", "australia",
