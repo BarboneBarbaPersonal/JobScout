@@ -75,6 +75,10 @@ Never push to main or merge."
     reader (0 jobs in Spain): Better Stack, JetHR, Genially, Toggl.
   - Open: SAP returns 0 jobs (new careers site; separate task). Buffer, Confluent and
     Adevinta boards are empty today.
+- [x] **T20. Audit fixes: one task list, Claude guardrails** - 2026-11-15
+  - The 10 old GitHub issues closed with a pointer to their task here.
+  - `.claude/settings.json` is now versioned and denies `gh pr merge`, pushing to main and
+    force pushes, so "never merge, never push to main" is enforced, not only written.
 
 - [x] **T17. Wider roles, 50 more companies, remote outside Europe** - 2026-10-27
   - Sheet: pre-sales back in (solutions engineer/architect, sales engineer, solution consultant)

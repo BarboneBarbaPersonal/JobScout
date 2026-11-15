@@ -236,3 +236,12 @@ verified, what is open or next. Read the last entries to know where things stand
   without a board 22 -> 8; page checked on desktop and phone, no console errors.
 - Found by the deep report: SAP 0 jobs (careers site rebuilt; separate task), Qonto moved to
   Ashby (link fixed), Buffer/Confluent/Adevinta boards empty today.
+
+## 2026-11-15 - T20 audit fixes (AI Controller audit)
+- Closed GitHub issues #5-#10, #16, #20-#22: all were already moved to TASKS.md ("was #N").
+- `.gitignore` ignores `.claude/*` except `settings.json`; new `.claude/settings.json` denies
+  `gh pr merge`, `git push origin main` and force pushes (Bash and PowerShell).
+- Not done: Dependabot (low value here: one dependency, engine pinned by commit; it would add
+  PR noise). PR #40 waits for Andrea's merge.
+- Verified: settings file is valid JSON; `python -B -m unittest` OK; `.claude/launch.json` still
+  ignored.
