@@ -65,7 +65,8 @@ class LocationRules(unittest.TestCase):
         # Real locations from the boards (2026-10-27) that passed as "remote, open to Europe".
         for location in ["Remote - Thailand", "MY-Malaysia-Remote; Remote", "Indonesia; Remote",
                          "AU-Perth-WW; Remote", "Remote - Pennsylvania", "Remote - Illinois",
-                         "New Jersey - Lyndhurst; Remote", "Wisconsin - Madison; Remote"]:
+                         "New Jersey - Lyndhurst; Remote", "Wisconsin - Madison; Remote",
+                         "Remote-NAMER", "Remote - NORAM"]:
             with self.subTest(location=location):
                 self.assertFalse(self.prefs.location_ok("Sales Engineer", location))
 

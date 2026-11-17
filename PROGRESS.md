@@ -237,6 +237,15 @@ verified, what is open or next. Read the last entries to know where things stand
 - Found by the deep report: SAP 0 jobs (careers site rebuilt; separate task), Qonto moved to
   Ashby (link fixed), Buffer/Confluent/Adevinta boards empty today.
 
+## 2026-11-09 - T19 companies like LaunchDarkly, NAMER filter
+- 110 dev-platform candidates probed on Greenhouse/Ashby/Lever; 28 kept (board answers and they
+  hire in Europe, 23 with customer-facing roles in Europe today) and added to the sheet.
+- Scan after adding them: 281/284 boards, 197 jobs; 3 from the new companies. One was
+  Amplitude "Remote-NAMER" (North America only): "namer"/"noram" added to places.py.
+- Aircall (Lever -> Greenhouse aircallioinc, 85 jobs) and Parloa (Greenhouse -> Ashby, 43 jobs)
+  had moved boards: sheet links fixed. Revolut answered 403 (to watch).
+- Verified: test with "Remote-NAMER" / "Remote - NORAM" failed first, then passes; 31 tests OK.
+
 ## 2026-11-15 - T20 audit fixes (AI Controller audit)
 - Closed GitHub issues #5-#10, #16, #20-#22: all were already moved to TASKS.md ("was #N").
 - `.gitignore` ignores `.claude/*` except `settings.json`; new `.claude/settings.json` denies
