@@ -2,6 +2,7 @@
 
 import json
 import tempfile
+import time
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -51,6 +52,40 @@ class DeepScan(unittest.TestCase):
         board.build(site, self.prefs, jobs, RUN)
         saved = json.loads((Path(site) / "deep.json").read_text(encoding="utf-8"))
         self.assertEqual([j["id"] for j in saved], ["a/b/1"])
+
+
+class WorkdayCities(unittest.TestCase):
+    """Workday jobs from the engine carry only their first city; the full list costs one request
+    per job. Since 2026-11-16 those requests made every scan run past GitHub's 55 minutes."""
+
+    def setUp(self):
+        self.prefs = Preferences(SETTINGS)
+        self.opened = []
+        self.real = main.DETAILS["workday"]
+        main.DETAILS["workday"] = self.fake_detail
+
+    def tearDown(self):
+        main.DETAILS["workday"] = self.real
+
+    def fake_detail(self, job, params):
+        self.opened.append(job["id"])
+        job["location"] = "Paris; Barcelona"
+        return job
+
+    def workday_job(self, id, title="Customer Success Manager"):
+        return dict(job(id, 3), location="Paris", _extra={"api": "https://x/" + id}, title=title)
+
+    def test_full_city_list_is_read_for_wanted_titles_only(self):
+        jobs = [self.workday_job("w/1"), self.workday_job("w/2", title="Software Engineer")]
+        main.fill_cities(jobs, self.prefs, deadline=time.time() + 60)
+        self.assertEqual(self.opened, ["w/1"])
+        self.assertEqual(jobs[0]["location"], "Paris; Barcelona")
+
+    def test_after_the_time_budget_jobs_keep_their_first_city(self):
+        jobs = [self.workday_job("w/1")]
+        main.fill_cities(jobs, self.prefs, deadline=time.time() - 1)
+        self.assertEqual(self.opened, [])
+        self.assertEqual(jobs[0]["location"], "Paris")
 
 
 if __name__ == "__main__":
