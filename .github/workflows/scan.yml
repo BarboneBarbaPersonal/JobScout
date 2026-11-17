@@ -73,7 +73,7 @@ jobs:
           SHEET_URL: ${{ secrets.SHEET_URL }}
           JOBSCOUT_ENGINE: ./jobscout-engine
           JOBSCOUT_DEEP: ${{ (github.event.schedule == '0 6 * * 4' || inputs.deep) && '1' || '' }}
-        run: python -m scout.main site
+        run: python -u -m scout.main site # -u: print each line at once, so a stuck scan still has a log
 
       # Only main publishes. A test run from another branch keeps the page as a download.
       - name: Keep the test page

@@ -78,6 +78,10 @@ Never push to main or merge."
     reader (0 jobs in Spain): Better Stack, JetHR, Genially, Toggl.
   - Open: SAP returns 0 jobs (new careers site; separate task). Buffer, Confluent and
     Adevinta boards are empty today.
+- [x] **T21. Board stuck since 2026-11-16: every scan killed at 55 minutes** - 2026-11-17
+  - Cause: Workday jobs from the engine were opened one at a time to read all their cities
+    (1,000+ requests). Now 8 at a time with a 15-minute budget; after it a job keeps its
+    first city. Run log now live, with slow boards and a stack dump after 50 minutes.
 - [x] **T20. Audit fixes: one task list, Claude guardrails** - 2026-11-15
   - The 10 old GitHub issues closed with a pointer to their task here.
   - `.claude/settings.json` is now versioned and denies `gh pr merge`, pushing to main and
