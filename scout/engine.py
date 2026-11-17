@@ -46,10 +46,11 @@ def scan(companies, binary):
     # The engine is outside code: give it a bare environment, without SHEET_URL or any key.
     bare = {name: os.environ[name] for name in ("PATH", "HOME", "TMPDIR", "TMP", "TEMP", "SYSTEMROOT")
             if name in os.environ}
-    result = subprocess.run([binary], input=request, capture_output=True, text=True,
+    # The engine's messages (stderr) go straight to the run log, so a slow board shows up live.
+    result = subprocess.run([binary], input=request, stdout=subprocess.PIPE, text=True,
                             encoding="utf-8", timeout=ENGINE_TIMEOUT, env=bare)
     if result.returncode != 0:
-        raise RuntimeError(f"engine failed: {result.stderr[-300:]}")
+        raise RuntimeError(f"engine failed with code {result.returncode} (its messages are above)")
 
     boards, unrecognized, jobs_by_board = [], without_board(companies), {}
     for line in result.stdout.splitlines():
