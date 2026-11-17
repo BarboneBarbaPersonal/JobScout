@@ -245,3 +245,12 @@ verified, what is open or next. Read the last entries to know where things stand
 - Aircall (Lever -> Greenhouse aircallioinc, 85 jobs) and Parloa (Greenhouse -> Ashby, 43 jobs)
   had moved boards: sheet links fixed. Revolut answered 403 (to watch).
 - Verified: test with "Remote-NAMER" / "Remote - NORAM" failed first, then passes; 31 tests OK.
+
+## 2026-11-15 - T20 audit fixes (AI Controller audit)
+- Closed GitHub issues #5-#10, #16, #20-#22: all were already moved to TASKS.md ("was #N").
+- `.gitignore` ignores `.claude/*` except `settings.json`; new `.claude/settings.json` denies
+  `gh pr merge`, `git push origin main` and force pushes (Bash and PowerShell).
+- Not done: Dependabot (low value here: one dependency, engine pinned by commit; it would add
+  PR noise). PR #40 waits for Andrea's merge.
+- Verified: settings file is valid JSON; `python -B -m unittest` OK; `.claude/launch.json` still
+  ignored.
