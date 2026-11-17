@@ -254,3 +254,14 @@ verified, what is open or next. Read the last entries to know where things stand
   PR noise). PR #40 waits for Andrea's merge.
 - Verified: settings file is valid JSON; `python -B -m unittest` OK; `.claude/launch.json` still
   ignored.
+
+## 2026-11-17 - T21 board stuck: scans killed at 55 minutes
+- Since 2026-11-16 01:58 every scan was cancelled at the 55-minute limit (page frozen ~45 h).
+  The log was empty (Python buffered output), so: `python -u`, slow boards printed live by the
+  engine and the old scanner, and a faulthandler stack dump after 50 minutes.
+- Diagnostic runs: engine done in ~12 min; the dump showed the rest stuck in `all_cities`,
+  opening Workday jobs one by one (Salesforce 278, Splunk 163... over 1,000 at ~1.5 s each).
+- Fix: `fill_cities` opens them 8 at a time until a 15-minute budget, then a job keeps its first
+  city. Tests first (2 failed, then 33 OK). Branch scan: success in 1664 s (28 min), 282/284
+  boards, 189 jobs. The budget was used in full, so some Workday jobs kept only their first
+  city this run. Revolut and SAP answer 403.
