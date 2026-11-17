@@ -5,6 +5,7 @@ The sheet link comes from the SHEET_URL environment variable (a GitHub secret);
 for local tests it can also be a folder with Preferences.csv and Companies.csv.
 """
 
+import faulthandler
 import json
 import os
 import sys
@@ -20,6 +21,7 @@ from .sources import DETAILS, READERS
 CACHE = Path(os.environ.get("JOBSCOUT_CACHE", "cache"))  # kept between runs by GitHub's cache
 RECHECK_NOT_FOUND_DAYS = 7  # companies without a board: look again after this many days
 WORKERS = 8                 # boards read at the same time
+CITIES_BUDGET = 15 * 60     # seconds for opening Workday jobs to read all their cities
 # Thursday's deep scan: no age limit (older jobs are kept, marked "deep", until the next deep
 # scan while still open) and companies without a board are looked for again at once.
 DEEP = os.environ.get("JOBSCOUT_DEEP") == "1"
@@ -39,9 +41,13 @@ def main():
     print(f"{len(companies)} companies, {len(prefs.core + prefs.also)} role keywords")
 
     started = time.time()
+    # If the scan is still running after 50 minutes, print where it is stuck (GitHub stops it at 55).
+    faulthandler.dump_traceback_later(50 * 60, exit=False)
     results, left = scan_with_engine(companies, prefs)  # 1. freehire's engine reads the links it knows
+    print(f"Engine part done after {time.time() - started:.0f} s")
     boards, not_found = find_boards(left)                # 2. the old board finder handles the rest...
     results += engine_reads_known_boards(boards, prefs)  # 3. ...and the engine reads what it can of those
+    print(f"Boards found after {time.time() - started:.0f} s, old scanner reads {len(boards)}")
     hints = {"countries": countries(prefs)}
     with ThreadPoolExecutor(WORKERS) as pool:
         results += list(pool.map(lambda item: scan_board(item, prefs, hints), boards.items()))
@@ -81,6 +87,7 @@ def scan_with_engine(companies, prefs):
         print(f"Engine failed, the old scanner reads every company: {error}")
         return [], companies
     results, retry = [], set(unrecognized)
+    deadline = time.time() + CITIES_BUDGET
     for item in boards:
         if not item["ok"]:
             # e.g. Workday answering "too many requests": the old scanner opens far fewer pages.
@@ -88,20 +95,27 @@ def scan_with_engine(companies, prefs):
             retry.update([item["company"]] + (item.get("also") or []))
             continue
         jobs = item["jobs"]
-        matches = [dict(job, company=item["company"]) for job in jobs
-                   if keep(job, prefs, all_cities, deep=DEEP)]
+        fill_cities(jobs, prefs, deadline)
+        matches = [dict(job, company=item["company"]) for job in jobs if keep(job, prefs, deep=DEEP)]
         results.append((item["company"], True, {"count": len(jobs), "ids": [j["id"] for j in jobs]},
                         matches, ""))
     return results, [c for c in companies if c["name"] in retry]
 
 
-def all_cities(job):
-    """Workday jobs from the engine carry only their first city: read the full list."""
-    if job.get("_extra", {}).get("api"):
-        try:
-            DETAILS["workday"](job, {})
-        except Exception:
-            pass  # keep the first city
+def fill_cities(jobs, prefs, deadline):
+    """Workday jobs from the engine carry only their first city: open the wanted titles whose
+    first city is not wanted, to read the full list. One request per job, so 8 at a time and
+    only until the deadline; after it a job keeps its first city (the scan must finish)."""
+    def one(job):
+        if time.time() < deadline:
+            try:
+                DETAILS["workday"](job, {})
+            except Exception:
+                pass  # keep the first city
+    needed = [job for job in jobs if job.get("_extra", {}).get("api") and prefs.title_ok(job["title"])
+              and not prefs.location_ok(job["title"], job["location"])]
+    with ThreadPoolExecutor(WORKERS) as pool:
+        list(pool.map(one, needed))
 
 
 def engine_reads_known_boards(boards, prefs):
@@ -125,14 +139,11 @@ def engine_reads_known_boards(boards, prefs):
     return results
 
 
-def keep(job, prefs, more_cities=None, deep=False):
+def keep(job, prefs, deep=False):
     """The rules every job must pass: wanted title, wanted place, not too old.
-    more_cities(job) may fill in the full city list before the place is judged.
     deep: a too-old job is kept anyway and marked job["deep"] = True."""
     if not prefs.title_ok(job["title"]):
         return False
-    if not prefs.location_ok(job["title"], job["location"]) and more_cities:
-        more_cities(job)
     if not prefs.location_ok(job["title"], job["location"]):
         return False
     cutoff = datetime.now(timezone.utc) - timedelta(days=prefs.max_age_days)
@@ -194,6 +205,7 @@ def scan_board(item, prefs, hints):
     """Read one board and keep the jobs that pass all rules.
     Returns (company, ok, {count, ids}, matches, error)."""
     _, (company, service, params) = item
+    started = time.time()
     jobs, error = None, ""
     for attempt in range(2):  # one retry: most failures are a slow or busy server
         try:
@@ -217,6 +229,8 @@ def scan_board(item, prefs, hints):
         if keep(job, prefs, deep=DEEP):
             job["company"] = company
             matches.append(job)
+    if time.time() - started > 60:
+        print(f"slow board: {company} ({service}) {time.time() - started:.0f} s")
     return company, True, {"count": len(jobs), "ids": [job["id"] for job in jobs]}, matches, ""
 
 

@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -122,7 +123,13 @@ func main() {
 
 func crawl(registry map[string]sources.Source, b *board, emit func(any)) {
 	start := time.Now()
-	defer func() { b.Seconds = time.Since(start).Seconds(); emit(b) }()
+	defer func() {
+		b.Seconds = time.Since(start).Seconds()
+		if b.Seconds > 60 { // slow boards show in the run log while the scan is still going
+			fmt.Fprintf(os.Stderr, "slow board: %s (%s) %.0f s\n", b.Company, b.Source, b.Seconds)
+		}
+		emit(b)
+	}()
 	src, ok := registry[b.Source]
 	if !ok {
 		b.Error = "no adapter for " + b.Source
