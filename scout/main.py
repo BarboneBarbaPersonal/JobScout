@@ -5,6 +5,7 @@ The sheet link comes from the SHEET_URL environment variable (a GitHub secret);
 for local tests it can also be a folder with Preferences.csv and Companies.csv.
 """
 
+import faulthandler
 import json
 import os
 import sys
@@ -39,9 +40,13 @@ def main():
     print(f"{len(companies)} companies, {len(prefs.core + prefs.also)} role keywords")
 
     started = time.time()
+    # If the scan is still running after 50 minutes, print where it is stuck (GitHub stops it at 55).
+    faulthandler.dump_traceback_later(50 * 60, exit=False)
     results, left = scan_with_engine(companies, prefs)  # 1. freehire's engine reads the links it knows
+    print(f"Engine part done after {time.time() - started:.0f} s")
     boards, not_found = find_boards(left)                # 2. the old board finder handles the rest...
     results += engine_reads_known_boards(boards, prefs)  # 3. ...and the engine reads what it can of those
+    print(f"Boards found after {time.time() - started:.0f} s, old scanner reads {len(boards)}")
     hints = {"countries": countries(prefs)}
     with ThreadPoolExecutor(WORKERS) as pool:
         results += list(pool.map(lambda item: scan_board(item, prefs, hints), boards.items()))
@@ -194,6 +199,7 @@ def scan_board(item, prefs, hints):
     """Read one board and keep the jobs that pass all rules.
     Returns (company, ok, {count, ids}, matches, error)."""
     _, (company, service, params) = item
+    started = time.time()
     jobs, error = None, ""
     for attempt in range(2):  # one retry: most failures are a slow or busy server
         try:
@@ -217,6 +223,8 @@ def scan_board(item, prefs, hints):
         if keep(job, prefs, deep=DEEP):
             job["company"] = company
             matches.append(job)
+    if time.time() - started > 60:
+        print(f"slow board: {company} ({service}) {time.time() - started:.0f} s")
     return company, True, {"count": len(jobs), "ids": [job["id"] for job in jobs]}, matches, ""
 
 
