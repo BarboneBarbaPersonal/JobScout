@@ -254,3 +254,7 @@ verified, what is open or next. Read the last entries to know where things stand
   PR noise). PR #40 waits for Andrea's merge.
 - Verified: settings file is valid JSON; `python -B -m unittest` OK; `.claude/launch.json` still
   ignored.
+
+## 2026-11-17 - T11 review: no automation
+- Drive shows only the skills' install tests (3 CVs on 19 Oct, 1 interview prep on 20 Oct);
+  Andrea confirmed no applications since. Rule agreed on 19 Oct: not used weekly -> drop.

@@ -108,7 +108,9 @@ Never push to main or merge."
     the jobscout-cv token > Delete. It is no longer used once the CV has moved to Supabase.
 
 ## Later
-- [ ] **T11. Review on 2026-11-19: automate the skills?** (was #22) - waiting for the date
+- [x] **T11. Review on 2026-11-19: automate the skills?** (was #22) - done 2026-11-17: dropped
+  - Skills used only in the install tests (19-20 Oct), no applications sent since: nothing to
+    automate. The bottleneck is applying, not tooling.
   - If T7/T8 were used weekly: plan one scheduled agent (drafts for new high-fit jobs,
     interview prep, morning brief). Otherwise drop.
 - [ ] **T12. Suggest the Workday fix to freehire** (optional) - draft ready in
