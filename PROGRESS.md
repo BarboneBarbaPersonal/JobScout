@@ -265,3 +265,7 @@ verified, what is open or next. Read the last entries to know where things stand
   city. Tests first (2 failed, then 33 OK). Branch scan: success in 1664 s (28 min), 282/284
   boards, 189 jobs. The budget was used in full, so some Workday jobs kept only their first
   city this run. Revolut and SAP answer 403.
+
+## 2026-11-18 - T22 added to the plan
+- Andrea asked to find the recruiter or a LinkedIn hiring post after "I applied". Planned as
+  search links he opens himself (no LinkedIn automation). Plan change only, no code.
