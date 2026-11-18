@@ -265,3 +265,13 @@ verified, what is open or next. Read the last entries to know where things stand
   city. Tests first (2 failed, then 33 OK). Branch scan: success in 1664 s (28 min), 282/284
   boards, 189 jobs. The budget was used in full, so some Workday jobs kept only their first
   city this run. Revolut and SAP answer 403.
+
+## 2026-11-18 - T23 fit-cv: only the new CV, same layout
+- Andrea wants a finished copy of his CV, not an analysis doc. The Claude app can't edit a
+  Google Doc copy (Drive connector only), so the skill moved to Claude Code: export CV_Eng as
+  .docx, swap headline, summary, bullets and skills (`build_cv.py`), upload as a Google Doc.
+- Verified: 5 real CVs made this way (Wiz, Remote, Stripe, SiteMinder, Sigma), PDF exports
+  1 page, same layout; the generic `build_cv.py` gives a byte-identical file to the checked
+  Wiz CV. Board: Fit my CV prompt checked on a local copy (starts with /fit-cv, no CV text),
+  no console errors; tests OK.
+- New: Drive doc "CV variants - to review" with 10 topic blocks, all from CV_Eng facts.

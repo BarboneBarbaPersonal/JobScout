@@ -133,7 +133,7 @@
       <button type="button" class="chip" id="account-send">Send login link</button>
     </div>
     <div class="cv-area" id="cv-area" hidden>
-      <p>My CV (plain text). Used for the match % on each job and for Fit my CV. Only you can see it.</p>
+      <p>My CV (plain text). Used for the match % on each job and for Prep interview. Only you can see it.</p>
       <textarea id="cv-text" spellcheck="false"></textarea>
       <button type="button" class="chip" id="cv-save">Save CV</button>
     </div>
@@ -364,7 +364,7 @@
 
   // =====================================================================
   // CV help (after login): instant keyword match on each card, and
-  // "Fit my CV", which copies a ready prompt (job + CV) for the Claude app's fit-cv skill.
+  // "Fit my CV", which copies a ready prompt (the job) for the fit-cv skill in Claude Code.
   // The CV text lives in the private database (table "profile").
   // =====================================================================
   var CV = "";
@@ -422,20 +422,19 @@
     return line;
   }
 
-  // The prompt for the Claude app: it starts the fit-cv skill (skills/fit-cv/SKILL.md in the
-  // repo), which tailors the CV to this job and saves it as a Google Doc.
+  // The prompt for Claude Code (a JobScout session): it starts the fit-cv skill
+  // (.claude/skills/fit-cv), which reads the CV from Drive and saves a tailored copy there.
   function claudePrompt(job) {
-    return "Use my fit-cv skill: tailor my CV to the job below, facts only, and save it as a Google Doc.\n\n" +
+    return "/fit-cv\n\n" +
       "JOB: " + job.title + " at " + job.company + " (" + job.location + ")\n" + job.url + "\n\n" +
-      "--- JOB AD ---\n" + (DESCRIPTIONS[job.id] || "(Open the link above: the ad text was not available.)") +
-      "\n\n--- MY CV ---\n" + CV;
+      "--- JOB AD ---\n" + (DESCRIPTIONS[job.id] || "(Open the link above: the ad text was not available.)");
   }
 
-  // Copy a prompt, then open Claude in a new tab: paste it there.
-  function copyToClaude(text, button, label) {
+  // Copy a prompt; with openClaude, also open the Claude app in a new tab: paste it there.
+  function copyToClaude(text, button, label, openClaude) {
     navigator.clipboard.writeText(text).then(function () {
-      button.textContent = "Copied: paste in Claude";
-      window.open("https://claude.ai/new", "_blank", "noopener");
+      button.textContent = openClaude ? "Copied: paste in Claude" : "Copied: paste in Claude Code";
+      if (openClaude) window.open("https://claude.ai/new", "_blank", "noopener");
     }, function () {
       // Copying is blocked on some phones: show the prompt, selected, to copy by hand.
       var card = button.closest(".card");
@@ -462,7 +461,7 @@
   function askButton(job) {
     var button = el("button", "hide ask", "Fit my CV");
     button.type = "button";
-    button.title = "Copies this job and your CV for the fit-cv skill, then opens Claude: paste it there. The tailored CV comes back as a Google Doc.";
+    button.title = "Copies this job for the fit-cv skill: paste it in a JobScout session of Claude Code. The tailored CV comes back as a Google Doc.";
     button.addEventListener("click", function () { copyToClaude(claudePrompt(job), button, "Fit my CV"); });
     return button;
   }
@@ -726,7 +725,7 @@
       var prep = el("button", "hide ask", "Prep interview");
       prep.type = "button";
       prep.title = "Copies this application, your notes and your CV for the interview-prep skill, then opens Claude: paste it there.";
-      prep.addEventListener("click", function () { copyToClaude(prepPrompt(app), prep, "Prep interview"); });
+      prep.addEventListener("click", function () { copyToClaude(prepPrompt(app), prep, "Prep interview", true); });
     }
     remove.type = "button";
     remove.addEventListener("click", function () { removeApp(app); });
