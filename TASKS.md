@@ -58,7 +58,7 @@ Never push to main or merge."
     its source email, unclear ones flagged; Andrea applies them on the board; nothing stored.
 - [ ] **T10. Tracker 4: interviews + overview** (was #9, phase 4)
   - Done when: interview rounds per application, reminder the day before, funnel numbers.
-- [ ] **T22. "Find the recruiter" links after "I applied"** (asked 2026-11-18)
+- [x] **T22. "Find the recruiter" links after "I applied"** (asked 2026-11-18) - done 2026-11-18
   - On an application: two links that Andrea opens himself, already filled with company and
     role: LinkedIn people search ("<company> recruiter / talent acquisition") and LinkedIn posts
     search ("<company> hiring <role>"). Page only, no new service.
