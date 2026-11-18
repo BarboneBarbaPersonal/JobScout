@@ -269,3 +269,6 @@ verified, what is open or next. Read the last entries to know where things stand
 ## 2026-11-18 - T22 added to the plan
 - Andrea asked to find the recruiter or a LinkedIn hiring post after "I applied". Planned as
   search links he opens himself (no LinkedIn automation). Plan change only, no code.
+- Built: open applications show "Find the recruiter: People · Hiring posts" (LinkedIn searches
+  filled with company and role). Tested on a local copy of the live board with a test
+  application: links correct, hidden on closed applications; tests OK.
