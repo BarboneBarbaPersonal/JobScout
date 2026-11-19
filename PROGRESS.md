@@ -255,6 +255,10 @@ verified, what is open or next. Read the last entries to know where things stand
 - Verified: settings file is valid JSON; `python -B -m unittest` OK; `.claude/launch.json` still
   ignored.
 
+## 2026-11-17 - T11 review: no automation
+- Drive shows only the skills' install tests (3 CVs on 19 Oct, 1 interview prep on 20 Oct);
+  Andrea confirmed no applications since. Rule agreed on 19 Oct: not used weekly -> drop.
+
 ## 2026-11-17 - T21 board stuck: scans killed at 55 minutes
 - Since 2026-11-16 01:58 every scan was cancelled at the 55-minute limit (page frozen ~45 h).
   The log was empty (Python buffered output), so: `python -u`, slow boards printed live by the
