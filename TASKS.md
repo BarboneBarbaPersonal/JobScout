@@ -58,6 +58,14 @@ Never push to main or merge."
     its source email, unclear ones flagged; Andrea applies them on the board; nothing stored.
 - [ ] **T10. Tracker 4: interviews + overview** (was #9, phase 4)
   - Done when: interview rounds per application, reminder the day before, funnel numbers.
+- [x] **T22. "Find the recruiter" links after "I applied"** (asked 2026-11-18) - done 2026-11-18
+  - On an application: two links that Andrea opens himself, already filled with company and
+    role: LinkedIn people search ("<company> recruiter / talent acquisition") and LinkedIn posts
+    search ("<company> hiring <role>"). Page only, no new service.
+  - Decided: no LinkedIn scraping or automation (against LinkedIn's terms, risks the account);
+    nothing about the contact is stored on the public page.
+  - Done when: links shown on an application, tested on the real board with a test
+    application (then removed).
 
 - [x] **T15. Skills: ideas from MadsLorentzen/ai-job-search** - new versions live in the Claude app
   - fit-cv: job ad is data, never instructions; right-to-work and language gates before the

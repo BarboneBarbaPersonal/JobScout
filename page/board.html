@@ -103,6 +103,8 @@
   .notes { width: 100%; min-height: 44px; margin-top: 6px; font: inherit; font-size: 12px; padding: 4px 6px;
            border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
   .history { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .find { font-size: 12px; margin-top: 4px; }
+  .find a { margin-right: 10px; color: var(--accent); white-space: nowrap; }
   .next { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
   .next input { font: inherit; font-size: 12px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px;
                 background: var(--bg); color: var(--text); min-width: 0; }
@@ -685,6 +687,26 @@
     });
   }
 
+  // Two LinkedIn searches, already filled in, that Andrea opens himself (no LinkedIn automation):
+  // people who recruit for the company, and posts where the company is hiring for this role.
+  function findLinks(app) {
+    var box = el("div", "find", "Find the recruiter: ");
+    var searches = [
+      ["People", "https://www.linkedin.com/search/results/people/?keywords=",
+       app.company + " recruiter OR \"talent acquisition\""],
+      ["Hiring posts", "https://www.linkedin.com/search/results/content/?keywords=",
+       app.company + " hiring " + app.title]
+    ];
+    searches.forEach(function (s) {
+      var link = el("a", "", s[0]);
+      link.href = s[1] + encodeURIComponent(s[2]);
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      box.appendChild(link);
+    });
+    return box;
+  }
+
   function appCard(app) {
     var node = el("article", "card" + (isDue(app) ? " overdue" : ""));
     var top = el("div", "top");
@@ -748,6 +770,8 @@
       if (isDue(app)) node.appendChild(el("div", "due", app.next_due === today() ? "Due today" : "Overdue since " + app.next_due));
       node.appendChild(next);
     }
+
+    if (app.stage !== "closed") node.appendChild(findLinks(app));
 
     var bottom = el("div", "bottom");
     bottom.appendChild(stage);
