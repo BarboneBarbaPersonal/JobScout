@@ -103,6 +103,9 @@
   .notes { width: 100%; min-height: 44px; margin-top: 6px; font: inherit; font-size: 12px; padding: 4px 6px;
            border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
   .history { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .rounds { margin-top: 6px; font-size: 12px; }
+  .round { margin-top: 2px; }
+  .overview { font-size: 13px; font-weight: 700; margin: 4px 0 8px; }
   .find { font-size: 12px; margin-top: 4px; }
   .find a { margin-right: 10px; color: var(--accent); white-space: nowrap; }
   .next { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
@@ -166,6 +169,7 @@
       <button type="button" class="chip" id="app-add">Add application</button>
     </div>
     <p class="private-status" id="apps-status"></p>
+    <p class="overview" id="apps-overview"></p>
     <div class="apps-grid" id="apps-board"></div>
   </section>
   <section class="stats" id="stats"></section>
@@ -607,8 +611,109 @@
     return date.toISOString().slice(0, 10);
   }
 
-  // An application needs attention when its next step's date is today or earlier.
-  function isDue(app) { return app.stage !== "closed" && app.next_due && app.next_due <= today(); }
+  // An interview that is today or tomorrow and has no outcome yet (the day-before reminder).
+  function interviewSoon(app) {
+    var tomorrow = addDays(today(), 1);
+    return (app.interviews || []).filter(function (i) {
+      return !i.outcome && i.date >= today() && i.date <= tomorrow;
+    })[0] || null;
+  }
+
+  // An application needs attention when its next step's date is today or earlier,
+  // or an interview is coming up today or tomorrow.
+  function isDue(app) {
+    return app.stage !== "closed" && !!((app.next_due && app.next_due <= today()) || interviewSoon(app));
+  }
+
+  // =====================================================================
+  // Interviews (TRACKER-SPEC phase 4): rounds per application, stored in the
+  // application's "interviews" list as {date, type, with, outcome}.
+  // =====================================================================
+  var INTERVIEW_TYPES = ["screening", "technical", "panel", "final"];
+  var OUTCOMES = [["", "outcome?"], ["passed", "passed"], ["rejected", "rejected"], ["cancelled", "cancelled"]];
+
+  function updateApp(app, change, errorText) {
+    change.updated_at = new Date().toISOString();
+    db.from("applications").update(change).eq("id", app.id).then(function (result) {
+      if (result.error) { appStatus(errorText + ": " + result.error.message); return; }
+      Object.assign(app, change);
+      showAccount();
+      renderApps();
+    });
+  }
+
+  // A new round moves the application to Interviewing and becomes its next step.
+  function addInterview(app, date, type, who) {
+    var round = { date: date, type: type, with: who, outcome: "" };
+    var change = { interviews: (app.interviews || []).concat([round]),
+                   timeline: (app.timeline || []).concat([{ date: today(), text: "Interview planned: " + type + " " + date }]),
+                   next_step: "Interview: " + type + (who ? " with " + who : ""), next_due: date };
+    if (app.stage === "applied") change.stage = "interviewing";
+    updateApp(app, change, "Could not add the interview");
+  }
+
+  function setOutcome(app, index, outcome) {
+    var rounds = (app.interviews || []).map(function (r, i) {
+      return i === index ? Object.assign({}, r, { outcome: outcome }) : r;
+    });
+    var change = { interviews: rounds };
+    if (outcome) change.timeline = (app.timeline || []).concat([{ date: today(), text: "Interview " + rounds[index].type + ": " + outcome }]);
+    updateApp(app, change, "Could not save the outcome");
+  }
+
+  // The rounds of one application, plus a small form to add the next one.
+  function interviewsBox(app) {
+    var box = el("div", "rounds");
+    (app.interviews || []).forEach(function (round, index) {
+      var line = el("div", "round", round.date + " · " + round.type + (round.with ? " with " + round.with : "") + " ");
+      var outcome = document.createElement("select");
+      outcome.className = "stage";
+      OUTCOMES.forEach(function (o) { var option = el("option", "", o[1]); option.value = o[0]; outcome.appendChild(option); });
+      outcome.value = round.outcome || "";
+      outcome.addEventListener("change", function () { setOutcome(app, index, outcome.value); });
+      line.appendChild(outcome);
+      box.appendChild(line);
+    });
+    if (app.stage === "closed") return box;
+    var form = el("div", "next");
+    var date = el("input"); date.type = "date";
+    var type = document.createElement("select");
+    type.className = "stage";
+    INTERVIEW_TYPES.forEach(function (t) { type.appendChild(el("option", "", t)); });
+    var who = el("input"); who.type = "text"; who.placeholder = "With (optional)";
+    var add = el("button", "hide", "Add interview");
+    add.type = "button";
+    add.addEventListener("click", function () {
+      if (!date.value) { appStatus("Pick the interview date first."); return; }
+      add.disabled = true;
+      addInterview(app, date.value, type.value, who.value.trim());
+    });
+    [date, type, who, add].forEach(function (n) { form.appendChild(n); });
+    box.appendChild(form);
+    return box;
+  }
+
+  // Overview strip: how the search is going, from the applications themselves.
+  function overviewText() {
+    if (!APPS.length) return "";
+    var answered = APPS.filter(function (a) {
+      return a.stage === "interviewing" || a.stage === "offer" ||
+             (a.stage === "closed" && (a.closed_reason === "rejected" || a.closed_reason === "accepted"));
+    });
+    var days = answered.map(function (a) {
+      // First dated answer: the first timeline line after "Applied" that is not a no-answer/withdrawn close.
+      var first = (a.timeline || []).slice(1).filter(function (t) {
+        return t.text !== "Closed (no answer)" && t.text !== "Closed (withdrawn)";
+      })[0];
+      return first ? Math.round((new Date(first.date) - new Date(a.applied_on)) / 86400000) : null;
+    }).filter(function (d) { return d !== null; }).sort(function (a, b) { return a - b; });
+    var median = days.length ? days[Math.floor((days.length - 1) / 2)] : null;
+    var count = function (stage) { return APPS.filter(function (a) { return a.stage === stage; }).length; };
+    return "Applied " + APPS.length + " · answered " + Math.round(100 * answered.length / APPS.length) + "%" +
+      " · interviewing " + count("interviewing") + " · offers " +
+      APPS.filter(function (a) { return a.stage === "offer" || a.closed_reason === "accepted"; }).length +
+      (median !== null ? " · first answer after " + median + " days (median)" : "");
+  }
 
   function createApplication(row) {
     row.timeline = [{ date: today(), text: "Applied" }];
@@ -766,9 +871,16 @@
       });
       next.appendChild(step);
       next.appendChild(dueDate);
-      if (isDue(app)) node.appendChild(el("div", "due", app.next_due === today() ? "Due today" : "Overdue since " + app.next_due));
+      var soon = interviewSoon(app);
+      if (soon) {
+        node.appendChild(el("div", "due", "Interview " + (soon.date === today() ? "today" : "tomorrow") +
+                                          ": " + soon.type + (soon.with ? " with " + soon.with : "")));
+      } else if (isDue(app)) {
+        node.appendChild(el("div", "due", app.next_due === today() ? "Due today" : "Overdue since " + app.next_due));
+      }
       node.appendChild(next);
     }
+    node.appendChild(interviewsBox(app));
 
     if (app.stage !== "closed") node.appendChild(findLinks(app));
 
@@ -785,6 +897,7 @@
   }
 
   function renderApps() {
+    document.getElementById("apps-overview").textContent = overviewText();
     var box = document.getElementById("apps-board");
     box.textContent = "";
     STAGES.forEach(function (s) {

@@ -276,6 +276,7 @@ verified, what is open or next. Read the last entries to know where things stand
 - Built: open applications show "Find the recruiter: People · Hiring posts" (LinkedIn searches
   filled with company and role). Tested on a local copy of the live board with a test
   application: links correct, hidden on closed applications; tests OK.
+
 ## 2026-11-18 - T23 fit-cv: only the new CV, same layout
 - Andrea wants a finished copy of his CV, not an analysis doc. The Claude app can't edit a
   Google Doc copy (Drive connector only), so the skill moved to Claude Code: export CV_Eng as
@@ -285,3 +286,15 @@ verified, what is open or next. Read the last entries to know where things stand
   Wiz CV. Board: Fit my CV prompt checked on a local copy (starts with /fit-cv, no CV text),
   no console errors; tests OK.
 - New: Drive doc "CV variants - to review" with 10 topic blocks, all from CV_Eng facts.
+
+## 2026-11-20 - T10 interviews + overview
+- Andrea said "do everything": built T10 although there are no interviews yet (advised waiting).
+- Each open application: "Add interview" (date, type, with); a round moves Applied to
+  Interviewing, becomes the next step and adds a timeline line; outcome per round
+  (passed / rejected / cancelled). Reminder "Interview today/tomorrow" until an outcome is set;
+  it also counts as due in the "My applications" badge. Overview line above the columns:
+  applied, answered %, interviewing, offers, median days to first answer. No schema change
+  (the "interviews" column already existed).
+- Verified on a local copy with the database calls replaced: add, reminder, outcome, overview
+  and badge all correct (screenshot in the session); tests OK. Not yet checked on the real
+  database (needs Andrea's login). This branch also contains T22 and T23 (PRs #44, #45).

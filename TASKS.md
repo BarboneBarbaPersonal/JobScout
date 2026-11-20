@@ -56,7 +56,8 @@ Never push to main or merge."
     connector, run on demand, plus a "Check Gmail" button on the board. No app password.
   - Done when: the skill lists suggested stage changes for the open applications, each with
     its source email, unclear ones flagged; Andrea applies them on the board; nothing stored.
-- [ ] **T10. Tracker 4: interviews + overview** (was #9, phase 4)
+- [x] **T10. Tracker 4: interviews + overview** (was #9, phase 4) - built 2026-11-20; real-database
+  check by Andrea pending
   - Done when: interview rounds per application, reminder the day before, funnel numbers.
 - [x] **T22. "Find the recruiter" links after "I applied"** (asked 2026-11-18) - done 2026-11-18
   - On an application: two links that Andrea opens himself, already filled with company and
