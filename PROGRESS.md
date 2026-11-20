@@ -276,3 +276,12 @@ verified, what is open or next. Read the last entries to know where things stand
 - Built: open applications show "Find the recruiter: People · Hiring posts" (LinkedIn searches
   filled with company and role). Tested on a local copy of the live board with a test
   application: links correct, hidden on closed applications; tests OK.
+## 2026-11-18 - T23 fit-cv: only the new CV, same layout
+- Andrea wants a finished copy of his CV, not an analysis doc. The Claude app can't edit a
+  Google Doc copy (Drive connector only), so the skill moved to Claude Code: export CV_Eng as
+  .docx, swap headline, summary, bullets and skills (`build_cv.py`), upload as a Google Doc.
+- Verified: 5 real CVs made this way (Wiz, Remote, Stripe, SiteMinder, Sigma), PDF exports
+  1 page, same layout; the generic `build_cv.py` gives a byte-identical file to the checked
+  Wiz CV. Board: Fit my CV prompt checked on a local copy (starts with /fit-cv, no CV text),
+  no console errors; tests OK.
+- New: Drive doc "CV variants - to review" with 10 topic blocks, all from CV_Eng facts.
