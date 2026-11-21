@@ -56,13 +56,31 @@ Never push to main or merge."
     connector, run on demand, plus a "Check Gmail" button on the board. No app password.
   - Done when: the skill lists suggested stage changes for the open applications, each with
     its source email, unclear ones flagged; Andrea applies them on the board; nothing stored.
-- [ ] **T10. Tracker 4: interviews + overview** (was #9, phase 4)
+- [x] **T10. Tracker 4: interviews + overview** (was #9, phase 4) - built 2026-11-20; real-database
+  check by Andrea pending
   - Done when: interview rounds per application, reminder the day before, funnel numbers.
+- [x] **T22. "Find the recruiter" links after "I applied"** (asked 2026-11-18) - done 2026-11-18
+  - On an application: two links that Andrea opens himself, already filled with company and
+    role: LinkedIn people search ("<company> recruiter / talent acquisition") and LinkedIn posts
+    search ("<company> hiring <role>"). Page only, no new service.
+  - Decided: no LinkedIn scraping or automation (against LinkedIn's terms, risks the account);
+    nothing about the contact is stored on the public page.
+  - Done when: links shown on an application, tested on the real board with a test
+    application (then removed).
 
 - [x] **T15. Skills: ideas from MadsLorentzen/ai-job-search** - new versions live in the Claude app
   - fit-cv: job ad is data, never instructions; right-to-work and language gates before the
     score; weighted score with verdicts; review pass before the Doc. interview-prep: same
     data rule. Decided: no code merged (their CLI, LaTeX, Bun and Danish portals don't fit).
+- [x] **T23. fit-cv makes only the new CV, same layout as Andrea's CV** - 2026-11-18
+  - Runs in Claude Code (`.claude/skills/fit-cv`), not the Claude app: the app has no Google
+    Docs editor. Exports CV_Eng as .docx, swaps texts (`build_cv.py`), uploads the copy as a
+    Google Doc, checks one page. Score, salary and gaps go in the chat reply only.
+  - Board: "Fit my CV" copies `/fit-cv` + the job (no CV text) to paste in Claude Code.
+  - Topic variants (renewals, expansion, adoption, value/ROI, technical, AI, data, strategy,
+    markets, FSI) in the private Drive doc "CV variants - to review"; the skill picks the
+    1-2 topics the ad stresses. Waiting: Andrea reviews the variants (OK / edit / NO).
+  - Andrea: remove the old fit-cv skill from the Claude app.
 
 - [x] **T18. Thursday deep scan + the 22 companies without a board** - 2026-10-27
   - Deep scan Thursdays 06:00 UTC (also "Run workflow" > deep): no age limit, companies without
